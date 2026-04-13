@@ -47,39 +47,186 @@ const STYLE_URLS: Record<string, string> = {
   'streets': 'mapbox://styles/mapbox/streets-v12',
 };
 
-// Convert spread in inches to meters for circle radius
 function inchesToMeters(inches: number): number {
-  return (inches / 2) / 39.37; // radius in meters
+  return (inches / 2) / 39.37;
+}
+
+function buildPlantGeoJSON(placements: PlantPlacement[]): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: placements.map(p => ({
+      type: 'Feature' as const,
+      geometry: { type: 'Point' as const, coordinates: [p.lng, p.lat] },
+      properties: {
+        slug: p.slug, name: p.name,
+        color: getPlantColor(p.color),
+        speciesIndex: p.speciesIndex || 0,
+        radiusMeters: p.spreadInches ? inchesToMeters(p.spreadInches) : 0.3,
+        plantType: p.plantType || 'forb',
+      },
+    })),
+  };
+}
+
+function buildExclusionGeoJSON(zones: ExclusionZone[]): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: zones.map(z => ({
+      type: 'Feature' as const, geometry: z.geoJson, properties: { label: z.label, type: z.type },
+    })),
+  };
+}
+
+function buildTreeGeoJSON(trees: ExistingTree[]): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: trees.map(t => ({
+      type: 'Feature' as const,
+      geometry: { type: 'Point' as const, coordinates: [t.lng, t.lat] },
+      properties: { label: t.label, canopyRadiusMeters: (t.canopyDiameterFt / 2) * 0.3048 },
+    })),
+  };
+}
+
+// Meters-per-pixel at Chicago latitude for zoom levels
+// Formula: 40075016.686 * cos(41.88°) / (256 * 2^zoom)
+// z17=1.11, z18=0.556, z19=0.278, z20=0.139, z21=0.0694
+function addMapLayers(
+  map: mapboxgl.Map,
+  plantData: GeoJSON.FeatureCollection,
+  exclusionData: GeoJSON.FeatureCollection,
+  treeData: GeoJSON.FeatureCollection,
+  areaOutline: GeoJSON.Polygon | null | undefined,
+  show3D: boolean,
+) {
+  // 3D buildings
+  if (show3D) {
+    const layers = map.getStyle().layers;
+    const labelLayerId = layers?.find(l => l.type === 'symbol' && l.layout?.['text-field'])?.id;
+    map.addLayer({
+      id: '3d-buildings', source: 'composite', 'source-layer': 'building',
+      filter: ['==', 'extrude', 'true'], type: 'fill-extrusion', minzoom: 14,
+      paint: {
+        'fill-extrusion-color': '#ddd',
+        'fill-extrusion-height': ['get', 'height'],
+        'fill-extrusion-base': ['get', 'min_height'],
+        'fill-extrusion-opacity': 0.6,
+      },
+    }, labelLayerId);
+  }
+
+  // Area outline
+  if (areaOutline) {
+    map.addSource('area-outline', {
+      type: 'geojson', data: { type: 'Feature', properties: {}, geometry: areaOutline },
+    });
+    map.addLayer({ id: 'area-outline-fill', type: 'fill', source: 'area-outline',
+      paint: { 'fill-color': '#22c55e', 'fill-opacity': 0.1 } });
+    map.addLayer({ id: 'area-outline-line', type: 'line', source: 'area-outline',
+      paint: { 'line-color': '#22c55e', 'line-width': 3, 'line-dasharray': [3, 2] } });
+  }
+
+  // Exclusion zones
+  map.addSource('exclusions', { type: 'geojson', data: exclusionData });
+  map.addLayer({ id: 'exclusion-fill', type: 'fill', source: 'exclusions',
+    paint: { 'fill-color': '#9ca3af', 'fill-opacity': 0.35 } });
+  map.addLayer({ id: 'exclusion-line', type: 'line', source: 'exclusions',
+    paint: { 'line-color': '#6b7280', 'line-width': 2, 'line-dasharray': [4, 2] } });
+  map.addLayer({ id: 'exclusion-labels', type: 'symbol', source: 'exclusions',
+    layout: { 'text-field': ['get', 'label'], 'text-size': 12, 'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'] },
+    paint: { 'text-color': '#374151', 'text-halo-color': 'rgba(255,255,255,0.8)', 'text-halo-width': 1.5 } });
+
+  // Existing trees — canopy + trunk + label
+  map.addSource('existing-trees', { type: 'geojson', data: treeData });
+  map.addLayer({
+    id: 'tree-canopy', type: 'circle', source: 'existing-trees',
+    paint: {
+      'circle-radius': [
+        'interpolate', ['exponential', 2], ['zoom'],
+        17, ['*', ['get', 'canopyRadiusMeters'], 0.9],
+        18, ['*', ['get', 'canopyRadiusMeters'], 1.8],
+        19, ['*', ['get', 'canopyRadiusMeters'], 3.6],
+        20, ['*', ['get', 'canopyRadiusMeters'], 7.2],
+        21, ['*', ['get', 'canopyRadiusMeters'], 14.4],
+      ],
+      'circle-color': '#166534', 'circle-opacity': 0.2,
+      'circle-stroke-width': 2, 'circle-stroke-color': '#166534', 'circle-stroke-opacity': 0.5,
+    },
+  });
+  map.addLayer({ id: 'tree-trunk', type: 'circle', source: 'existing-trees',
+    paint: { 'circle-radius': 5, 'circle-color': '#78350f', 'circle-stroke-width': 2, 'circle-stroke-color': '#fff' } });
+  map.addLayer({ id: 'tree-labels', type: 'symbol', source: 'existing-trees',
+    layout: { 'text-field': ['get', 'label'], 'text-size': 11, 'text-offset': [0, -2],
+      'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'] },
+    paint: { 'text-color': '#166534', 'text-halo-color': 'rgba(255,255,255,0.8)', 'text-halo-width': 1.5 } });
+
+  // Plant circles — SIZED TO ACTUAL SPREAD
+  // For a 20x20ft yard at zoom 19-20, a 24" spread plant should be clearly visible
+  map.addSource('plants', { type: 'geojson', data: plantData });
+  map.addLayer({
+    id: 'plant-circles', type: 'circle', source: 'plants',
+    paint: {
+      'circle-radius': [
+        'interpolate', ['exponential', 2], ['zoom'],
+        17, ['*', ['get', 'radiusMeters'], 0.9],
+        18, ['*', ['get', 'radiusMeters'], 1.8],
+        19, ['*', ['get', 'radiusMeters'], 3.6],
+        20, ['*', ['get', 'radiusMeters'], 7.2],
+        21, ['*', ['get', 'radiusMeters'], 14.4],
+      ],
+      'circle-color': ['get', 'color'],
+      'circle-opacity': 0.65,
+      'circle-stroke-width': 2,
+      'circle-stroke-color': 'rgba(255,255,255,0.9)',
+    },
+  });
+
+  // Species number labels on top of circles
+  map.addLayer({
+    id: 'plant-labels', type: 'symbol', source: 'plants',
+    layout: {
+      'text-field': ['to-string', ['get', 'speciesIndex']],
+      'text-size': 11,
+      'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
+      'text-allow-overlap': true,
+    },
+    paint: {
+      'text-color': '#ffffff',
+      'text-halo-color': 'rgba(0,0,0,0.6)',
+      'text-halo-width': 1,
+    },
+  });
+
+  // Click interaction
+  map.on('click', 'plant-circles', (e) => {
+    if (!e.features?.length) return;
+    const props = e.features[0].properties;
+    new mapboxgl.Popup({ offset: 10, closeButton: false })
+      .setLngLat(e.lngLat)
+      .setHTML(`<div style="padding:6px 10px;font-size:13px;"><strong>${props?.name}</strong></div>`)
+      .addTo(map);
+  });
+  map.on('mouseenter', 'plant-circles', () => { map.getCanvas().style.cursor = 'pointer'; });
+  map.on('mouseleave', 'plant-circles', () => { map.getCanvas().style.cursor = ''; });
 }
 
 export default function MapboxMap({
   center = [41.8781, -87.6298],
-  zoom = 11,
-  pitch = 0,
-  bearing = 0,
-  onAreaSelected,
-  onLocationSelected,
-  showDrawControls = false,
-  showSearch = true,
-  show3D = false,
-  showSunlight = false,
-  plantPlacements = [],
-  planMarkers = [],
-  onPlantClick,
-  onPlanMarkerClick,
-  areaOutline,
-  exclusionZones = [],
-  existingTrees = [],
-  editMode = 'none',
-  onExclusionZoneCreated,
-  onExistingTreePlaced,
-  height = '100%',
-  style = 'satellite-streets',
+  zoom = 11, pitch = 0, bearing = 0,
+  onAreaSelected, onLocationSelected,
+  showDrawControls = false, showSearch = true,
+  show3D = false, showSunlight = false,
+  plantPlacements = [], planMarkers = [],
+  onPlantClick, onPlanMarkerClick,
+  areaOutline, exclusionZones = [], existingTrees = [],
+  editMode = 'none', onExclusionZoneCreated, onExistingTreePlaced,
+  height = '100%', style = 'satellite-streets',
 }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const drawRef = useRef<MapboxDraw | null>(null);
   const planMarkersRef = useRef<mapboxgl.Marker[]>([]);
+  const layersAddedRef = useRef(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -89,7 +236,14 @@ export default function MapboxMap({
   const editModeRef = useRef(editMode);
   editModeRef.current = editMode;
 
-  // Initialize map
+  // Store latest props in refs so the load callback can read them
+  const plantPlacementsRef = useRef(plantPlacements);
+  plantPlacementsRef.current = plantPlacements;
+  const exclusionZonesRef = useRef(exclusionZones);
+  exclusionZonesRef.current = exclusionZones;
+  const existingTreesRef = useRef(existingTrees);
+  existingTreesRef.current = existingTrees;
+
   useEffect(() => {
     if (!containerRef.current || mapRef.current || !MAPBOX_TOKEN) return;
 
@@ -99,165 +253,62 @@ export default function MapboxMap({
       center: [center[1], center[0]],
       zoom,
       pitch: showDrawControls ? 0 : (show3D ? 45 : pitch),
-      bearing,
-      antialias: true,
+      bearing, antialias: true,
     });
 
     map.addControl(new mapboxgl.NavigationControl({ visualizePitch: true }), 'bottom-right');
     map.addControl(new mapboxgl.ScaleControl({ maxWidth: 150 }), 'bottom-left');
 
     map.on('load', () => {
-      // 3D buildings
-      if (show3D || zoom >= 15) {
-        const layers = map.getStyle().layers;
-        const labelLayerId = layers?.find(l => l.type === 'symbol' && l.layout?.['text-field'])?.id;
-        map.addLayer({
-          id: '3d-buildings',
-          source: 'composite',
-          'source-layer': 'building',
-          filter: ['==', 'extrude', 'true'],
-          type: 'fill-extrusion',
-          minzoom: 14,
-          paint: {
-            'fill-extrusion-color': '#ddd',
-            'fill-extrusion-height': ['get', 'height'],
-            'fill-extrusion-base': ['get', 'min_height'],
-            'fill-extrusion-opacity': 0.7,
-          },
-        }, labelLayerId);
-      }
+      if (layersAddedRef.current) return;
+      layersAddedRef.current = true;
 
-      // Area outline
-      if (areaOutline) {
-        map.addSource('area-outline', {
-          type: 'geojson',
-          data: { type: 'Feature', properties: {}, geometry: areaOutline },
-        });
-        map.addLayer({ id: 'area-outline-fill', type: 'fill', source: 'area-outline',
-          paint: { 'fill-color': '#22c55e', 'fill-opacity': 0.08 } });
-        map.addLayer({ id: 'area-outline-line', type: 'line', source: 'area-outline',
-          paint: { 'line-color': '#22c55e', 'line-width': 3, 'line-dasharray': [3, 2] } });
-      }
+      addMapLayers(
+        map,
+        buildPlantGeoJSON(plantPlacementsRef.current),
+        buildExclusionGeoJSON(exclusionZonesRef.current),
+        buildTreeGeoJSON(existingTreesRef.current),
+        areaOutline,
+        show3D,
+      );
 
-      // Plant circles layer (GeoJSON)
-      map.addSource('plants', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-
-      // Plant fill circles — sized by spread
-      // At zoom 19, 1 meter ≈ 2.4 px. Circle-radius = radiusMeters * metersToPixels(zoom)
-      // metersToPixels ≈ 256 * 2^zoom / (40075016.686 * cos(lat))
-      // At 41.88N: z16=4.8, z17=9.6, z18=19.2, z19=38.4, z20=76.8, z21=153.6
-      map.addLayer({
-        id: 'plant-circles',
-        type: 'circle',
-        source: 'plants',
-        paint: {
-          'circle-radius': [
-            'interpolate', ['exponential', 2], ['zoom'],
-            16, ['*', ['get', 'radiusMeters'], 5],
-            17, ['*', ['get', 'radiusMeters'], 10],
-            18, ['*', ['get', 'radiusMeters'], 20],
-            19, ['*', ['get', 'radiusMeters'], 40],
-            20, ['*', ['get', 'radiusMeters'], 80],
-            21, ['*', ['get', 'radiusMeters'], 160],
-          ],
-          'circle-color': ['get', 'color'],
-          'circle-opacity': 0.6,
-          'circle-stroke-width': 2,
-          'circle-stroke-color': 'rgba(255,255,255,0.85)',
-        },
-      });
-
-      // Species index labels
-      map.addLayer({
-        id: 'plant-labels',
-        type: 'symbol',
-        source: 'plants',
-        layout: {
-          'text-field': ['to-string', ['get', 'speciesIndex']],
-          'text-size': 11,
-          'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
-          'text-allow-overlap': true,
-        },
-        paint: {
-          'text-color': '#ffffff',
-          'text-halo-color': 'rgba(0,0,0,0.5)',
-          'text-halo-width': 1,
-        },
-      });
-
-      // Exclusion zones layer
-      map.addSource('exclusions', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-      map.addLayer({ id: 'exclusion-fill', type: 'fill', source: 'exclusions',
-        paint: { 'fill-color': '#9ca3af', 'fill-opacity': 0.35 } });
-      map.addLayer({ id: 'exclusion-line', type: 'line', source: 'exclusions',
-        paint: { 'line-color': '#6b7280', 'line-width': 2, 'line-dasharray': [4, 2] } });
-      map.addLayer({ id: 'exclusion-labels', type: 'symbol', source: 'exclusions',
-        layout: { 'text-field': ['get', 'label'], 'text-size': 12, 'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'] },
-        paint: { 'text-color': '#374151', 'text-halo-color': 'rgba(255,255,255,0.8)', 'text-halo-width': 1.5 } });
-
-      // Existing trees layer
-      map.addSource('existing-trees', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-      // Canopy
-      map.addLayer({
-        id: 'tree-canopy',
-        type: 'circle',
-        source: 'existing-trees',
-        paint: {
-          'circle-radius': [
-            'interpolate', ['exponential', 2], ['zoom'],
-            16, ['*', ['get', 'canopyRadiusMeters'], 5],
-            17, ['*', ['get', 'canopyRadiusMeters'], 10],
-            18, ['*', ['get', 'canopyRadiusMeters'], 20],
-            19, ['*', ['get', 'canopyRadiusMeters'], 40],
-            20, ['*', ['get', 'canopyRadiusMeters'], 80],
-            21, ['*', ['get', 'canopyRadiusMeters'], 160],
-          ],
-          'circle-color': '#166534',
-          'circle-opacity': 0.2,
-          'circle-stroke-width': 2,
-          'circle-stroke-color': '#166534',
-          'circle-stroke-opacity': 0.5,
-        },
-      });
-      // Trunk
-      map.addLayer({
-        id: 'tree-trunk',
-        type: 'circle',
-        source: 'existing-trees',
-        paint: { 'circle-radius': 5, 'circle-color': '#78350f', 'circle-stroke-width': 2, 'circle-stroke-color': '#fff' },
-      });
-      map.addLayer({ id: 'tree-labels', type: 'symbol', source: 'existing-trees',
-        layout: { 'text-field': ['get', 'label'], 'text-size': 11, 'text-offset': [0, -2],
-          'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'] },
-        paint: { 'text-color': '#166534', 'text-halo-color': 'rgba(255,255,255,0.8)', 'text-halo-width': 1.5 } });
-
-      // Sunlight
+      // Sun lighting
       if (showSunlight) updateSunPosition(map, center[0], center[1], sunHour);
 
-      // Plant click interaction
+      // Plant click handler
       map.on('click', 'plant-circles', (e) => {
-        if (!e.features?.length) return;
-        const slug = e.features[0].properties?.slug;
+        const slug = e.features?.[0]?.properties?.slug;
         if (slug && onPlantClick) onPlantClick(slug);
       });
-      map.on('mouseenter', 'plant-circles', () => { map.getCanvas().style.cursor = 'pointer'; });
-      map.on('mouseleave', 'plant-circles', () => { map.getCanvas().style.cursor = ''; });
 
-      // Tree placement mode
+      // Tree placement click
       map.on('click', (e) => {
         if (editModeRef.current !== 'tree') return;
-        const tree: ExistingTree = {
+        onExistingTreePlaced?.({
           id: `tree-${Date.now()}`,
-          lat: e.lngLat.lat,
-          lng: e.lngLat.lng,
-          canopyDiameterFt: 20,
-          label: 'Existing Tree',
-        };
-        onExistingTreePlaced?.(tree);
+          lat: e.lngLat.lat, lng: e.lngLat.lng,
+          canopyDiameterFt: 20, label: 'Existing Tree',
+        });
       });
     });
 
-    // MapboxDraw for planting area + exclusion zones
+    // Re-add layers on style change
+    map.on('style.load', () => {
+      if (!layersAddedRef.current) return;
+      // Layers were already added once — re-add after style switch
+      try {
+        addMapLayers(
+          map,
+          buildPlantGeoJSON(plantPlacementsRef.current),
+          buildExclusionGeoJSON(exclusionZonesRef.current),
+          buildTreeGeoJSON(existingTreesRef.current),
+          areaOutline,
+          show3D,
+        );
+      } catch (e) { /* sources may already exist */ }
+    });
+
+    // MapboxDraw
     if (showDrawControls) {
       const draw = new MapboxDraw({
         displayControlsDefault: false,
@@ -286,15 +337,11 @@ export default function MapboxMap({
         if (feature.geometry.type !== 'Polygon') return;
 
         if (editModeRef.current === 'exclusion') {
-          // Exclusion zone
-          const zone: ExclusionZone = {
-            id: `excl-${Date.now()}`,
-            geoJson: feature.geometry as GeoJSON.Polygon,
-            label: 'Excluded Area',
-            type: 'other',
-          };
           draw.deleteAll();
-          onExclusionZoneCreated?.(zone);
+          onExclusionZoneCreated?.({
+            id: `excl-${Date.now()}`, geoJson: feature.geometry as GeoJSON.Polygon,
+            label: 'Excluded Area', type: 'other',
+          });
           return;
         }
 
@@ -321,74 +368,56 @@ export default function MapboxMap({
     }
 
     mapRef.current = map;
-    return () => { map.remove(); mapRef.current = null; };
+    return () => { map.remove(); mapRef.current = null; layersAddedRef.current = false; };
   }, []);
 
-  // Update plant placement GeoJSON
+  // Update plant data when it changes
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-
-    function updatePlants() {
-      const src = map!.getSource('plants') as mapboxgl.GeoJSONSource | undefined;
-      if (!src) return;
-
-    const features = plantPlacements.map(p => ({
-      type: 'Feature' as const,
-      geometry: { type: 'Point' as const, coordinates: [p.lng, p.lat] },
-      properties: {
-        slug: p.slug,
-        name: p.name,
-        color: getPlantColor(p.color),
-        speciesIndex: p.speciesIndex || 0,
-        radiusMeters: p.spreadInches ? inchesToMeters(p.spreadInches) : 0.5,
-        plantType: p.plantType || 'forb',
-      },
-    }));
-
-      src.setData({ type: 'FeatureCollection', features });
-    }
-
-    if (map.isStyleLoaded()) updatePlants();
-    else map.once('style.load', updatePlants);
+    const update = () => {
+      try {
+        const src = map.getSource('plants') as mapboxgl.GeoJSONSource;
+        if (src) src.setData(buildPlantGeoJSON(plantPlacements));
+      } catch {}
+    };
+    if (map.isStyleLoaded() && layersAddedRef.current) update();
+    else map.once('idle', update);
   }, [plantPlacements]);
 
-  // Update exclusion zones GeoJSON
+  // Update exclusion zones
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    function update() {
-      const src = map!.getSource('exclusions') as mapboxgl.GeoJSONSource | undefined;
-      if (!src) return;
-      src.setData({ type: 'FeatureCollection', features: exclusionZones.map(z => ({
-        type: 'Feature' as const, geometry: z.geoJson, properties: { label: z.label, type: z.type },
-      })) });
-    }
-    if (map.isStyleLoaded()) update(); else map.once('style.load', update);
+    const update = () => {
+      try {
+        const src = map.getSource('exclusions') as mapboxgl.GeoJSONSource;
+        if (src) src.setData(buildExclusionGeoJSON(exclusionZones));
+      } catch {}
+    };
+    if (map.isStyleLoaded() && layersAddedRef.current) update();
+    else map.once('idle', update);
   }, [exclusionZones]);
 
-  // Update existing trees GeoJSON
+  // Update existing trees
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    function update() {
-      const src = map!.getSource('existing-trees') as mapboxgl.GeoJSONSource | undefined;
-      if (!src) return;
-      src.setData({ type: 'FeatureCollection', features: existingTrees.map(t => ({
-        type: 'Feature' as const,
-        geometry: { type: 'Point' as const, coordinates: [t.lng, t.lat] },
-        properties: { label: t.label, canopyRadiusMeters: (t.canopyDiameterFt / 2) * 0.3048 },
-      })) });
-    }
-    if (map.isStyleLoaded()) update(); else map.once('style.load', update);
+    const update = () => {
+      try {
+        const src = map.getSource('existing-trees') as mapboxgl.GeoJSONSource;
+        if (src) src.setData(buildTreeGeoJSON(existingTrees));
+      } catch {}
+    };
+    if (map.isStyleLoaded() && layersAddedRef.current) update();
+    else map.once('idle', update);
   }, [existingTrees]);
 
-  // Plan markers (community map)
+  // Plan markers (community map — DOM markers)
   useEffect(() => {
     if (!mapRef.current) return;
     planMarkersRef.current.forEach(m => m.remove());
     planMarkersRef.current = [];
-
     planMarkers.forEach(pm => {
       const el = document.createElement('div');
       el.innerHTML = `<div style="background:#16a34a;width:30px;height:30px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;">
@@ -407,24 +436,20 @@ export default function MapboxMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !showSunlight) return;
-    if (map.isStyleLoaded()) updateSunPosition(map, center[0], center[1], sunHour);
-    else map.once('style.load', () => updateSunPosition(map, center[0], center[1], sunHour));
+    const update = () => updateSunPosition(map, center[0], center[1], sunHour);
+    if (map.isStyleLoaded()) update();
+    else map.once('style.load', update);
   }, [sunHour, showSunlight]);
 
-  function switchStyle(newStyle: string) {
+  function switchStyle(s: string) {
     if (!mapRef.current) return;
-    mapRef.current.setStyle(STYLE_URLS[newStyle]);
-    setMapStyle(newStyle as any);
-    // Re-add sources/layers after style change
-    mapRef.current.once('style.load', () => {
-      // Sources will be re-added on next useEffect cycle via setData
-    });
+    mapRef.current.setStyle(STYLE_URLS[s]);
+    setMapStyle(s as 'satellite' | 'streets' | 'satellite-streets');
   }
 
   const handleSearch = useCallback(async () => {
     if (!searchQuery.trim() || !mapRef.current) return;
-    setSearching(true);
-    setSearchResults([]);
+    setSearching(true); setSearchResults([]);
     try {
       const res = await fetch(
         `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(searchQuery)}.json?access_token=${MAPBOX_TOKEN}&bbox=-88.5,41.4,-87.2,42.2&limit=5`
@@ -434,10 +459,10 @@ export default function MapboxMap({
       setSearchResults(features);
       if (features.length > 0) {
         const [lng, lat] = features[0].center;
-        mapRef.current.flyTo({ center: [lng, lat], zoom: 19, pitch: show3D ? 45 : 0 });
+        mapRef.current.flyTo({ center: [lng, lat], zoom: 20, pitch: show3D ? 45 : 0 });
         onLocationSelected?.(lat, lng, features[0].place_name);
       }
-    } catch (e) { console.error('Search error:', e); }
+    } catch (e) { console.error(e); }
     finally { setSearching(false); }
   }, [searchQuery, onLocationSelected, show3D]);
 
@@ -447,35 +472,28 @@ export default function MapboxMap({
 
       {/* Style toggle */}
       <div className="absolute bottom-20 right-3 z-10 flex flex-col gap-1">
-        {[
-          { key: 'streets', label: 'Map' },
-          { key: 'satellite-streets', label: 'Hybrid' },
-          { key: 'satellite', label: 'Satellite' },
-        ].map(s => (
-          <button key={s.key} onClick={() => switchStyle(s.key)}
+        {[{ k: 'streets', l: 'Map' }, { k: 'satellite-streets', l: 'Hybrid' }, { k: 'satellite', l: 'Satellite' }].map(s => (
+          <button key={s.k} onClick={() => switchStyle(s.k)}
             className={`px-2.5 py-1.5 text-xs font-medium rounded-lg shadow-md transition-all ${
-              mapStyle === s.key ? 'bg-white text-gray-800 ring-2 ring-primary' : 'bg-white/90 text-gray-600 hover:bg-white'
-            }`}
-          >{s.label}</button>
+              mapStyle === s.k ? 'bg-white text-gray-800 ring-2 ring-primary' : 'bg-white/90 text-gray-600 hover:bg-white'}`}
+          >{s.l}</button>
         ))}
       </div>
 
       {/* Draw hint */}
       {showDrawControls && editMode === 'none' && (
         <div className="absolute top-16 left-3 z-10 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow text-xs text-gray-600 max-w-[240px]">
-          Use the <strong>polygon tool</strong> (top-right) to draw your planting area. Click corners, double-click to finish.
+          Use the <strong>polygon tool</strong> (top-right) to draw your planting area.
         </div>
       )}
-
-      {/* Edit mode indicators */}
       {editMode === 'exclusion' && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 bg-gray-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium">
-          Draw an exclusion zone (walkway, patio, etc). Double-click to finish.
+          Draw an exclusion zone. Double-click to finish.
         </div>
       )}
       {editMode === 'tree' && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-10 bg-green-700 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium">
-          Click on the map to place an existing tree.
+          Click to place an existing tree.
         </div>
       )}
 
@@ -483,9 +501,7 @@ export default function MapboxMap({
       {showSunlight && (
         <div className="absolute top-3 right-16 z-10">
           <button onClick={() => setShowSunPanel(!showSunPanel)}
-            className={`p-2.5 rounded-lg shadow-md transition-all ${showSunPanel ? 'bg-amber-500 text-white' : 'bg-white text-amber-600 hover:bg-amber-50'}`}
-            title="Sun position"
-          >
+            className={`p-2.5 rounded-lg shadow-md transition-all ${showSunPanel ? 'bg-amber-500 text-white' : 'bg-white text-amber-600 hover:bg-amber-50'}`}>
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm9-9h1a1 1 0 110 2h-1a1 1 0 110-2zM3 12a1 1 0 110 2H2a1 1 0 110-2h1z" /></svg>
           </button>
           {showSunPanel && (
@@ -519,7 +535,7 @@ export default function MapboxMap({
               {searchResults.map((r: any, i: number) => (
                 <button key={i} onClick={() => {
                   const [lng, lat] = r.center;
-                  mapRef.current?.flyTo({ center: [lng, lat], zoom: 19, pitch: show3D ? 45 : 0 });
+                  mapRef.current?.flyTo({ center: [lng, lat], zoom: 20, pitch: show3D ? 45 : 0 });
                   onLocationSelected?.(lat, lng, r.place_name);
                   setSearchResults([]);
                 }} className="w-full text-left px-4 py-2 text-sm hover:bg-stone-50 border-b border-stone-100 last:border-0 text-gray-700"
@@ -540,9 +556,9 @@ function updateSunPosition(map: mapboxgl.Map, lat: number, lng: number, hour: nu
   const altitude = sunPos.altitude * (180 / Math.PI);
   const azimuth = sunPos.azimuth * (180 / Math.PI) + 180;
   if (altitude > 0) {
-    map.setLight({ anchor: 'map', position: [1.5, azimuth, altitude], intensity: 0.4, color: altitude < 15 ? '#ff9944' : '#ffffff' });
+    map.setLight({ anchor: 'map', position: [1.5, azimuth, altitude], intensity: 0.5, color: altitude < 15 ? '#ff9944' : '#ffffff' });
   } else {
-    map.setLight({ anchor: 'map', position: [1.5, 0, 0], intensity: 0.1, color: '#334466' });
+    map.setLight({ anchor: 'map', position: [1.5, 0, 5], intensity: 0.15, color: '#334466' });
   }
 }
 

@@ -29,9 +29,12 @@ export function polygonToBounds(polygon: GeoJSON.Polygon | null, center?: [numbe
     const lngs = coords.map(c => c[0]);
     return { minLat: Math.min(...lats), maxLat: Math.max(...lats), minLng: Math.min(...lngs), maxLng: Math.max(...lngs) };
   }
+  // Default: ~20x20 ft area (typical small garden bed)
   const lat = center?.[0] || 41.88;
   const lng = center?.[1] || -87.63;
-  return { minLat: lat - 0.00015, maxLat: lat + 0.00015, minLng: lng - 0.0002, maxLng: lng + 0.0002 };
+  const offsetLat = 0.00003; // ~10 ft in each direction = 20ft total
+  const offsetLng = 0.00004;
+  return { minLat: lat - offsetLat, maxLat: lat + offsetLat, minLng: lng - offsetLng, maxLng: lng + offsetLng };
 }
 
 /** Clump sizes by plant type */

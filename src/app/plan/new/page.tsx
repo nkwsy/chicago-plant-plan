@@ -590,8 +590,8 @@ export default function NewPlanPage() {
             <div className="h-[400px] md:h-[500px] rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-2">
               <MapContainer
                 center={[location.lat, location.lng]}
-                zoom={19}
-                pitch={50}
+                zoom={20}
+                pitch={45}
                 showSearch={false}
                 show3D={true}
                 showSunlight={true}

@@ -154,7 +154,7 @@ export default function PlanViewPage() {
           <div className="h-[400px] md:h-[500px] rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-4">
             <MapContainer
               center={[plan.centerLat, plan.centerLng]}
-              zoom={19}
+              zoom={20}
               pitch={50}
               showSearch={false}
               show3D={true}
