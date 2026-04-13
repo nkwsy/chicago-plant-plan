@@ -109,6 +109,7 @@ function generateFromCandidates(
     selected, gridConfig, polygon, center,
     exclusionZones, existingTrees,
     preferences.aestheticPref || 'mixed',
+    preferences.densityMultiplier || 1.0,
   );
   const diversityScore = calculateDiversityScore(selected);
 

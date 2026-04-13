@@ -10,6 +10,7 @@ export interface UserPreferences {
   avoidSlugs: string[];
   specialFeatures: string[];
   targetSpeciesCount: number;
+  densityMultiplier: number; // 0.5 = sparse, 1.0 = standard (1 plant/sqft), 2.0 = dense
 }
 
 export interface PlanPlant {

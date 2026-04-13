@@ -36,7 +36,9 @@ export default function NewPlanPage() {
     avoidSlugs: [],
     specialFeatures: [],
     targetSpeciesCount: 5,
+    densityMultiplier: 1.0,
   });
+  const [allPlantsCache, setAllPlantsCache] = useState<any[]>([]);
   const [exclusionZones, setExclusionZones] = useState<ExclusionZone[]>([]);
   const [existingTrees, setExistingTrees] = useState<ExistingTree[]>([]);
   const [editMode, setEditMode] = useState<'none' | 'exclusion' | 'tree'>('none');
@@ -91,8 +93,12 @@ export default function NewPlanPage() {
     setGenerating(true);
     try {
       // Fetch all plants
-      const plantsRes = await fetch('/api/plants?all=1');
-      const allPlants = await plantsRes.json();
+      let allPlants = allPlantsCache;
+      if (allPlants.length === 0) {
+        const plantsRes = await fetch('/api/plants?all=1');
+        allPlants = await plantsRes.json();
+        setAllPlantsCache(allPlants);
+      }
 
       // Import and run generation client-side (using the JSON data)
       const { generatePlan: gen } = await import('@/lib/planner/generate');
@@ -597,6 +603,38 @@ export default function NewPlanPage() {
                 plants={generatedPlan.plants}
                 selectedSlug={selectedPlantSlug}
                 onSelect={setSelectedPlantSlug}
+                allPlants={allPlantsCache}
+                densityMultiplier={preferences.densityMultiplier}
+                onDensityChange={(d) => {
+                  setPreferences(p => ({ ...p, densityMultiplier: d }));
+                  // Will regenerate on next click
+                }}
+                onRemoveSpecies={(slug) => {
+                  if (!generatedPlan) return;
+                  const newPlants = generatedPlan.plants.filter(p => p.plantSlug !== slug);
+                  const newSpecies = generatedPlan.species.filter((s: any) => s.slug !== slug);
+                  setGeneratedPlan({ ...generatedPlan, plants: newPlants, species: newSpecies });
+                }}
+                onSwapSpecies={(oldSlug, newSlug) => {
+                  if (!generatedPlan) return;
+                  const replacement = allPlantsCache.find((p: any) => p.slug === newSlug);
+                  if (!replacement) return;
+                  const newPlants = generatedPlan.plants.map(p =>
+                    p.plantSlug === oldSlug ? {
+                      ...p,
+                      plantSlug: replacement.slug,
+                      commonName: replacement.commonName,
+                      scientificName: replacement.scientificName,
+                      bloomColor: replacement.bloomColor,
+                      heightMaxInches: replacement.heightMaxInches,
+                      imageUrl: replacement.imageUrl || '',
+                    } : p
+                  );
+                  const newSpecies = generatedPlan.species.map((s: any) =>
+                    s.slug === oldSlug ? replacement : s
+                  );
+                  setGeneratedPlan({ ...generatedPlan, plants: newPlants, species: newSpecies });
+                }}
               />
             </div>
 

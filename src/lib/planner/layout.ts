@@ -2,30 +2,20 @@ import type { Plant, PlantType } from '@/types/plant';
 import type { PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
 import * as turf from '@turf/turf';
 
-// Conversion constants at Chicago latitude (~41.88N)
-const METERS_PER_DEG_LAT = 111320;
-const METERS_PER_DEG_LNG = 111320 * Math.cos(41.88 * Math.PI / 180);
-const INCHES_PER_METER = 39.37;
+// Conversion at Chicago latitude (~41.88N)
+const M_PER_DEG_LAT = 111320;
+const M_PER_DEG_LNG = 111320 * Math.cos(41.88 * Math.PI / 180);
+const FT_TO_M = 0.3048;
 
-function inchesToDegLat(inches: number): number {
-  return inches / (METERS_PER_DEG_LAT * INCHES_PER_METER);
-}
-function inchesToDegLng(inches: number): number {
-  return inches / (METERS_PER_DEG_LNG * INCHES_PER_METER);
-}
+function ftToDegLat(ft: number): number { return ft * FT_TO_M / M_PER_DEG_LAT; }
+function ftToDegLng(ft: number): number { return ft * FT_TO_M / M_PER_DEG_LNG; }
 
-interface LayoutConfig {
-  areaSqFt: number;
-  gridCols: number;
-  gridRows: number;
-}
+interface LayoutConfig { areaSqFt: number; gridCols: number; gridRows: number; }
 
 export function calculateGridSize(areaSqFt: number): LayoutConfig {
-  const cellSizeFt = 2;
-  const totalCells = Math.floor(areaSqFt / (cellSizeFt * cellSizeFt));
-  const cols = Math.max(3, Math.ceil(Math.sqrt(totalCells * 1.5)));
-  const rows = Math.max(3, Math.ceil(totalCells / cols));
-  return { areaSqFt, gridCols: Math.min(cols, 20), gridRows: Math.min(rows, 15) };
+  const cols = Math.max(3, Math.ceil(Math.sqrt(areaSqFt) * 1.2));
+  const rows = Math.max(3, Math.ceil(areaSqFt / cols));
+  return { areaSqFt, gridCols: Math.min(cols, 30), gridRows: Math.min(rows, 25) };
 }
 
 export function polygonToBounds(polygon: GeoJSON.Polygon | null, center?: [number, number]) {
@@ -35,80 +25,58 @@ export function polygonToBounds(polygon: GeoJSON.Polygon | null, center?: [numbe
     const lngs = coords.map(c => c[0]);
     return { minLat: Math.min(...lats), maxLat: Math.max(...lats), minLng: Math.min(...lngs), maxLng: Math.max(...lngs) };
   }
-  // Default: ~20x20 ft
   const lat = center?.[0] || 41.88;
   const lng = center?.[1] || -87.63;
-  const offset = 10 * 12; // 10 ft in inches
-  return {
-    minLat: lat - inchesToDegLat(offset),
-    maxLat: lat + inchesToDegLat(offset),
-    minLng: lng - inchesToDegLng(offset),
-    maxLng: lng + inchesToDegLng(offset),
-  };
-}
-
-function getClumpSize(type: PlantType, aesthetic: string, smallArea: boolean): number {
-  if (smallArea) {
-    const base: Record<string, [number, number]> = {
-      tree: [1, 1], shrub: [1, 2], vine: [1, 1], fern: [2, 4],
-      forb: [2, 4], grass: [3, 5], sedge: [3, 5],
-    };
-    const [min, max] = base[type] || [1, 3];
-    return min + Math.floor(Math.random() * (max - min + 1));
-  }
-  const base: Record<string, [number, number]> = {
-    tree: [1, 1], shrub: [1, 3], vine: [1, 2], fern: [3, 7],
-    forb: [3, 7], grass: [5, 9], sedge: [5, 9],
-  };
-  const [min, max] = base[type] || [2, 5];
-  const mult = aesthetic === 'wild' ? 1.3 : aesthetic === 'structured' ? 0.7 : 1.0;
-  return Math.round(min + Math.random() * (max - min) * mult);
+  const offset = ftToDegLat(10); // 10ft each direction = 20ft total
+  const offsetLng = ftToDegLng(10);
+  return { minLat: lat - offset, maxLat: lat + offset, minLng: lng - offsetLng, maxLng: lng + offsetLng };
 }
 
 function isInsidePolygon(lat: number, lng: number, polygon: GeoJSON.Polygon): boolean {
-  try {
-    return turf.booleanPointInPolygon(turf.point([lng, lat]), turf.polygon(polygon.coordinates));
-  } catch { return true; }
+  try { return turf.booleanPointInPolygon(turf.point([lng, lat]), turf.polygon(polygon.coordinates)); }
+  catch { return true; }
 }
 
 function isInExclusionZone(lat: number, lng: number, zones: ExclusionZone[]): boolean {
   return zones.some(z => isInsidePolygon(lat, lng, z.geoJson));
 }
 
-function getTreeShade(lat: number, lng: number, trees: ExistingTree[]): boolean {
+function isUnderTreeCanopy(lat: number, lng: number, trees: ExistingTree[]): boolean {
   for (const tree of trees) {
-    const radiusLat = inchesToDegLat(tree.canopyDiameterFt * 6); // ft to inches radius
-    const radiusLng = inchesToDegLng(tree.canopyDiameterFt * 6);
-    const dLat = (lat - tree.lat) / radiusLat;
-    const dLng = (lng - tree.lng) / radiusLng;
-    if (dLat * dLat + dLng * dLng <= 1) return true;
+    const rLat = ftToDegLat(tree.canopyDiameterFt / 2);
+    const rLng = ftToDegLng(tree.canopyDiameterFt / 2);
+    const d = ((lat - tree.lat) / rLat) ** 2 + ((lng - tree.lng) / rLng) ** 2;
+    if (d <= 1) return true;
   }
   return false;
 }
 
-/** Circular distance collision check — much more accurate than axis-aligned */
-function hasCollision(
-  lat: number, lng: number, spreadInches: number,
-  placed: { lat: number; lng: number; spreadInches: number }[],
-  overlapFactor: number,
-): boolean {
-  const myRadiusLat = inchesToDegLat(spreadInches / 2);
-  const myRadiusLng = inchesToDegLng(spreadInches / 2);
-
-  for (const p of placed) {
-    const otherRadiusLat = inchesToDegLat(p.spreadInches / 2);
-    const otherRadiusLng = inchesToDegLng(p.spreadInches / 2);
-
-    // Circular distance using normalized coordinates
-    const dLat = (lat - p.lat) / (myRadiusLat + otherRadiusLat);
-    const dLng = (lng - p.lng) / (myRadiusLng + otherRadiusLng);
-    const dist = Math.sqrt(dLat * dLat + dLng * dLng);
-
-    if (dist < overlapFactor) return true;
-  }
-  return false;
+/** Professional spacing in feet on-center by plant type */
+function getSpacingFt(type: PlantType, densityMultiplier: number): number {
+  // Professional standards: trees 14ft, shrubs 6ft, herbaceous 1.5ft
+  const base: Record<string, number> = {
+    tree: 14, shrub: 6, vine: 4, fern: 1.5, forb: 1.5, grass: 1.5, sedge: 1.5,
+  };
+  return (base[type] || 1.5) / densityMultiplier;
 }
 
+/** Categorize species for zone-fill: structure, matrix, or accent */
+function getPlantRole(type: PlantType): 'structure' | 'matrix' | 'accent' {
+  if (type === 'tree' || type === 'shrub') return 'structure';
+  if (type === 'grass' || type === 'sedge') return 'matrix';
+  return 'accent'; // forbs, ferns, vines
+}
+
+/**
+ * Professional zone-fill layout algorithm.
+ *
+ * Based on restoration ecology practices:
+ * 1. Place STRUCTURE plants (trees, shrubs) first at wide spacing
+ * 2. Fill MATRIX with grasses/sedges at 18" on-center (continuous groundcover)
+ * 3. Insert ACCENT forbs in natural drift patterns (odd groups of 3-7)
+ *
+ * Default density: ~1 plant per sqft for herbaceous, adjustable via densityMultiplier
+ */
 export function layoutPlants(
   plants: Plant[],
   config: LayoutConfig,
@@ -117,132 +85,170 @@ export function layoutPlants(
   exclusionZones: ExclusionZone[] = [],
   existingTrees: ExistingTree[] = [],
   aesthetic: string = 'mixed',
+  densityMultiplier: number = 1.0,
 ): PlanPlant[] {
   const bounds = polygonToBounds(polygon || null, centerCoords);
   const latRange = bounds.maxLat - bounds.minLat;
   const lngRange = bounds.maxLng - bounds.minLng;
   if (latRange === 0 || lngRange === 0) return [];
 
-  const smallArea = config.areaSqFt < 400;
   const result: PlanPlant[] = [];
-  const placedPositions: { lat: number; lng: number; spreadInches: number }[] = [];
 
-  // Sort: trees → shrubs → forbs → grasses (large footprint first)
-  const typeOrder: Record<string, number> = { tree: 0, shrub: 1, vine: 2, fern: 3, forb: 4, grass: 5, sedge: 6 };
-  const sorted = [...plants].sort((a, b) => {
-    const ta = typeOrder[a.plantType] ?? 4;
-    const tb = typeOrder[b.plantType] ?? 4;
-    if (ta !== tb) return ta - tb;
-    return b.spreadMaxInches - a.spreadMaxInches;
-  });
-
-  // Assign species indices
+  // Assign species indices and categorize
   const speciesIndexMap = new Map<string, number>();
-  sorted.forEach(p => { if (!speciesIndexMap.has(p.slug)) speciesIndexMap.set(p.slug, speciesIndexMap.size + 1); });
+  let idx = 1;
+  plants.forEach(p => { if (!speciesIndexMap.has(p.slug)) speciesIndexMap.set(p.slug, idx++); });
 
-  // Max spread relative to area
-  const areaWidthInches = Math.sqrt(config.areaSqFt) * 12;
-  const maxSpread = areaWidthInches * 0.5;
+  const structure = plants.filter(p => getPlantRole(p.plantType) === 'structure');
+  const matrix = plants.filter(p => getPlantRole(p.plantType) === 'matrix');
+  const accent = plants.filter(p => getPlantRole(p.plantType) === 'accent');
 
-  for (const plant of sorted) {
-    const clumpSize = getClumpSize(plant.plantType, aesthetic, smallArea);
-    const rawSpread = (plant.spreadMinInches + plant.spreadMaxInches) / 2;
-    const spread = Math.min(rawSpread, maxSpread);
+  // Track occupied cells (1ft grid for collision)
+  const gridResolutionFt = 1;
+  const gridW = Math.ceil(lngRange / ftToDegLng(gridResolutionFt));
+  const gridH = Math.ceil(latRange / ftToDegLat(gridResolutionFt));
+  const occupied = new Set<string>();
 
-    // Overlap tolerance: grasses/groundcovers can overlap more
-    const overlapFactor = (plant.plantType === 'grass' || plant.plantType === 'sedge' || plant.plantType === 'fern')
-      ? 0.5 : 0.65;
+  function gridKey(lat: number, lng: number): string {
+    const gx = Math.round((lng - bounds.minLng) / ftToDegLng(gridResolutionFt));
+    const gy = Math.round((lat - bounds.minLat) / ftToDegLat(gridResolutionFt));
+    return `${gx},${gy}`;
+  }
 
-    const heightBias = Math.min(plant.heightMaxInches / 120, 1);
-    const targetLatCenter = bounds.minLat + latRange * (0.2 + heightBias * 0.6);
+  function isOccupied(lat: number, lng: number, radiusFt: number): boolean {
+    const cx = Math.round((lng - bounds.minLng) / ftToDegLng(gridResolutionFt));
+    const cy = Math.round((lat - bounds.minLat) / ftToDegLat(gridResolutionFt));
+    const r = Math.ceil(radiusFt / gridResolutionFt);
+    for (let dx = -r; dx <= r; dx++) {
+      for (let dy = -r; dy <= r; dy++) {
+        if (dx * dx + dy * dy <= r * r && occupied.has(`${cx + dx},${cy + dy}`)) return true;
+      }
+    }
+    return false;
+  }
 
-    let clumpSeedLat = 0, clumpSeedLng = 0;
+  function markOccupied(lat: number, lng: number, radiusFt: number) {
+    const cx = Math.round((lng - bounds.minLng) / ftToDegLng(gridResolutionFt));
+    const cy = Math.round((lat - bounds.minLat) / ftToDegLat(gridResolutionFt));
+    const r = Math.ceil(radiusFt / gridResolutionFt);
+    for (let dx = -r; dx <= r; dx++) {
+      for (let dy = -r; dy <= r; dy++) {
+        if (dx * dx + dy * dy <= r * r) occupied.add(`${cx + dx},${cy + dy}`);
+      }
+    }
+  }
 
-    for (let c = 0; c < clumpSize; c++) {
-      let placed = false;
-      const maxAttempts = c === 0 ? 60 : 30;
+  function isValid(lat: number, lng: number): boolean {
+    if (lat < bounds.minLat || lat > bounds.maxLat || lng < bounds.minLng || lng > bounds.maxLng) return false;
+    if (polygon && !isInsidePolygon(lat, lng, polygon)) return false;
+    if (isInExclusionZone(lat, lng, exclusionZones)) return false;
+    return true;
+  }
 
-      for (let attempt = 0; attempt < maxAttempts; attempt++) {
-        let lat: number, lng: number;
+  function placePlant(plant: Plant, lat: number, lng: number): PlanPlant {
+    const spread = (plant.spreadMinInches + plant.spreadMaxInches) / 2;
+    return {
+      plantSlug: plant.slug,
+      commonName: plant.commonName,
+      scientificName: plant.scientificName,
+      gridX: 0, gridY: 0, quantity: 1,
+      bloomColor: plant.bloomColor,
+      heightMaxInches: plant.heightMaxInches,
+      notes: '', lat, lng,
+      imageUrl: plant.imageUrl || '',
+      spreadInches: Math.min(spread, 120), // Cap display at 10ft
+      speciesIndex: speciesIndexMap.get(plant.slug) || 0,
+      plantType: plant.plantType,
+    };
+  }
 
-        if (c === 0) {
-          // Seed point
-          const bandSpread = latRange * 0.4;
-          lat = targetLatCenter + (Math.random() - 0.5) * bandSpread;
-          lng = bounds.minLng + (0.05 + Math.random() * 0.9) * lngRange;
-        } else {
-          // Clump member — tight offset from seed
-          const angle = (Math.PI * 2 * c) / clumpSize + (Math.random() - 0.5) * 0.8;
-          const dist = spread * (0.8 + Math.random() * 0.4);
-          lat = clumpSeedLat + Math.sin(angle) * inchesToDegLat(dist);
-          lng = clumpSeedLng + Math.cos(angle) * inchesToDegLng(dist);
-        }
+  // === PHASE 1: Place structure plants (trees, shrubs) ===
+  for (const plant of structure) {
+    const spacingFt = getSpacingFt(plant.plantType, densityMultiplier);
+    const spacingLat = ftToDegLat(spacingFt);
+    const spacingLng = ftToDegLng(spacingFt);
+    const radiusFt = spacingFt / 2;
 
-        // Clamp to bounds with margin
-        const margin = 0.02;
-        lat = bounds.minLat + latRange * margin + (lat - bounds.minLat) % (latRange * (1 - 2 * margin));
-        lat = Math.max(bounds.minLat, Math.min(bounds.maxLat, lat));
-        lng = Math.max(bounds.minLng, Math.min(bounds.maxLng, lng));
+    // Try to place one instance with random jitter
+    for (let attempt = 0; attempt < 30; attempt++) {
+      const lat = bounds.minLat + latRange * (0.2 + Math.random() * 0.6);
+      const lng = bounds.minLng + lngRange * (0.15 + Math.random() * 0.7);
+      if (!isValid(lat, lng)) continue;
+      if (isOccupied(lat, lng, radiusFt)) continue;
 
-        // Validation
-        if (polygon && !isInsidePolygon(lat, lng, polygon)) continue;
-        if (isInExclusionZone(lat, lng, exclusionZones)) continue;
-
-        // Relaxed collision on later attempts
-        const relaxed = attempt > maxAttempts * 0.7;
-        const factor = relaxed ? overlapFactor * 0.5 : overlapFactor;
-        if (hasCollision(lat, lng, spread, placedPositions, factor)) continue;
-
-        // Tree shade: if under canopy, plant must tolerate shade
-        if (getTreeShade(lat, lng, existingTrees)) {
-          const ok = plant.sun.some(s => s === 'part_shade' || s === 'full_shade');
-          if (!ok) continue;
-        }
-
-        placedPositions.push({ lat, lng, spreadInches: spread });
-        result.push({
-          plantSlug: plant.slug,
-          commonName: plant.commonName,
-          scientificName: plant.scientificName,
-          gridX: 0, gridY: 0,
-          quantity: 1,
-          bloomColor: plant.bloomColor,
-          heightMaxInches: plant.heightMaxInches,
-          notes: '',
-          lat, lng,
-          imageUrl: plant.imageUrl || '',
-          spreadInches: spread,
-          speciesIndex: speciesIndexMap.get(plant.slug) || 0,
-          plantType: plant.plantType,
-        });
-
-        placed = true;
-        if (c === 0) { clumpSeedLat = lat; clumpSeedLng = lng; }
-        break;
+      // Check shade compatibility
+      if (isUnderTreeCanopy(lat, lng, existingTrees)) {
+        if (!plant.sun.some(s => s === 'part_shade' || s === 'full_shade')) continue;
       }
 
-      // If seed can't place, try one random position (don't skip species entirely)
-      if (!placed && c === 0) {
-        const lat = bounds.minLat + Math.random() * latRange;
-        const lng = bounds.minLng + Math.random() * lngRange;
-        if (!polygon || isInsidePolygon(lat, lng, polygon)) {
-          if (!isInExclusionZone(lat, lng, exclusionZones)) {
-            placedPositions.push({ lat, lng, spreadInches: spread });
-            result.push({
-              plantSlug: plant.slug, commonName: plant.commonName,
-              scientificName: plant.scientificName,
-              gridX: 0, gridY: 0, quantity: 1,
-              bloomColor: plant.bloomColor, heightMaxInches: plant.heightMaxInches,
-              notes: '', lat, lng,
-              imageUrl: plant.imageUrl || '',
-              spreadInches: spread,
-              speciesIndex: speciesIndexMap.get(plant.slug) || 0,
-              plantType: plant.plantType,
-            });
-            clumpSeedLat = lat; clumpSeedLng = lng;
-          }
+      markOccupied(lat, lng, radiusFt);
+      result.push(placePlant(plant, lat, lng));
+      break;
+    }
+  }
+
+  // === PHASE 2: Fill matrix (grasses/sedges) at professional density ===
+  if (matrix.length > 0) {
+    const spacingFt = getSpacingFt('grass', densityMultiplier);
+    const stepLat = ftToDegLat(spacingFt);
+    const stepLng = ftToDegLng(spacingFt);
+
+    // Systematic grid fill with slight jitter for natural look
+    for (let lat = bounds.minLat + stepLat; lat < bounds.maxLat - stepLat / 2; lat += stepLat) {
+      for (let lng = bounds.minLng + stepLng; lng < bounds.maxLng - stepLng / 2; lng += stepLng) {
+        // Add natural jitter (±30% of spacing)
+        const jLat = lat + (Math.random() - 0.5) * stepLat * 0.6;
+        const jLng = lng + (Math.random() - 0.5) * stepLng * 0.6;
+
+        if (!isValid(jLat, jLng)) continue;
+        if (isOccupied(jLat, jLng, spacingFt * 0.4)) continue;
+
+        // Pick a random matrix species
+        const species = matrix[Math.floor(Math.random() * matrix.length)];
+
+        // Under tree canopy? Check shade tolerance
+        if (isUnderTreeCanopy(jLat, jLng, existingTrees)) {
+          if (!species.sun.some(s => s === 'part_shade' || s === 'full_shade')) continue;
         }
-        // Still continue with remaining clump members
+
+        markOccupied(jLat, jLng, spacingFt * 0.4);
+        result.push(placePlant(species, jLat, jLng));
+      }
+    }
+  }
+
+  // === PHASE 3: Insert accent forbs in drift patterns ===
+  if (accent.length > 0) {
+    const spacingFt = getSpacingFt('forb', densityMultiplier);
+    const driftSizes = [3, 5, 7]; // Professional: odd-numbered groups
+
+    for (const species of accent) {
+      const driftSize = driftSizes[Math.floor(Math.random() * driftSizes.length)];
+      let placed = 0;
+
+      // Pick a seed location
+      for (let seedAttempt = 0; seedAttempt < 20 && placed === 0; seedAttempt++) {
+        const seedLat = bounds.minLat + latRange * (0.1 + Math.random() * 0.8);
+        const seedLng = bounds.minLng + lngRange * (0.1 + Math.random() * 0.8);
+        if (!isValid(seedLat, seedLng)) continue;
+
+        // Under canopy shade check
+        const underCanopy = isUnderTreeCanopy(seedLat, seedLng, existingTrees);
+        if (underCanopy && !species.sun.some(s => s === 'part_shade' || s === 'full_shade')) continue;
+
+        // Place the drift
+        for (let d = 0; d < driftSize; d++) {
+          const angle = (Math.PI * 2 * d) / driftSize + (Math.random() - 0.5) * 1.2;
+          const dist = spacingFt * (0.8 + Math.random() * 0.8);
+          const pLat = seedLat + Math.sin(angle) * ftToDegLat(dist);
+          const pLng = seedLng + Math.cos(angle) * ftToDegLng(dist);
+
+          if (!isValid(pLat, pLng)) continue;
+
+          // For accents, we replace matrix plants — don't check occupation strictly
+          result.push(placePlant(species, pLat, pLng));
+          placed++;
+        }
       }
     }
   }
