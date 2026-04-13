@@ -30,12 +30,12 @@ async function queryNearbyBuildings(lat: number, lng: number): Promise<NearbyBui
       const center = el.center || { lat, lon: lng };
       const tags = el.tags || {};
 
-      // Skip the building the garden is in (within ~10m of center)
+      // Skip only buildings the garden is literally inside of (within ~3m of center)
       const distM = Math.sqrt(
         ((center.lat - lat) * 111320) ** 2 +
         ((center.lon - lng) * 111320 * Math.cos(lat * Math.PI / 180)) ** 2
       );
-      if (distM < 10) continue;
+      if (distM < 3) continue;
 
       // Parse height: prefer explicit height tag, then estimate from levels
       let heightMeters = 0;

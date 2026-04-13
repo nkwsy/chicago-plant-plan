@@ -164,14 +164,12 @@ function countDirectSunHours(
   let sunHours = 0;
   const metersPerFt = 0.3048;
 
-  // Garden point in meters (origin = garden point itself)
-  const gardenM = { x: 0, y: 0 };
-
-  // Loop 30 hours to cover daylight that extends past midnight UTC
-  // (e.g., Chicago summer sunset ~1:30 AM UTC next day)
-  for (let utcHour = 0; utcHour < 30; utcHour++) {
+  // Sample every 30 min for better accuracy (each tick = 0.5 hours)
+  for (let halfHour = 0; halfHour < 60; halfHour++) {
+    const utcHour = halfHour / 2;
     const time = new Date(Date.UTC(
-      date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), utcHour,
+      date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),
+      Math.floor(utcHour), (utcHour % 1) * 60,
     ));
     const sunPos = SunCalc.getPosition(time, lat, lng);
     const altitudeDeg = sunPos.altitude * (180 / Math.PI);
@@ -183,48 +181,57 @@ function countDirectSunHours(
     const altRad = altitudeDeg * Math.PI / 180;
     // Shadow falls opposite to sun direction
     const shadowBearingRad = ((azimuthDeg + 180) % 360) * Math.PI / 180;
-    // Shadow direction vector (meters): north=+y, east=+x
-    const shadowDirX = Math.sin(shadowBearingRad);
-    const shadowDirY = Math.cos(shadowBearingRad);
+    // Shadow direction unit vector (north=+y, east=+x)
+    const sdx = Math.sin(shadowBearingRad);
+    const sdy = Math.cos(shadowBearingRad);
+    // Perpendicular to shadow direction (for building width)
+    const perpX = -sdy;
+    const perpY = sdx;
     let inShadow = false;
 
-    // Check tree shadows (all in meters)
+    // Check tree shadows
     for (const tree of trees) {
       const treeM = toMeters(tree.lat, tree.lng, lat, lng);
       const treeHeightM = tree.canopyDiameterFt * 1.5 * metersPerFt;
       const shadowLenM = Math.min(treeHeightM / Math.tan(altRad), 200);
-      const tipX = treeM.x + shadowDirX * shadowLenM;
-      const tipY = treeM.y + shadowDirY * shadowLenM;
       const canopyRadiusM = tree.canopyDiameterFt / 2 * metersPerFt;
 
-      const dist = pointToSegmentDistM(gardenM.x, gardenM.y, treeM.x, treeM.y, tipX, tipY);
-      if (dist < canopyRadiusM * 1.5) {
-        // Verify we're on the shadow side (not between sun and tree)
-        const dx = gardenM.x - treeM.x, dy = gardenM.y - treeM.y;
-        const sdx = tipX - treeM.x, sdy = tipY - treeM.y;
-        if (dx * sdx + dy * sdy > 0) { inShadow = true; break; }
+      // Vector from tree to garden point
+      const dx = -treeM.x, dy = -treeM.y;
+      // Project onto shadow direction: how far along the shadow?
+      const along = dx * sdx + dy * sdy;
+      if (along < 0 || along > shadowLenM) continue;
+      // Project onto perpendicular: how far off the shadow centerline?
+      const across = Math.abs(dx * perpX + dy * perpY);
+      if (across < canopyRadiusM * 1.5) {
+        inShadow = true; break;
       }
     }
 
-    if (inShadow) continue;
+    if (inShadow) { sunHours += 0; continue; }
 
-    // Check building shadows (all in meters)
+    // Check building shadows — rectangular shadow model
+    // A building casts a shadow that is (width x shadowLength) rectangle
     for (const building of buildings) {
       const bldgM = toMeters(building.lat, building.lng, lat, lng);
       const shadowLenM = Math.min(building.heightMeters / Math.tan(altRad), 300);
-      const tipX = bldgM.x + shadowDirX * shadowLenM;
-      const tipY = bldgM.y + shadowDirY * shadowLenM;
       const halfWidthM = (building.widthMeters || 15) / 2;
 
-      const dist = pointToSegmentDistM(gardenM.x, gardenM.y, bldgM.x, bldgM.y, tipX, tipY);
-      if (dist < halfWidthM) {
-        const dx = gardenM.x - bldgM.x, dy = gardenM.y - bldgM.y;
-        const sdx = tipX - bldgM.x, sdy = tipY - bldgM.y;
-        if (dx * sdx + dy * sdy > 0) { inShadow = true; break; }
+      // Vector from building center to garden point
+      const dx = -bldgM.x, dy = -bldgM.y;
+      // Project onto shadow direction
+      const along = dx * sdx + dy * sdy;
+      // Garden must be on shadow side: between building edge and shadow tip
+      // Allow starting from slightly behind center (building has depth too)
+      if (along < -halfWidthM || along > shadowLenM) continue;
+      // Project onto perpendicular axis
+      const across = Math.abs(dx * perpX + dy * perpY);
+      if (across < halfWidthM) {
+        inShadow = true; break;
       }
     }
 
-    if (!inShadow) sunHours++;
+    if (!inShadow) sunHours += 0.5;
   }
 
   return sunHours;

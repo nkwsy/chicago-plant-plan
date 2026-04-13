@@ -476,6 +476,14 @@ export default function MapboxMap({
     else map.once('style.load', update);
   }, [sunHour, showSunlight]);
 
+  // Respond to pitch prop changes (top-down vs 3D toggle)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const targetPitch = showDrawControls ? 0 : (show3D ? 45 : pitch);
+    map.easeTo({ pitch: targetPitch, duration: 500 });
+  }, [pitch, show3D]);
+
   function switchStyle(s: string) {
     if (!mapRef.current) return;
     mapRef.current.setStyle(STYLE_URLS[s]);

@@ -4,8 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MapContainer from '@/components/map/MapContainer';
 import PlantingLegend from '@/components/plan/PlantingLegend';
-import GridPlanView from '@/components/plan/GridPlanView';
-import type { EditTool } from '@/components/plan/GridPlanView';
 import type { SiteProfile } from '@/types/analysis';
 import type { UserPreferences, PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
 
@@ -42,13 +40,9 @@ export default function NewPlanPage() {
   const [exclusionZones, setExclusionZones] = useState<ExclusionZone[]>([]);
   const [existingTrees, setExistingTrees] = useState<ExistingTree[]>([]);
   const [editMode, setEditMode] = useState<'none' | 'exclusion' | 'tree'>('none');
-  const [editTool, setEditTool] = useState<EditTool>('select');
-  const [editTreeSize, setEditTreeSize] = useState(20);
   const [selectedPlantSlug, setSelectedPlantSlug] = useState<string | null>(null);
-  const [showSatellite, setShowSatellite] = useState(false);
-  const [showSatBg, setShowSatBg] = useState(false);
-  const [showShadows, setShowShadows] = useState(false);
-  const [shadowHour, setShadowHour] = useState(14);
+  const [view3D, setView3D] = useState(false);
+  const [showSunlight, setShowSunlight] = useState(true);
   const [generatedPlan, setGeneratedPlan] = useState<{
     plants: PlanPlant[];
     gridCols: number;
@@ -66,10 +60,6 @@ export default function NewPlanPage() {
     { key: 'preferences', label: 'Goals' },
     { key: 'plan', label: 'Plan' },
   ];
-
-  // Compute area dimensions in feet
-  const areaWidthFt = Math.max(10, Math.round(Math.sqrt(location.areaSqFt || 400) * 1.2));
-  const areaHeightFt = Math.max(10, Math.round((location.areaSqFt || 400) / areaWidthFt));
 
   const currentIdx = steps.findIndex(s => s.key === step);
 
@@ -557,42 +547,6 @@ export default function NewPlanPage() {
               </button>
             </div>
 
-            {/* Site features editing toolbar */}
-            <div className="flex flex-wrap items-center gap-2 mb-3 p-3 bg-stone-50 rounded-lg border border-stone-200">
-              <span className="text-xs font-medium text-muted mr-1">Edit site:</span>
-              <button onClick={() => setEditTool('select')}
-                className={`px-3 py-1.5 text-sm rounded-lg border flex items-center gap-1.5 transition-all ${
-                  editTool === 'select' ? 'bg-primary text-white border-primary' : 'border-stone-300 hover:bg-stone-50 bg-white'}`}>
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
-                Select
-              </button>
-              <button onClick={() => setEditTool('path')}
-                className={`px-3 py-1.5 text-sm rounded-lg border flex items-center gap-1.5 transition-all ${
-                  editTool === 'path' ? 'bg-gray-700 text-white border-gray-700' : 'border-stone-300 hover:bg-stone-50 bg-white'}`}>
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-                Draw Path
-              </button>
-              <button onClick={() => setEditTool('tree')}
-                className={`px-3 py-1.5 text-sm rounded-lg border flex items-center gap-1.5 transition-all ${
-                  editTool === 'tree' ? 'bg-green-700 text-white border-green-700' : 'border-stone-300 hover:bg-stone-50 bg-white'}`}>
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 22V8M12 8C12 8 8 4 5 6C2 8 4 12 7 12C9 12 12 8 12 8ZM12 8C12 8 16 4 19 6C22 8 20 12 17 12C15 12 12 8 12 8Z" /></svg>
-                Place Tree
-              </button>
-              {editTool === 'tree' && (
-                <select value={editTreeSize} onChange={e => setEditTreeSize(parseInt(e.target.value))}
-                  className="px-2 py-1.5 border border-stone-300 rounded-lg text-sm bg-white">
-                  <option value={10}>Small (10ft)</option>
-                  <option value={20}>Medium (20ft)</option>
-                  <option value={30}>Large (30ft)</option>
-                </select>
-              )}
-              <span className="text-xs text-muted ml-auto">
-                {editTool === 'path' && 'Click and drag to draw a path or patio'}
-                {editTool === 'tree' && 'Click to place a tree'}
-                {editTool === 'select' && 'Click features to remove them'}
-              </span>
-            </div>
-
             {/* Feature tags */}
             {(exclusionZones.length > 0 || existingTrees.length > 0) && (
               <div className="flex flex-wrap gap-2 mb-3">
@@ -623,117 +577,64 @@ export default function NewPlanPage() {
             <div className="flex items-center gap-2 mb-3 flex-wrap">
               <div className="flex rounded-lg border border-stone-200 overflow-hidden text-sm">
                 <button
-                  onClick={() => setShowSatellite(false)}
-                  className={`px-3 py-1.5 transition-colors ${!showSatellite ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+                  onClick={() => setView3D(false)}
+                  className={`px-3 py-1.5 transition-colors ${!view3D ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
                 >
-                  Plan View
+                  Top View
                 </button>
                 <button
-                  onClick={() => setShowSatellite(true)}
-                  className={`px-3 py-1.5 border-l border-stone-200 transition-colors ${showSatellite ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+                  onClick={() => setView3D(true)}
+                  className={`px-3 py-1.5 border-l border-stone-200 transition-colors ${view3D ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
                 >
-                  Satellite + 3D
+                  3D View
                 </button>
               </div>
 
-              {!showSatellite && (
-                <>
-                  <button
-                    onClick={() => setShowSatBg(s => !s)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
-                      showSatBg ? 'bg-blue-600 text-white border-blue-600' : 'border-stone-300 hover:border-stone-400 bg-white'
-                    }`}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
-                    Satellite
-                  </button>
-                  <button
-                    onClick={() => setShowShadows(s => !s)}
-                    className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
-                      showShadows ? 'bg-slate-700 text-white border-slate-700' : 'border-stone-300 hover:border-stone-400 bg-white'
-                    }`}
-                  >
-                    <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
-                    Shadows
-                  </button>
-                </>
-              )}
-
-              <div className="flex items-center gap-2 ml-1">
-                <input
-                  type="range" min={6} max={20} step={0.5}
-                  value={shadowHour}
-                  onChange={(e) => setShadowHour(parseFloat(e.target.value))}
-                  className="w-24 accent-slate-600"
-                />
-                <span className="text-xs text-muted w-14">
-                  {shadowHour < 12 ? `${Math.floor(shadowHour)}:${String(Math.round((shadowHour%1)*60)).padStart(2,'0')} AM`
-                    : shadowHour === 12 ? '12:00 PM'
-                    : `${Math.floor(shadowHour)-12}:${String(Math.round((shadowHour%1)*60)).padStart(2,'0')} PM`}
-                </span>
-              </div>
+              <button
+                onClick={() => setShowSunlight(s => !s)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
+                  showSunlight ? 'bg-amber-500 text-white border-amber-500' : 'border-stone-300 hover:border-stone-400 bg-white'
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm9-9a1 1 0 110 2h-1a1 1 0 110-2h1zM4 12a1 1 0 110 2H3a1 1 0 110-2h1z" /></svg>
+                Sunlight
+              </button>
 
               <span className="ml-auto text-xs text-muted">
                 {generatedPlan.species.length} spp · {generatedPlan.plants.length} plants
               </span>
             </div>
 
-            {/* Plan view: satellite 3D map OR clean SVG layout */}
-            {showSatellite ? (
-              <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-2" style={{ height: '460px' }}>
-                <MapContainer
-                  center={[location.lat, location.lng]}
-                  zoom={20}
-                  style="satellite-streets"
-                  show3D={true}
-                  showSunlight={true}
-                  showSearch={false}
-                  areaOutline={location.areaGeoJson}
-                  exclusionZones={exclusionZones}
-                  existingTrees={existingTrees}
-                  plantPlacements={generatedPlan.plants
-                    .filter((p: PlanPlant) => p.lat && p.lng)
-                    .map((p: PlanPlant) => ({
-                      lat: p.lat!, lng: p.lng!,
-                      color: p.bloomColor, name: p.commonName,
-                      slug: p.plantSlug, imageUrl: p.imageUrl,
-                      spreadInches: p.spreadInches, speciesIndex: p.speciesIndex,
-                      plantType: p.plantType,
-                    }))}
-                  onPlantClick={(slug) => setSelectedPlantSlug(slug === selectedPlantSlug ? null : slug)}
-                  height="100%"
-                />
-              </div>
-            ) : (
-              <GridPlanView
-                widthFt={areaWidthFt}
-                heightFt={areaHeightFt}
-                centerLat={location.lat}
-                centerLng={location.lng}
-                plants={generatedPlan.plants}
+            {/* Map view */}
+            <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-2" style={{ height: '500px' }}>
+              <MapContainer
+                center={[location.lat, location.lng]}
+                zoom={20}
+                pitch={view3D ? 45 : 0}
+                style="satellite-streets"
+                show3D={true}
+                showSunlight={showSunlight}
+                showSearch={false}
+                areaOutline={location.areaGeoJson}
                 exclusionZones={exclusionZones}
                 existingTrees={existingTrees}
-                selectedSlug={selectedPlantSlug}
+                plantPlacements={generatedPlan.plants
+                  .filter((p: PlanPlant) => p.lat && p.lng)
+                  .map((p: PlanPlant) => ({
+                    lat: p.lat!, lng: p.lng!,
+                    color: p.bloomColor, name: p.commonName,
+                    slug: p.plantSlug, imageUrl: p.imageUrl,
+                    spreadInches: p.spreadInches, speciesIndex: p.speciesIndex,
+                    plantType: p.plantType,
+                  }))}
                 onPlantClick={(slug) => setSelectedPlantSlug(slug === selectedPlantSlug ? null : slug)}
-                nearbyBuildings={siteProfile?.nearbyBuildings}
-                showSatellite={showSatBg}
-                showShadows={showShadows}
-                shadowHour={shadowHour}
-                editable
-                editTool={editTool}
-                editTreeSize={editTreeSize}
-                onPathDrawn={(zone) => setExclusionZones(prev => [...prev, zone])}
-                onTreePlaced={(tree) => setExistingTrees(prev => [...prev, tree])}
-                onFeatureRemoved={(type, id) => {
-                  if (type === 'zone') setExclusionZones(prev => prev.filter(z => z.id !== id));
-                  else setExistingTrees(prev => prev.filter(t => t.id !== id));
-                }}
+                height="100%"
               />
-            )}
+            </div>
             <p className="text-xs text-muted mb-4 mt-2 text-center">
-              {showSatellite
-                ? '3D view — buildings cast real shadows. Use the time slider above to see shadow movement.'
-                : 'Numbered circles match the legend below. Colors show species zones.'}
+              {view3D
+                ? 'Drag to orbit. Buildings cast real-time shadows when sunlight is enabled.'
+                : 'Top-down satellite view with plant placements. Toggle 3D to see building shadows.'}
             </p>
 
             {/* Ecological impact */}
