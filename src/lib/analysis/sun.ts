@@ -2,6 +2,12 @@ import SunCalc from 'suncalc';
 import type { SunExposure, DaySunData } from '@/types/analysis';
 import type { ExistingTree } from '@/types/plan';
 
+export interface NearbyBuilding {
+  lat: number;
+  lng: number;
+  heightMeters: number; // estimated or from OSM tags
+}
+
 function getDaySunData(date: Date, lat: number, lng: number): DaySunData {
   const times = SunCalc.getTimes(date, lat, lng);
   const noonPosition = SunCalc.getPosition(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0), lat, lng);
@@ -31,9 +37,9 @@ export function analyzeSunExposure(lat: number, lng: number): SunExposure {
 }
 
 /**
- * Compute effective sun hours considering existing trees.
+ * Compute effective sun hours considering existing trees and adjacent buildings.
  * For each hour of the growing season day (6AM-8PM), check if the garden
- * center is shadowed by any tree canopy using sun position + shadow projection.
+ * center is shadowed by any tree canopy or building using sun position + shadow projection.
  */
 export function estimateEffectiveSunHours(
   sunExposure: SunExposure,
@@ -42,10 +48,12 @@ export function estimateEffectiveSunHours(
   existingTrees?: ExistingTree[],
   gardenCenterLat?: number,
   gardenCenterLng?: number,
+  nearbyBuildings?: NearbyBuilding[],
 ): { summer: number; winter: number; average: number } {
-  // If no trees or no location data, use a reasonable base estimate
-  if (!lat || !lng || !existingTrees || existingTrees.length === 0) {
-    // Base exposure factor: typical residential yard (no nearby obstructions)
+  const hasObstructions = (existingTrees && existingTrees.length > 0) || (nearbyBuildings && nearbyBuildings.length > 0);
+
+  // If no obstructions or no location data, use a reasonable base estimate
+  if (!lat || !lng || !hasObstructions) {
     const exposureFactor = 0.7;
     const summer = Math.round(sunExposure.summerSolstice.totalDaylightHours * exposureFactor * 10) / 10;
     const winter = Math.round(sunExposure.winterSolstice.totalDaylightHours * exposureFactor * 10) / 10;
@@ -56,16 +64,15 @@ export function estimateEffectiveSunHours(
   const cLng = gardenCenterLng || lng;
   const year = new Date().getFullYear();
 
-  // Check summer solstice and winter solstice
-  const summerHours = countDirectSunHours(new Date(year, 5, 21), cLat, cLng, existingTrees);
-  const winterHours = countDirectSunHours(new Date(year, 11, 21), cLat, cLng, existingTrees);
+  const summerHours = countDirectSunHours(new Date(year, 5, 21), cLat, cLng, existingTrees || [], nearbyBuildings || []);
+  const winterHours = countDirectSunHours(new Date(year, 11, 21), cLat, cLng, existingTrees || [], nearbyBuildings || []);
   const average = Math.round(((summerHours + winterHours) / 2) * 10) / 10;
 
   return { summer: summerHours, winter: winterHours, average };
 }
 
 /**
- * Count hours of direct sun at a point, subtracting hours when tree shadows cover it.
+ * Count hours of direct sun at a point, considering tree and building shadows.
  * Checks each hour from 6AM to 8PM.
  */
 function countDirectSunHours(
@@ -73,63 +80,62 @@ function countDirectSunHours(
   lat: number,
   lng: number,
   trees: ExistingTree[],
+  buildings: NearbyBuilding[],
 ): number {
   let sunHours = 0;
+  const metersPerFt = 0.3048;
 
   for (let hour = 6; hour <= 20; hour++) {
     const time = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hour);
     const sunPos = SunCalc.getPosition(time, lat, lng);
     const altitudeDeg = sunPos.altitude * (180 / Math.PI);
 
-    // Sun below horizon
     if (altitudeDeg <= 0) continue;
 
-    // Check if any tree casts shadow over this point at this time
-    const azimuthDeg = sunPos.azimuth * (180 / Math.PI) + 180; // 0=N, 90=E, 180=S, 270=W
+    const azimuthDeg = sunPos.azimuth * (180 / Math.PI) + 180;
+    const altRad = altitudeDeg * Math.PI / 180;
+    // Shadow direction = opposite of sun direction
+    const shadowDirRad = ((azimuthDeg + 180) % 360) * Math.PI / 180;
     let inShadow = false;
 
+    // Check tree shadows
     for (const tree of trees) {
-      // Assume tree height based on canopy: roughly canopyDiameterFt * 1.5
       const treeHeightFt = tree.canopyDiameterFt * 1.5;
-
-      // Shadow length in feet: height / tan(altitude)
-      const shadowLenFt = treeHeightFt / Math.tan(altitudeDeg * Math.PI / 180);
-
-      // Shadow direction: opposite of sun azimuth
-      const shadowDirRad = ((azimuthDeg + 180) % 360) * Math.PI / 180;
-
-      // Shadow tip position relative to tree (in feet, then convert to degrees)
+      const shadowLenFt = treeHeightFt / Math.tan(altRad);
       const shadowTipDLat = Math.cos(shadowDirRad) * shadowLenFt;
       const shadowTipDLng = Math.sin(shadowDirRad) * shadowLenFt;
-
-      // Convert shadow tip offset to degrees
-      const metersPerFt = 0.3048;
       const tipLat = tree.lat + (shadowTipDLat * metersPerFt) / 111320;
       const tipLng = tree.lng + (shadowTipDLng * metersPerFt) / (111320 * Math.cos(lat * Math.PI / 180));
-
-      // Check if the garden point is within the shadow cone
-      // Simplified: check if point is between tree and shadow tip, within canopy width
       const canopyRadiusDeg = (tree.canopyDiameterFt / 2 * metersPerFt) / 111320;
+      const distToShadow = pointToSegmentDist(lng, lat, tree.lng, tree.lat, tipLng, tipLat);
 
-      // Distance from point to the line segment tree→shadowTip
-      const distToShadow = pointToSegmentDist(
-        lng, lat,
-        tree.lng, tree.lat,
-        tipLng, tipLat,
-      );
-
-      // If within canopy radius of the shadow line, it's shaded
       if (distToShadow < canopyRadiusDeg * 1.5) {
-        // Also check the point is on the shadow side (not behind the tree from sun)
-        const dx = lng - tree.lng;
-        const dy = lat - tree.lat;
-        const sdx = tipLng - tree.lng;
-        const sdy = tipLat - tree.lat;
-        const dot = dx * sdx + dy * sdy;
-        if (dot > 0) { // Point is in shadow direction
-          inShadow = true;
-          break;
-        }
+        const dx = lng - tree.lng, dy = lat - tree.lat;
+        const sdx = tipLng - tree.lng, sdy = tipLat - tree.lat;
+        if (dx * sdx + dy * sdy > 0) { inShadow = true; break; }
+      }
+    }
+
+    if (inShadow) { sunHours += 0; continue; }
+
+    // Check building shadows
+    for (const building of buildings) {
+      // Shadow length in meters: height / tan(altitude)
+      const shadowLenMeters = building.heightMeters / Math.tan(altRad);
+      const shadowLenDegLat = shadowLenMeters / 111320;
+      const shadowLenDegLng = shadowLenMeters / (111320 * Math.cos(lat * Math.PI / 180));
+
+      const tipLat = building.lat + Math.cos(shadowDirRad) * shadowLenDegLat;
+      const tipLng = building.lng + Math.sin(shadowDirRad) * shadowLenDegLng;
+
+      // Buildings cast a wide shadow — use half of typical building width (~10m) as shadow corridor
+      const shadowWidthDeg = 10 / 111320;
+      const distToShadow = pointToSegmentDist(lng, lat, building.lng, building.lat, tipLng, tipLat);
+
+      if (distToShadow < shadowWidthDeg) {
+        const dx = lng - building.lng, dy = lat - building.lat;
+        const sdx = tipLng - building.lng, sdy = tipLat - building.lat;
+        if (dx * sdx + dy * sdy > 0) { inShadow = true; break; }
       }
     }
 

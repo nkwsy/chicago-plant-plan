@@ -7,7 +7,6 @@ import SunCalc from 'suncalc';
 import type { ExclusionZone, ExistingTree } from '@/types/plan';
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
-mapboxgl.accessToken = MAPBOX_TOKEN;
 
 interface PlantPlacement {
   lat: number; lng: number; color: string; name: string; slug: string;
@@ -228,6 +227,7 @@ export default function MapboxMap({
   const [searchQuery, setSearchQuery] = useState('');
   const [searching, setSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [mapError, setMapError] = useState<string | null>(null);
   const [mapStyle, setMapStyle] = useState(style);
   const [sunHour, setSunHour] = useState(12);
   const [showSunPanel, setShowSunPanel] = useState(false);
@@ -243,7 +243,14 @@ export default function MapboxMap({
   existingTreesRef.current = existingTrees;
 
   useEffect(() => {
-    if (!containerRef.current || mapRef.current || !MAPBOX_TOKEN) return;
+    if (!containerRef.current || mapRef.current) return;
+    if (!MAPBOX_TOKEN) {
+      setMapError('Mapbox token is missing. Set NEXT_PUBLIC_MAPBOX_TOKEN in your environment variables.');
+      return;
+    }
+
+    // Set access token inside useEffect to ensure it runs in browser context
+    mapboxgl.accessToken = MAPBOX_TOKEN;
 
     const map = new mapboxgl.Map({
       container: containerRef.current,
@@ -463,6 +470,19 @@ export default function MapboxMap({
     } catch (e) { console.error(e); }
     finally { setSearching(false); }
   }, [searchQuery, onLocationSelected, show3D]);
+
+  if (mapError) {
+    return (
+      <div className="w-full rounded-xl bg-stone-100 flex items-center justify-center" style={{ height }}>
+        <div className="text-center p-6 max-w-sm">
+          <svg className="w-10 h-10 mx-auto mb-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <p className="text-sm text-red-600 font-medium">{mapError}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative" style={{ height }}>
