@@ -276,7 +276,7 @@ export default function MapboxMap({
       style: STYLE_URLS[mapStyle],
       center: [center[1], center[0]],
       zoom,
-      pitch: showDrawControls ? 0 : (show3D ? 45 : pitch),
+      pitch: showDrawControls ? 0 : pitch,
       bearing, antialias: true,
     });
 
@@ -480,9 +480,8 @@ export default function MapboxMap({
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
-    const targetPitch = showDrawControls ? 0 : (show3D ? 45 : pitch);
-    map.easeTo({ pitch: targetPitch, duration: 500 });
-  }, [pitch, show3D]);
+    map.easeTo({ pitch, duration: 500 });
+  }, [pitch]);
 
   function switchStyle(s: string) {
     if (!mapRef.current) return;
@@ -502,7 +501,7 @@ export default function MapboxMap({
       setSearchResults(features);
       if (features.length > 0) {
         const [lng, lat] = features[0].center;
-        mapRef.current.flyTo({ center: [lng, lat], zoom: 20, pitch: show3D ? 45 : 0 });
+        mapRef.current.flyTo({ center: [lng, lat], zoom: 20, pitch: pitch });
         onLocationSelected?.(lat, lng, features[0].place_name);
       }
     } catch (e) { console.error(e); }
@@ -591,7 +590,7 @@ export default function MapboxMap({
               {searchResults.map((r: any, i: number) => (
                 <button key={i} onClick={() => {
                   const [lng, lat] = r.center;
-                  mapRef.current?.flyTo({ center: [lng, lat], zoom: 20, pitch: show3D ? 45 : 0 });
+                  mapRef.current?.flyTo({ center: [lng, lat], zoom: 20, pitch: pitch });
                   onLocationSelected?.(lat, lng, r.place_name);
                   setSearchResults([]);
                 }} className="w-full text-left px-4 py-2 text-sm hover:bg-stone-50 border-b border-stone-100 last:border-0 text-gray-700"

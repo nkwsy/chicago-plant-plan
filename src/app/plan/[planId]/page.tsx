@@ -21,6 +21,26 @@ export default function PlanViewPage() {
   const [view3D, setView3D] = useState(false);
   const [showSunlight, setShowSunlight] = useState(true);
   const [reanalyzing, setReanalyzing] = useState(false);
+  const [ownerEmail, setOwnerEmail] = useState('');
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [emailError, setEmailError] = useState('');
+
+  async function verifyEmail() {
+    if (!plan || !ownerEmail.trim()) return;
+    setEmailError('');
+    // Check if plan has no owner (legacy) or email matches
+    const planEmail = plan.authorEmail;
+    if (!planEmail) {
+      // Legacy plan without email — anyone can claim ownership
+      setEmailVerified(true);
+      return;
+    }
+    if (ownerEmail.trim().toLowerCase() === planEmail.toLowerCase()) {
+      setEmailVerified(true);
+    } else {
+      setEmailError('Email does not match the plan owner.');
+    }
+  }
 
   async function reanalyze() {
     if (!plan) return;
@@ -60,7 +80,7 @@ export default function PlanViewPage() {
   }, [planId]);
 
   function removePlant(slug: string) {
-    if (!plan) return;
+    if (!plan || !emailVerified) return;
     const newPlants = plan.plants.filter(p => p.plantSlug !== slug);
     setPlan({ ...plan, plants: newPlants });
     setEditing(true);
@@ -70,12 +90,22 @@ export default function PlanViewPage() {
     if (!plan) return;
     setSaving(true);
     try {
-      await fetch('/api/plans', {
+      const res = await fetch('/api/plans', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planId, plants: plan.plants }),
+        body: JSON.stringify({
+          planId,
+          authorEmail: ownerEmail.trim().toLowerCase(),
+          plants: plan.plants,
+          siteProfile: plan.siteProfile,
+        }),
       });
-      setEditing(false);
+      const data = await res.json();
+      if (!res.ok) {
+        alert(data.error || 'Save failed');
+      } else {
+        setEditing(false);
+      }
     } catch (err) {
       console.error('Save failed:', err);
     } finally {
@@ -116,7 +146,7 @@ export default function PlanViewPage() {
           </p>
         </div>
         <div className="flex gap-2 no-print">
-          {editing && (
+          {editing && emailVerified && (
             <button
               onClick={saveEdits}
               disabled={saving}
@@ -141,6 +171,32 @@ export default function PlanViewPage() {
         </div>
       </div>
 
+      {/* Email verification to edit */}
+      {!emailVerified && (
+        <div className="mb-6 p-4 bg-stone-50 rounded-lg border border-stone-200 no-print">
+          <p className="text-sm font-medium mb-2">Want to edit this plan?</p>
+          <p className="text-xs text-muted mb-3">Enter the email you used when creating this plan.</p>
+          <div className="flex gap-2">
+            <input
+              type="email"
+              value={ownerEmail}
+              onChange={(e) => { setOwnerEmail(e.target.value); setEmailError(''); }}
+              onKeyDown={(e) => e.key === 'Enter' && verifyEmail()}
+              placeholder="you@example.com"
+              className="flex-1 px-3 py-2 border border-stone-300 rounded-lg text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+            />
+            <button
+              onClick={verifyEmail}
+              disabled={!ownerEmail.trim()}
+              className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark transition-colors disabled:opacity-50"
+            >
+              Unlock Editing
+            </button>
+          </div>
+          {emailError && <p className="text-xs text-red-500 mt-2">{emailError}</p>}
+        </div>
+      )}
+
       {/* Map */}
       {/* Location context map removed — satellite view is in the Layout tab */}
 
@@ -155,8 +211,8 @@ export default function PlanViewPage() {
           </div>
           <button
             onClick={reanalyze}
-            disabled={reanalyzing}
-            className="mt-2 text-xs text-muted hover:text-primary transition-colors flex items-center gap-1 no-print"
+            disabled={reanalyzing || !emailVerified}
+            className="mt-2 text-xs text-muted hover:text-primary transition-colors flex items-center gap-1 no-print disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {reanalyzing ? (
               <><svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="31" /></svg> Re-analyzing...</>
@@ -254,18 +310,18 @@ export default function PlanViewPage() {
               : 'Top-down satellite view with plant placements. Toggle 3D to see building shadows.'}
           </p>
 
-          {/* Plant legend with remove/swap */}
+          {/* Plant legend with remove/swap (only when editing unlocked) */}
           <PlantingLegend
             plants={plan.plants}
             selectedSlug={selectedPlant}
             onSelect={setSelectedPlant}
-            allPlants={allPlants}
-            onRemoveSpecies={(slug) => {
+            allPlants={emailVerified ? allPlants : []}
+            onRemoveSpecies={emailVerified ? (slug) => {
               const newPlants = plan.plants.filter(p => p.plantSlug !== slug);
               setPlan({ ...plan, plants: newPlants });
               setEditing(true);
-            }}
-            onSwapSpecies={(oldSlug, newSlug) => {
+            } : undefined}
+            onSwapSpecies={emailVerified ? (oldSlug, newSlug) => {
               const replacement = allPlants.find((p: any) => p.slug === newSlug);
               if (!replacement) return;
               const newPlants = plan.plants.map(p =>
@@ -281,7 +337,7 @@ export default function PlanViewPage() {
               );
               setPlan({ ...plan, plants: newPlants });
               setEditing(true);
-            }}
+            } : undefined}
           />
         </div>
       )}
@@ -312,13 +368,15 @@ export default function PlanViewPage() {
                 <Link href={`/plants/${plant.plantSlug}`} className="text-primary text-sm hover:underline">
                   Details
                 </Link>
-                <button
-                  onClick={() => removePlant(plant.plantSlug)}
-                  className="text-stone-400 hover:text-red-500 transition-colors"
-                  title="Remove from plan"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
+                {emailVerified && (
+                  <button
+                    onClick={() => removePlant(plant.plantSlug)}
+                    className="text-stone-400 hover:text-red-500 transition-colors"
+                    title="Remove from plan"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  </button>
+                )}
               </div>
             </div>
           ))}

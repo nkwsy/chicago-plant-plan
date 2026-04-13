@@ -53,6 +53,7 @@ export default function NewPlanPage() {
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
   const [planTitle, setPlanTitle] = useState('My Native Garden');
+  const [authorEmail, setAuthorEmail] = useState('');
 
   const steps: { key: Step; label: string }[] = [
     { key: 'location', label: 'Location' },
@@ -140,6 +141,7 @@ export default function NewPlanPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: planTitle,
+          authorEmail: authorEmail.trim().toLowerCase(),
           areaGeoJson: location.areaGeoJson || makeDefaultPolygon(location.lat, location.lng),
           centerLat: location.lat,
           centerLng: location.lng,
@@ -694,13 +696,26 @@ export default function NewPlanPage() {
               />
             </div>
 
+            {/* Email for ownership */}
+            <div className="mb-4 p-4 bg-stone-50 rounded-lg border border-stone-200">
+              <label className="block text-sm font-medium mb-1">Your email (to edit later)</label>
+              <p className="text-xs text-muted mb-2">We&apos;ll use this to let you edit your plan. No account needed.</p>
+              <input
+                type="email"
+                value={authorEmail}
+                onChange={(e) => setAuthorEmail(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
+              />
+            </div>
+
             <div className="flex flex-wrap gap-3 justify-between">
               <button onClick={() => setStep('preferences')} className="text-muted hover:text-foreground px-4 py-2 transition-colors">
                 ← Adjust goals
               </button>
               <button
                 onClick={savePlan}
-                disabled={saving}
+                disabled={saving || !authorEmail.trim()}
                 className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
               >
                 {saving ? 'Saving...' : 'Save Plan'}

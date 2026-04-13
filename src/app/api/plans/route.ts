@@ -112,20 +112,24 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
   const body = await request.json();
-  const { planId, ...updates } = body;
+  const { planId, authorEmail, ...updates } = body;
   if (!planId) return NextResponse.json({ error: 'planId required' }, { status: 400 });
 
   updates.updatedAt = new Date().toISOString();
 
-  // Try MongoDB
+  // Verify email ownership before allowing edits
   const Plan = await getMongoConnection();
   if (Plan) {
     try {
+      const existing = await Plan.findOne({ planId }).lean();
+      if (!existing) return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
+      if (existing.authorEmail && authorEmail?.toLowerCase() !== existing.authorEmail.toLowerCase()) {
+        return NextResponse.json({ error: 'Email does not match the plan owner' }, { status: 403 });
+      }
       if (updates.centerLat && updates.centerLng) {
         updates.center = { type: 'Point', coordinates: [updates.centerLng, updates.centerLat] };
       }
       const plan = await Plan.findOneAndUpdate({ planId }, { $set: updates }, { new: true }).lean();
-      if (!plan) return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
       return NextResponse.json(plan);
     } catch {}
   }
@@ -134,6 +138,9 @@ export async function PUT(request: Request) {
   const plans = readPlansFile();
   const idx = plans.findIndex(p => p.planId === planId);
   if (idx === -1) return NextResponse.json({ error: 'Plan not found' }, { status: 404 });
+  if (plans[idx].authorEmail && authorEmail?.toLowerCase() !== plans[idx].authorEmail.toLowerCase()) {
+    return NextResponse.json({ error: 'Email does not match the plan owner' }, { status: 403 });
+  }
   plans[idx] = { ...plans[idx], ...updates };
   writePlansFile(plans);
   return NextResponse.json(plans[idx]);
