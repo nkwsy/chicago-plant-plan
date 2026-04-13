@@ -18,6 +18,10 @@ export default function PlanViewPage() {
   const [selectedPlant, setSelectedPlant] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [allPlants, setAllPlants] = useState<any[]>([]);
+  const [showSatellite, setShowSatellite] = useState(false);
+  const [showShadows, setShowShadows] = useState(false);
+  const [shadowHour, setShadowHour] = useState(14);
 
   useEffect(() => {
     fetch(`/api/plans?id=${planId}`)
@@ -27,6 +31,12 @@ export default function PlanViewPage() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
+
+    // Fetch plant catalog for swap functionality
+    fetch('/api/plants?all=1')
+      .then(r => r.json())
+      .then(setAllPlants)
+      .catch(() => {});
   }, [planId]);
 
   function removePlant(slug: string) {
@@ -151,6 +161,43 @@ export default function PlanViewPage() {
       {/* Tab content */}
       {activeTab === 'layout' && (
         <div>
+          {/* View controls */}
+          <div className="flex items-center gap-2 mb-3 flex-wrap">
+            <button
+              onClick={() => setShowSatellite(s => !s)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
+                showSatellite ? 'bg-blue-600 text-white border-blue-600' : 'border-stone-300 hover:border-stone-400 bg-white'
+              }`}
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+              Satellite
+            </button>
+            <button
+              onClick={() => setShowShadows(s => !s)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
+                showShadows ? 'bg-slate-700 text-white border-slate-700' : 'border-stone-300 hover:border-stone-400 bg-white'
+              }`}
+            >
+              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+              Shadows
+            </button>
+            {showShadows && (
+              <div className="flex items-center gap-2 ml-1">
+                <input
+                  type="range" min={6} max={20} step={0.5}
+                  value={shadowHour}
+                  onChange={e => setShadowHour(parseFloat(e.target.value))}
+                  className="w-28 accent-slate-600"
+                />
+                <span className="text-xs text-muted w-16">
+                  {shadowHour < 12 ? `${Math.floor(shadowHour)}:${String(Math.round((shadowHour%1)*60)).padStart(2,'0')} AM`
+                    : shadowHour === 12 ? '12:00 PM'
+                    : `${Math.floor(shadowHour)-12}:${String(Math.round((shadowHour%1)*60)).padStart(2,'0')} PM`}
+                </span>
+              </div>
+            )}
+          </div>
+
           {/* 2D Grid Plan View */}
           <GridPlanView
             widthFt={Math.max(10, Math.round(Math.sqrt(plan.areaSqFt || 400) * 1.2))}
@@ -162,13 +209,43 @@ export default function PlanViewPage() {
             existingTrees={(plan as any).existingTrees || []}
             selectedSlug={selectedPlant}
             onPlantClick={(slug) => setSelectedPlant(slug === selectedPlant ? null : slug)}
+            nearbyBuildings={(plan.siteProfile as any)?.nearbyBuildings}
+            showSatellite={showSatellite}
+            showShadows={showShadows}
+            shadowHour={shadowHour}
           />
+          <p className="text-xs text-muted mt-2 mb-6 text-center">
+            Circles sized to plant spread. Numbers match legend below.
+          </p>
 
-          {/* Plant legend */}
+          {/* Plant legend with remove/swap */}
           <PlantingLegend
             plants={plan.plants}
             selectedSlug={selectedPlant}
             onSelect={setSelectedPlant}
+            allPlants={allPlants}
+            onRemoveSpecies={(slug) => {
+              const newPlants = plan.plants.filter(p => p.plantSlug !== slug);
+              setPlan({ ...plan, plants: newPlants });
+              setEditing(true);
+            }}
+            onSwapSpecies={(oldSlug, newSlug) => {
+              const replacement = allPlants.find((p: any) => p.slug === newSlug);
+              if (!replacement) return;
+              const newPlants = plan.plants.map(p =>
+                p.plantSlug === oldSlug ? {
+                  ...p,
+                  plantSlug: replacement.slug,
+                  commonName: replacement.commonName,
+                  scientificName: replacement.scientificName,
+                  bloomColor: replacement.bloomColor,
+                  heightMaxInches: replacement.heightMaxInches,
+                  imageUrl: replacement.imageUrl || '',
+                } : p
+              );
+              setPlan({ ...plan, plants: newPlants });
+              setEditing(true);
+            }}
           />
         </div>
       )}
