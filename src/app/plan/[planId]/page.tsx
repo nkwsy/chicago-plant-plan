@@ -23,6 +23,28 @@ export default function PlanViewPage() {
   const [showSatBg, setShowSatBg] = useState(false);
   const [showShadows, setShowShadows] = useState(false);
   const [shadowHour, setShadowHour] = useState(14);
+  const [reanalyzing, setReanalyzing] = useState(false);
+
+  async function reanalyze() {
+    if (!plan) return;
+    setReanalyzing(true);
+    try {
+      const res = await fetch('/api/site-analysis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lat: plan.centerLat, lng: plan.centerLng, existingTrees: plan.existingTrees || [] }),
+      });
+      const profile = await res.json();
+      if (!profile.error) {
+        setPlan({ ...plan, siteProfile: profile });
+        setEditing(true);
+      }
+    } catch (err) {
+      console.error('Re-analysis failed:', err);
+    } finally {
+      setReanalyzing(false);
+    }
+  }
 
   useEffect(() => {
     fetch(`/api/plans?id=${planId}`)
@@ -127,11 +149,24 @@ export default function PlanViewPage() {
 
       {/* Site Analysis Summary */}
       {plan.siteProfile && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          <StatCard label="Sun" value={`${(plan.siteProfile as any).effectiveSunHours?.average || '?'}h/day`} />
-          <StatCard label="Soil" value={(plan.siteProfile as any).soilType?.replace('_', ' ') || 'Unknown'} />
-          <StatCard label="Moisture" value={(plan.siteProfile as any).moistureCategory || 'Unknown'} />
-          <StatCard label="Elevation" value={`${(plan.siteProfile as any).elevation || '?'} ft`} />
+        <div className="mb-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <StatCard label="Sun" value={`${(plan.siteProfile as any).effectiveSunHours?.average || '?'}h/day`} />
+            <StatCard label="Soil" value={(plan.siteProfile as any).soilType?.replace('_', ' ') || 'Unknown'} />
+            <StatCard label="Moisture" value={(plan.siteProfile as any).moistureCategory || 'Unknown'} />
+            <StatCard label="Elevation" value={`${(plan.siteProfile as any).elevation || '?'} ft`} />
+          </div>
+          <button
+            onClick={reanalyze}
+            disabled={reanalyzing}
+            className="mt-2 text-xs text-muted hover:text-primary transition-colors flex items-center gap-1 no-print"
+          >
+            {reanalyzing ? (
+              <><svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="31" /></svg> Re-analyzing...</>
+            ) : (
+              <><svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg> Re-analyze site (update sun &amp; buildings)</>
+            )}
+          </button>
         </div>
       )}
 

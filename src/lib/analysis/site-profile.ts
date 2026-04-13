@@ -11,21 +11,31 @@ import { queryFloodZone } from './flood';
  */
 async function queryNearbyBuildings(lat: number, lng: number): Promise<NearbyBuilding[]> {
   const radius = 150; // meters
-  const query = `[out:json][timeout:10];(way["building"](around:${radius},${lat},${lng});relation["building"](around:${radius},${lat},${lng}););out center tags;`;
+  const query = `[out:json][timeout:15];(way["building"](around:${radius},${lat},${lng});relation["building"](around:${radius},${lat},${lng}););out center tags;`;
   try {
     const res = await fetch('https://overpass-api.de/api/interpreter', {
       method: 'POST',
-      body: query,
-      headers: { 'Content-Type': 'text/plain' },
-      signal: AbortSignal.timeout(8000),
+      body: `data=${encodeURIComponent(query)}`,
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      signal: AbortSignal.timeout(15000),
     });
-    if (!res.ok) return [];
+    if (!res.ok) {
+      console.warn(`Overpass query failed: ${res.status} ${res.statusText}`);
+      return [];
+    }
     const data = await res.json();
     const buildings: NearbyBuilding[] = [];
 
     for (const el of data.elements || []) {
       const center = el.center || { lat, lon: lng };
       const tags = el.tags || {};
+
+      // Skip the building the garden is in (within ~10m of center)
+      const distM = Math.sqrt(
+        ((center.lat - lat) * 111320) ** 2 +
+        ((center.lon - lng) * 111320 * Math.cos(lat * Math.PI / 180)) ** 2
+      );
+      if (distM < 10) continue;
 
       // Parse height: prefer explicit height tag, then estimate from levels
       let heightMeters = 0;
@@ -40,12 +50,19 @@ async function queryNearbyBuildings(lat: number, lng: number): Promise<NearbyBui
         heightMeters = 7;
       }
 
+      // Estimate width from building type
+      let widthMeters = 15; // default residential
+      if (tags['building'] === 'commercial' || tags['building'] === 'retail') widthMeters = 25;
+      else if (tags['building'] === 'apartments' || (tags['building:levels'] && parseFloat(tags['building:levels']) > 4)) widthMeters = 30;
+
       if (heightMeters > 0) {
-        buildings.push({ lat: center.lat, lng: center.lon, heightMeters });
+        buildings.push({ lat: center.lat, lng: center.lon, heightMeters, widthMeters });
       }
     }
+    console.log(`Overpass: found ${data.elements?.length || 0} raw, ${buildings.length} buildings (after filtering)`);
     return buildings;
-  } catch {
+  } catch (err) {
+    console.warn('Overpass query error:', err);
     return [];
   }
 }
@@ -87,7 +104,7 @@ export async function analyzeSite(
     moistureCategory,
     effectiveSunHours,
     nearbyBuildings: nearbyBuildings.map(b => ({
-      lat: b.lat, lng: b.lng, heightMeters: b.heightMeters, widthMeters: 15,
+      lat: b.lat, lng: b.lng, heightMeters: b.heightMeters, widthMeters: b.widthMeters ?? 15,
     })),
     rawData: {
       soilDescription: soilResult.description,

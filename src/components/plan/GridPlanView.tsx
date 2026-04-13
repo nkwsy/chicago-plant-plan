@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useRef, useCallback } from 'react';
 import SunCalc from 'suncalc';
 import type { PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
 
@@ -9,6 +10,8 @@ export interface NearbyBuilding {
   heightMeters: number;
   widthMeters?: number;
 }
+
+export type EditTool = 'select' | 'path' | 'tree';
 
 interface GridPlanViewProps {
   widthFt: number;
@@ -24,6 +27,13 @@ interface GridPlanViewProps {
   showSatellite?: boolean;
   showShadows?: boolean;
   shadowHour?: number; // 0–24
+  // Editing props
+  editable?: boolean;
+  editTool?: EditTool;
+  editTreeSize?: number;
+  onPathDrawn?: (zone: ExclusionZone) => void;
+  onTreePlaced?: (tree: ExistingTree) => void;
+  onFeatureRemoved?: (type: 'zone' | 'tree', id: string) => void;
 }
 
 const PX_PER_FT = 22;
@@ -63,34 +73,37 @@ export default function GridPlanView({
   showSatellite,
   showShadows,
   shadowHour = 14,
+  editable, editTool = 'select', editTreeSize = 20,
+  onPathDrawn, onTreePlaced, onFeatureRemoved,
 }: GridPlanViewProps) {
   const shadowsOn = showShadows !== undefined ? showShadows : nearbyBuildings.length > 0;
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [drawing, setDrawing] = useState(false);
+  const [drawStart, setDrawStart] = useState<{ x: number; y: number } | null>(null);
+  const [drawCurrent, setDrawCurrent] = useState<{ x: number; y: number } | null>(null);
+  const [pendingPath, setPendingPath] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+  const [pathLabel, setPathLabel] = useState('');
+  const [popupPlant, setPopupPlant] = useState<{ plant: PlanPlant; cx: number; cy: number } | null>(null);
 
-  const svgWidth = widthFt * PX_PER_FT;
-  const svgHeight = heightFt * PX_PER_FT;
-  const ftToPx = (ft: number) => ft * PX_PER_FT;
+  // Add padding around the garden so surrounding context is visible
+  const PAD_FT = 4;
+  const svgWidth = (widthFt + PAD_FT * 2) * PX_PER_FT;
+  const svgHeight = (heightFt + PAD_FT * 2) * PX_PER_FT;
+  const padPx = PAD_FT * PX_PER_FT;
+  /** Convert a position (ft from garden origin) to SVG px, offset by padding */
+  const ftToPx = (ft: number) => ft * PX_PER_FT + padPx;
+  /** Convert a dimension (ft) to SVG px, no offset */
+  const ftToSize = (ft: number) => ft * PX_PER_FT;
 
-  // Bounding box from actual plant positions
+  // Bounding box from garden dimensions — always use center + size for correct scale
   const plantsWithCoords = plants.filter(p => p.lat && p.lng);
-  let minLat: number, maxLat: number, minLng: number, maxLng: number;
-
-  if (plantsWithCoords.length > 0) {
-    minLat = Math.min(...plantsWithCoords.map(p => p.lat!));
-    maxLat = Math.max(...plantsWithCoords.map(p => p.lat!));
-    minLng = Math.min(...plantsWithCoords.map(p => p.lng!));
-    maxLng = Math.max(...plantsWithCoords.map(p => p.lng!));
-    const padLat = (maxLat - minLat) * 0.12 || 0.00002;
-    const padLng = (maxLng - minLng) * 0.12 || 0.00002;
-    minLat -= padLat; maxLat += padLat;
-    minLng -= padLng; maxLng += padLng;
-  } else {
-    const latPerFt = 0.3048 / 111320;
-    const lngPerFt = 0.3048 / (111320 * Math.cos(centerLat * Math.PI / 180));
-    minLat = centerLat - (heightFt / 2) * latPerFt;
-    maxLat = centerLat + (heightFt / 2) * latPerFt;
-    minLng = centerLng - (widthFt / 2) * lngPerFt;
-    maxLng = centerLng + (widthFt / 2) * lngPerFt;
-  }
+  const metersPerFt = 0.3048;
+  const latPerFt = metersPerFt / 111320;
+  const lngPerFt = metersPerFt / (111320 * Math.cos(centerLat * Math.PI / 180));
+  const minLat = centerLat - (heightFt / 2) * latPerFt;
+  const maxLat = centerLat + (heightFt / 2) * latPerFt;
+  const minLng = centerLng - (widthFt / 2) * lngPerFt;
+  const maxLng = centerLng + (widthFt / 2) * lngPerFt;
 
   function latLngToFt(lat: number, lng: number): { xFt: number; yFt: number } {
     const latRange = maxLat - minLat || 0.0001;
@@ -101,12 +114,115 @@ export default function GridPlanView({
     };
   }
 
+  // ── Inverse coordinate conversion (SVG pixels → lat/lng) ────────────────────
+  const ftToLatLng = useCallback((xFt: number, yFt: number) => {
+    const latRange = maxLat - minLat || 0.0001;
+    const lngRange = maxLng - minLng || 0.0001;
+    return {
+      lat: maxLat - (yFt / heightFt) * latRange,
+      lng: minLng + (xFt / widthFt) * lngRange,
+    };
+  }, [minLat, maxLat, minLng, maxLng, widthFt, heightFt]);
+
+  function getSVGPoint(e: React.MouseEvent<SVGSVGElement>): { x: number; y: number } {
+    const svg = svgRef.current!;
+    const rect = svg.getBoundingClientRect();
+    return {
+      x: ((e.clientX - rect.left) / rect.width) * svgWidth,
+      y: ((e.clientY - rect.top) / rect.height) * svgHeight,
+    };
+  }
+
+  function handleMouseDown(e: React.MouseEvent<SVGSVGElement>) {
+    if (!editable) return;
+    if (editTool === 'path') {
+      const pt = getSVGPoint(e);
+      const snap = ftToPx(GRID_SPACING_FT);
+      const snappedX = Math.round(pt.x / snap) * snap;
+      const snappedY = Math.round(pt.y / snap) * snap;
+      setDrawStart({ x: snappedX, y: snappedY });
+      setDrawCurrent({ x: snappedX, y: snappedY });
+      setDrawing(true);
+    } else if (editTool === 'tree') {
+      const pt = getSVGPoint(e);
+      const xFt = pt.x / PX_PER_FT;
+      const yFt = pt.y / PX_PER_FT;
+      const { lat, lng } = ftToLatLng(xFt, yFt);
+      const newTree: ExistingTree = {
+        id: `tree-${Date.now()}`,
+        lat, lng,
+        canopyDiameterFt: editTreeSize,
+        label: 'Existing Tree',
+      };
+      (newTree as any).gridXFt = xFt;
+      (newTree as any).gridYFt = yFt;
+      onTreePlaced?.(newTree);
+    }
+  }
+
+  function handleMouseMove(e: React.MouseEvent<SVGSVGElement>) {
+    if (!editable || !drawing || editTool !== 'path') return;
+    const pt = getSVGPoint(e);
+    const snap = ftToPx(GRID_SPACING_FT);
+    setDrawCurrent({ x: Math.round(pt.x / snap) * snap, y: Math.round(pt.y / snap) * snap });
+  }
+
+  function handleMouseUp() {
+    if (!editable || !drawing || !drawStart || !drawCurrent || editTool !== 'path') return;
+    const x = Math.min(drawStart.x, drawCurrent.x);
+    const y = Math.min(drawStart.y, drawCurrent.y);
+    const w = Math.abs(drawCurrent.x - drawStart.x);
+    const h = Math.abs(drawCurrent.y - drawStart.y);
+    if (w > ftToPx(1) && h > ftToPx(1)) {
+      setPendingPath({ x, y, w, h });
+      setPathLabel('');
+    }
+    setDrawing(false);
+    setDrawStart(null);
+    setDrawCurrent(null);
+  }
+
+  function confirmPath() {
+    if (!pendingPath) return;
+    const xFt = pendingPath.x / PX_PER_FT;
+    const yFt = pendingPath.y / PX_PER_FT;
+    const wFt = pendingPath.w / PX_PER_FT;
+    const hFt = pendingPath.h / PX_PER_FT;
+    const tl = ftToLatLng(xFt, yFt);
+    const tr = ftToLatLng(xFt + wFt, yFt);
+    const br = ftToLatLng(xFt + wFt, yFt + hFt);
+    const bl = ftToLatLng(xFt, yFt + hFt);
+    const zone: ExclusionZone = {
+      id: `excl-${Date.now()}`,
+      geoJson: {
+        type: 'Polygon',
+        coordinates: [[[tl.lng, tl.lat], [tr.lng, tr.lat], [br.lng, br.lat], [bl.lng, bl.lat], [tl.lng, tl.lat]]],
+      },
+      label: pathLabel || 'Path',
+      type: 'walkway',
+    };
+    (zone as any).gridRect = { xFt, yFt, wFt, hFt };
+    onPathDrawn?.(zone);
+    setPendingPath(null);
+    setPathLabel('');
+  }
+
   // ── Satellite background URL ────────────────────────────────────────────────
+  // Use center/zoom format at zoom 22 (max) and compute exact pixel dimensions
+  // so the satellite image matches the grid scale 1:1. Include padding area.
   const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
-  const satImgW = Math.min(1280, Math.round(svgWidth));
-  const satImgH = Math.min(1280, Math.round(svgHeight));
+  const MAX_ZOOM = 22;
+  const groundResM = (40075016.686 * Math.cos(centerLat * Math.PI / 180)) / (Math.pow(2, MAX_ZOOM) * 256);
+  // Pixels needed for the garden + padding at zoom 22
+  const totalWidthFt = widthFt + PAD_FT * 2;
+  const totalHeightFt = heightFt + PAD_FT * 2;
+  const gardenPxW = Math.round((totalWidthFt * metersPerFt) / groundResM);
+  const gardenPxH = Math.round((totalHeightFt * metersPerFt) / groundResM);
+  // Clamp to Mapbox limits (1–1280), use @2x for retina sharpness
+  const satImgW = Math.max(1, Math.min(1280, gardenPxW));
+  const satImgH = Math.max(1, Math.min(1280, gardenPxH));
   const satelliteUrl = showSatellite && MAPBOX_TOKEN
-    ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/[${minLng},${minLat},${maxLng},${maxLat}]/${satImgW}x${satImgH}@2x?access_token=${MAPBOX_TOKEN}&padding=0`
+    ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${centerLng},${centerLat},${MAX_ZOOM},0/${satImgW}x${satImgH}@2x?access_token=${MAPBOX_TOKEN}`
     : null;
 
   // ── Sun position and path ───────────────────────────────────────────────────
@@ -276,7 +392,20 @@ export default function GridPlanView({
         </span>
       </div>
 
-      <svg viewBox={`0 0 ${svgWidth} ${svgHeight}`} className="w-full" style={{ maxHeight: '520px' }}>
+      <svg
+        ref={svgRef}
+        viewBox={`0 0 ${svgWidth} ${svgHeight}`}
+        className="w-full"
+        style={{
+          maxHeight: '560px',
+          cursor: editable ? (editTool === 'path' ? 'crosshair' : editTool === 'tree' ? 'pointer' : 'default') : 'default',
+        }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onClick={() => setPopupPlant(null)}
+        onMouseLeave={() => { if (drawing) handleMouseUp(); }}
+      >
         <defs>
           <pattern id="soil" x="0" y="0" width="4" height="4" patternUnits="userSpaceOnUse">
             <rect width="4" height="4" fill="#ecfdf5" />
@@ -291,10 +420,16 @@ export default function GridPlanView({
             preserveAspectRatio="xMidYMid slice" />
         ) : (
           <>
-            <rect width={svgWidth} height={svgHeight} fill="#f8fafc" />
-            <rect width={svgWidth} height={svgHeight} fill="url(#soil)" opacity={0.4} />
+            <rect width={svgWidth} height={svgHeight} fill="#eef2f6" />
+            <rect x={padPx} y={padPx} width={widthFt * PX_PER_FT} height={heightFt * PX_PER_FT} fill="#f8fafc" />
+            <rect x={padPx} y={padPx} width={widthFt * PX_PER_FT} height={heightFt * PX_PER_FT} fill="url(#soil)" opacity={0.4} />
           </>
         )}
+
+        {/* Garden border */}
+        <rect x={padPx} y={padPx} width={widthFt * PX_PER_FT} height={heightFt * PX_PER_FT}
+          fill="none" stroke={isSat ? 'rgba(255,255,255,0.5)' : '#a8b5c4'} strokeWidth={1.5}
+          strokeDasharray={isSat ? '6,3' : 'none'} rx={2} />
 
         {/* Grid lines */}
         {gridLines}
@@ -319,13 +454,13 @@ export default function GridPlanView({
         {!isSat && Array.from(speciesGroups.values()).map((zone, i) => (
           <ellipse key={`zone-${i}`}
             cx={ftToPx(zone.cx)} cy={ftToPx(zone.cy)}
-            rx={ftToPx(zone.r)} ry={ftToPx(zone.r * 0.75)}
+            rx={ftToSize(zone.r)} ry={ftToSize(zone.r * 0.75)}
             fill={zone.color} fillOpacity={0.08} />
         ))}
 
         {/* Building footprints (visible buildings near/in viewport) */}
         {buildingInfo.filter(b => b.inView).map((b, i) => {
-          const halfPx = ftToPx(b.wFt / 2);
+          const halfPx = ftToSize(b.wFt / 2);
           const cx = ftToPx(b.xFt);
           const cy = ftToPx(b.yFt);
           return (
@@ -360,11 +495,18 @@ export default function GridPlanView({
           const rect = (z as any).gridRect;
           if (!rect) return null;
           return (
-            <g key={z.id}>
-              <rect x={ftToPx(rect.xFt)} y={ftToPx(rect.yFt)} width={ftToPx(rect.wFt)} height={ftToPx(rect.hFt)}
-                fill="#6b7280" fillOpacity={0.2} stroke="#9ca3af" strokeWidth={1.5} strokeDasharray="6,3" rx={3} />
+            <g key={z.id}
+              onClick={() => editable && editTool === 'select' && onFeatureRemoved?.('zone', z.id)}
+              style={{ cursor: editable && editTool === 'select' ? 'pointer' : 'default' }}>
+              <rect x={ftToPx(rect.xFt)} y={ftToPx(rect.yFt)} width={ftToSize(rect.wFt)} height={ftToSize(rect.hFt)}
+                fill={isSat ? 'rgba(100,116,139,0.4)' : '#6b7280'} fillOpacity={isSat ? 0.4 : 0.2}
+                stroke={isSat ? 'rgba(255,255,255,0.7)' : '#9ca3af'} strokeWidth={1.5} strokeDasharray="6,3" rx={3} />
               <text x={ftToPx(rect.xFt + rect.wFt / 2)} y={ftToPx(rect.yFt + rect.hFt / 2)}
-                textAnchor="middle" dominantBaseline="middle" fontSize="10" fill="#374151" fontWeight="500">{z.label}</text>
+                textAnchor="middle" dominantBaseline="middle" fontSize="10"
+                fill={isSat ? 'white' : '#374151'} fontWeight="500"
+                stroke={isSat ? 'rgba(0,0,0,0.5)' : 'none'} strokeWidth={isSat ? '2' : '0'} paintOrder="stroke">
+                {z.label}
+              </text>
             </g>
           );
         })}
@@ -373,15 +515,21 @@ export default function GridPlanView({
         {existingTrees.map(t => {
           const xFt = (t as any).gridXFt ?? latLngToFt(t.lat, t.lng).xFt;
           const yFt = (t as any).gridYFt ?? latLngToFt(t.lat, t.lng).yFt;
-          const rPx = ftToPx(t.canopyDiameterFt / 2);
+          const rPx = ftToSize(t.canopyDiameterFt / 2);
           return (
-            <g key={t.id}>
+            <g key={t.id}
+              onClick={() => editable && editTool === 'select' && onFeatureRemoved?.('tree', t.id)}
+              style={{ cursor: editable && editTool === 'select' ? 'pointer' : 'default' }}>
               <circle cx={ftToPx(xFt)} cy={ftToPx(yFt)} r={rPx}
-                fill="#15803d" fillOpacity={0.15} stroke="#15803d" strokeWidth={1.5} strokeDasharray="4,2" strokeOpacity={0.5} />
+                fill="#15803d" fillOpacity={0.15} stroke={isSat ? 'rgba(255,255,255,0.6)' : '#15803d'}
+                strokeWidth={1.5} strokeDasharray="4,2" strokeOpacity={0.5} />
               <circle cx={ftToPx(xFt)} cy={ftToPx(yFt)} r={4} fill="#713f12" stroke="white" strokeWidth={1.5} />
               <text x={ftToPx(xFt)} y={ftToPx(yFt) - rPx - 5}
-                textAnchor="middle" fontSize="9" fill="#14532d" fontWeight="600"
-                stroke="white" strokeWidth="2" paintOrder="stroke">{t.label}</text>
+                textAnchor="middle" fontSize="9" fontWeight="600"
+                fill={isSat ? 'white' : '#14532d'}
+                stroke={isSat ? 'rgba(0,0,0,0.5)' : 'white'} strokeWidth="2" paintOrder="stroke">
+                {t.label} ({t.canopyDiameterFt}ft)
+              </text>
             </g>
           );
         })}
@@ -399,8 +547,12 @@ export default function GridPlanView({
 
           return (
             <g key={`${p.plantSlug}-${i}`}
-              onClick={() => onPlantClick?.(p.plantSlug)}
-              style={{ cursor: onPlantClick ? 'pointer' : 'default' }}>
+              onClick={(e) => {
+                e.stopPropagation();
+                onPlantClick?.(p.plantSlug);
+                setPopupPlant(popupPlant?.plant.plantSlug === p.plantSlug && popupPlant?.cx === cx ? null : { plant: p, cx, cy });
+              }}
+              style={{ cursor: 'pointer' }}>
               {isSelected && <circle cx={cx} cy={cy} r={radiusPx + 3} fill="none" stroke="#000" strokeWidth={2} strokeOpacity={0.5} />}
               {/* Wider backing disc on satellite for contrast */}
               <circle cx={cx} cy={cy} r={radiusPx + (isSat ? 2 : 1)}
@@ -418,6 +570,33 @@ export default function GridPlanView({
             </g>
           );
         })}
+
+        {/* Plant info popup */}
+        {popupPlant && (() => {
+          const pp = popupPlant;
+          const pw = 160, ph = 52;
+          // Position above the plant, flip down if too close to top
+          const flipDown = pp.cy - ph - 12 < 0;
+          const px = Math.max(4, Math.min(svgWidth - pw - 4, pp.cx - pw / 2));
+          const py = flipDown ? pp.cy + 16 : pp.cy - ph - 12;
+          return (
+            <g onClick={(e) => { e.stopPropagation(); setPopupPlant(null); }} style={{ cursor: 'pointer' }}>
+              <rect x={px} y={py} width={pw} height={ph} rx={6}
+                fill="white" stroke="#d1d5db" strokeWidth={1} filter="drop-shadow(0 2px 4px rgba(0,0,0,0.15))" />
+              <rect x={px + 4} y={py + 6} width={10} height={10} rx={5}
+                fill={getPlantColor(pp.plant.bloomColor)} />
+              <text x={px + 18} y={py + 14} fontSize="9" fontWeight="700" fill="#1e293b" dominantBaseline="central">
+                {pp.plant.commonName.length > 20 ? pp.plant.commonName.slice(0, 19) + '…' : pp.plant.commonName}
+              </text>
+              <text x={px + 6} y={py + 28} fontSize="7.5" fill="#64748b" fontStyle="italic" dominantBaseline="central">
+                {pp.plant.scientificName?.length > 24 ? pp.plant.scientificName.slice(0, 23) + '…' : pp.plant.scientificName}
+              </text>
+              <text x={px + 6} y={py + 42} fontSize="7.5" fill="#475569" dominantBaseline="central">
+                {pp.plant.bloomColor} · {pp.plant.heightMaxInches ? `${Math.round(pp.plant.heightMaxInches / 12)}ft` : ''} · #{pp.plant.speciesIndex}
+              </text>
+            </g>
+          );
+        })()}
 
         {/* Sun compass — combined north arrow + sun path */}
         <g transform={`translate(${compassCx}, ${compassCy})`}>
@@ -456,16 +635,52 @@ export default function GridPlanView({
           {formatHour(shadowHour)}
         </text>
 
+        {/* Drawing preview */}
+        {editable && drawing && drawStart && drawCurrent && editTool === 'path' && (
+          <rect
+            x={Math.min(drawStart.x, drawCurrent.x)}
+            y={Math.min(drawStart.y, drawCurrent.y)}
+            width={Math.abs(drawCurrent.x - drawStart.x)}
+            height={Math.abs(drawCurrent.y - drawStart.y)}
+            fill={isSat ? 'rgba(100,116,139,0.3)' : '#9ca3af'}
+            fillOpacity={isSat ? 0.3 : 0.2}
+            stroke={isSat ? 'rgba(255,255,255,0.7)' : '#6b7280'}
+            strokeWidth={2} strokeDasharray="8,4" rx={4}
+          />
+        )}
+
         {/* Scale bar — bottom right */}
         <g transform={`translate(${svgWidth - 80}, ${svgHeight - 14})`}>
-          <rect x={0} y={4} width={ftToPx(5)} height={4}
+          <rect x={0} y={4} width={ftToSize(5)} height={4}
             fill={isSat ? 'white' : '#374151'} rx={1} />
           <text x={0} y={2} fontSize="8" fill={isSat ? 'white' : '#6b7280'}
             stroke={isSat ? 'rgba(0,0,0,0.4)' : 'none'} strokeWidth={isSat ? '2' : '0'} paintOrder="stroke">0</text>
-          <text x={ftToPx(5)} y={2} fontSize="8" fill={isSat ? 'white' : '#6b7280'} textAnchor="middle"
+          <text x={ftToSize(5)} y={2} fontSize="8" fill={isSat ? 'white' : '#6b7280'} textAnchor="middle"
             stroke={isSat ? 'rgba(0,0,0,0.4)' : 'none'} strokeWidth={isSat ? '2' : '0'} paintOrder="stroke">5 ft</text>
         </g>
       </svg>
+
+      {/* Label input for drawn path */}
+      {editable && pendingPath && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-stone-50 border-t border-stone-200">
+          <input
+            type="text"
+            value={pathLabel}
+            onChange={e => setPathLabel(e.target.value)}
+            placeholder="Label (e.g. Sidewalk, Patio)"
+            className="flex-1 px-3 py-1.5 border border-stone-300 rounded-lg text-sm outline-none focus:border-primary"
+            autoFocus
+            onKeyDown={e => e.key === 'Enter' && confirmPath()}
+          />
+          <button onClick={confirmPath} className="px-4 py-1.5 bg-primary text-white rounded-lg text-sm font-medium">
+            Add
+          </button>
+          <button onClick={() => { setPendingPath(null); setPathLabel(''); }}
+            className="px-3 py-1.5 border border-stone-300 rounded-lg text-sm">
+            Cancel
+          </button>
+        </div>
+      )}
     </div>
   );
 }

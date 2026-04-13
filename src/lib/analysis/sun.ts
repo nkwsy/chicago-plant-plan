@@ -143,6 +143,17 @@ export function estimateEffectiveSunHours(
  * Iterates all 24 UTC hours and checks if the sun is above the horizon —
  * no timezone assumptions needed.
  */
+/**
+ * Convert lat/lng to local meters relative to a reference point.
+ * Uses equirectangular projection (accurate enough for <500m distances).
+ */
+function toMeters(lat: number, lng: number, refLat: number, refLng: number): { x: number; y: number } {
+  return {
+    x: (lng - refLng) * 111320 * Math.cos(refLat * Math.PI / 180),
+    y: (lat - refLat) * 111320,
+  };
+}
+
 function countDirectSunHours(
   date: Date,
   lat: number,
@@ -153,56 +164,62 @@ function countDirectSunHours(
   let sunHours = 0;
   const metersPerFt = 0.3048;
 
-  for (let utcHour = 0; utcHour < 24; utcHour++) {
+  // Garden point in meters (origin = garden point itself)
+  const gardenM = { x: 0, y: 0 };
+
+  // Loop 30 hours to cover daylight that extends past midnight UTC
+  // (e.g., Chicago summer sunset ~1:30 AM UTC next day)
+  for (let utcHour = 0; utcHour < 30; utcHour++) {
     const time = new Date(Date.UTC(
       date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), utcHour,
     ));
     const sunPos = SunCalc.getPosition(time, lat, lng);
     const altitudeDeg = sunPos.altitude * (180 / Math.PI);
 
-    // Skip hours when sun is below horizon
     if (altitudeDeg <= 2) continue;
 
-    const azimuthDeg = sunPos.azimuth * (180 / Math.PI) + 180; // compass bearing
+    // SunCalc azimuth: 0=south, clockwise. Convert to compass: +180
+    const azimuthDeg = sunPos.azimuth * (180 / Math.PI) + 180;
     const altRad = altitudeDeg * Math.PI / 180;
-    const shadowDirRad = ((azimuthDeg + 180) % 360) * Math.PI / 180;
+    // Shadow falls opposite to sun direction
+    const shadowBearingRad = ((azimuthDeg + 180) % 360) * Math.PI / 180;
+    // Shadow direction vector (meters): north=+y, east=+x
+    const shadowDirX = Math.sin(shadowBearingRad);
+    const shadowDirY = Math.cos(shadowBearingRad);
     let inShadow = false;
 
-    // Check tree shadows
+    // Check tree shadows (all in meters)
     for (const tree of trees) {
-      const treeHeightFt = tree.canopyDiameterFt * 1.5;
-      const shadowLenFt = treeHeightFt / Math.tan(altRad);
-      const shadowTipDLat = Math.cos(shadowDirRad) * shadowLenFt;
-      const shadowTipDLng = Math.sin(shadowDirRad) * shadowLenFt;
-      const tipLat = tree.lat + (shadowTipDLat * metersPerFt) / 111320;
-      const tipLng = tree.lng + (shadowTipDLng * metersPerFt) / (111320 * Math.cos(lat * Math.PI / 180));
-      const canopyRadiusDeg = (tree.canopyDiameterFt / 2 * metersPerFt) / 111320;
-      const distToShadow = pointToSegmentDist(lng, lat, tree.lng, tree.lat, tipLng, tipLat);
+      const treeM = toMeters(tree.lat, tree.lng, lat, lng);
+      const treeHeightM = tree.canopyDiameterFt * 1.5 * metersPerFt;
+      const shadowLenM = Math.min(treeHeightM / Math.tan(altRad), 200);
+      const tipX = treeM.x + shadowDirX * shadowLenM;
+      const tipY = treeM.y + shadowDirY * shadowLenM;
+      const canopyRadiusM = tree.canopyDiameterFt / 2 * metersPerFt;
 
-      if (distToShadow < canopyRadiusDeg * 1.5) {
-        const dx = lng - tree.lng, dy = lat - tree.lat;
-        const sdx = tipLng - tree.lng, sdy = tipLat - tree.lat;
+      const dist = pointToSegmentDistM(gardenM.x, gardenM.y, treeM.x, treeM.y, tipX, tipY);
+      if (dist < canopyRadiusM * 1.5) {
+        // Verify we're on the shadow side (not between sun and tree)
+        const dx = gardenM.x - treeM.x, dy = gardenM.y - treeM.y;
+        const sdx = tipX - treeM.x, sdy = tipY - treeM.y;
         if (dx * sdx + dy * sdy > 0) { inShadow = true; break; }
       }
     }
 
     if (inShadow) continue;
 
-    // Check building shadows — use actual building width for corridor
+    // Check building shadows (all in meters)
     for (const building of buildings) {
-      const shadowLenMeters = building.heightMeters / Math.tan(altRad);
-      const tipLat = building.lat + Math.cos(shadowDirRad) * shadowLenMeters / 111320;
-      const tipLng = building.lng + Math.sin(shadowDirRad) * shadowLenMeters / (111320 * Math.cos(lat * Math.PI / 180));
+      const bldgM = toMeters(building.lat, building.lng, lat, lng);
+      const shadowLenM = Math.min(building.heightMeters / Math.tan(altRad), 300);
+      const tipX = bldgM.x + shadowDirX * shadowLenM;
+      const tipY = bldgM.y + shadowDirY * shadowLenM;
+      const halfWidthM = (building.widthMeters || 15) / 2;
 
-      // Shadow corridor = half building width
-      const buildingWidthM = building.widthMeters || 15;
-      const shadowWidthDeg = (buildingWidthM / 2) / 111320;
-      const distToShadow = pointToSegmentDist(lng, lat, building.lng, building.lat, tipLng, tipLat);
-
-      if (distToShadow < shadowWidthDeg) {
-        // Verify garden point is on shadow side (away from sun)
-        const dx = lng - building.lng, dy = lat - building.lat;
-        const sdx = tipLng - building.lng, sdy = tipLat - building.lat;
+      const dist = pointToSegmentDistM(gardenM.x, gardenM.y, bldgM.x, bldgM.y, tipX, tipY);
+      if (dist < halfWidthM) {
+        const dx = gardenM.x - bldgM.x, dy = gardenM.y - bldgM.y;
+        const sdx = tipX - bldgM.x, sdy = tipY - bldgM.y;
         if (dx * sdx + dy * sdy > 0) { inShadow = true; break; }
       }
     }
@@ -213,8 +230,8 @@ function countDirectSunHours(
   return sunHours;
 }
 
-/** Distance from point (px,py) to line segment (ax,ay)→(bx,by) */
-function pointToSegmentDist(px: number, py: number, ax: number, ay: number, bx: number, by: number): number {
+/** Distance from point (px,py) to line segment (ax,ay)→(bx,by) in meters */
+function pointToSegmentDistM(px: number, py: number, ax: number, ay: number, bx: number, by: number): number {
   const dx = bx - ax, dy = by - ay;
   const lenSq = dx * dx + dy * dy;
   if (lenSq === 0) return Math.sqrt((px - ax) ** 2 + (py - ay) ** 2);
