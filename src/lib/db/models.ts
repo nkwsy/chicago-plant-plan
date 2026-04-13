@@ -92,6 +92,9 @@ export interface IPlan extends Document {
   areaSqFt: number;
   diversityScore: number;
   isPublic: boolean;
+  exclusionZones: object[];
+  existingTrees: object[];
+  layoutVersion: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -120,7 +123,17 @@ const PlanSchema = new Schema<IPlan>({
     bloomColor: String,
     heightMaxInches: Number,
     notes: { type: String, default: '' },
+    lat: Number,
+    lng: Number,
+    imageUrl: { type: String, default: '' },
+    spreadInches: Number,
+    speciesIndex: Number,
+    plantType: String,
+    groupId: String,
   }],
+  exclusionZones: Schema.Types.Mixed,
+  existingTrees: Schema.Types.Mixed,
+  layoutVersion: { type: Number, default: 1 },
   gridCols: { type: Number, default: 0 },
   gridRows: { type: Number, default: 0 },
   areaSqFt: { type: Number, default: 0 },

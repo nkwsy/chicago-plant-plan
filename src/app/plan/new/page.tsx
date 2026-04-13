@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MapContainer from '@/components/map/MapContainer';
 import PlantingLegend from '@/components/plan/PlantingLegend';
+import GridEditor from '@/components/plan/GridEditor';
+import GridPlanView from '@/components/plan/GridPlanView';
 import type { SiteProfile } from '@/types/analysis';
 import type { UserPreferences, PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
 
-type Step = 'location' | 'analysis' | 'preferences' | 'plan';
+type Step = 'location' | 'features' | 'analysis' | 'preferences' | 'plan';
 
 interface LocationData {
   lat: number;
@@ -52,10 +54,15 @@ export default function NewPlanPage() {
 
   const steps: { key: Step; label: string }[] = [
     { key: 'location', label: 'Location' },
+    { key: 'features', label: 'Features' },
     { key: 'analysis', label: 'Analysis' },
     { key: 'preferences', label: 'Goals' },
     { key: 'plan', label: 'Plan' },
   ];
+
+  // Compute area dimensions in feet
+  const areaWidthFt = Math.max(10, Math.round(Math.sqrt(location.areaSqFt || 400) * 1.2));
+  const areaHeightFt = Math.max(10, Math.round((location.areaSqFt || 400) / areaWidthFt));
 
   const currentIdx = steps.findIndex(s => s.key === step);
 
@@ -66,7 +73,7 @@ export default function NewPlanPage() {
       const res = await fetch('/api/site-analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lat: location.lat, lng: location.lng }),
+        body: JSON.stringify({ lat: location.lat, lng: location.lng, existingTrees }),
       });
       const profile = await res.json();
       setSiteProfile(profile);
@@ -227,72 +234,6 @@ export default function NewPlanPage() {
               />
             </div>
 
-            {/* Site features toolbar */}
-            {location.lat > 0 && (
-              <div className="mb-4">
-                <div className="flex flex-wrap gap-2 mb-3">
-                  <button
-                    onClick={() => setEditMode(editMode === 'exclusion' ? 'none' : 'exclusion')}
-                    className={`px-3 py-2 text-sm rounded-lg border transition-all flex items-center gap-2 ${
-                      editMode === 'exclusion' ? 'bg-gray-700 text-white border-gray-700' : 'border-stone-300 hover:bg-stone-50'
-                    }`}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
-                    {editMode === 'exclusion' ? 'Drawing...' : 'Mark Walkway / Patio'}
-                  </button>
-                  <button
-                    onClick={() => setEditMode(editMode === 'tree' ? 'none' : 'tree')}
-                    className={`px-3 py-2 text-sm rounded-lg border transition-all flex items-center gap-2 ${
-                      editMode === 'tree' ? 'bg-green-700 text-white border-green-700' : 'border-stone-300 hover:bg-stone-50'
-                    }`}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 22V8M12 8C12 8 8 4 5 6C2 8 4 12 7 12C9 12 12 8 12 8ZM12 8C12 8 16 4 19 6C22 8 20 12 17 12C15 12 12 8 12 8Z" /></svg>
-                    {editMode === 'tree' ? 'Click map to place...' : 'Add Existing Tree'}
-                  </button>
-                </div>
-
-                {/* List of exclusion zones */}
-                {exclusionZones.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {exclusionZones.map((z, i) => (
-                      <div key={z.id} className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded text-xs">
-                        <span className="text-gray-600">{z.label || `Zone ${i + 1}`}</span>
-                        <button onClick={() => setExclusionZones(prev => prev.filter(x => x.id !== z.id))}
-                          className="text-gray-400 hover:text-red-500">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* List of existing trees */}
-                {existingTrees.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    {existingTrees.map((t, i) => (
-                      <div key={t.id} className="flex items-center gap-2 bg-green-50 px-2 py-1 rounded text-xs">
-                        <span className="text-green-700">{t.label} ({t.canopyDiameterFt}ft canopy)</span>
-                        <select
-                          value={t.canopyDiameterFt}
-                          onChange={(e) => setExistingTrees(prev => prev.map(x => x.id === t.id ? { ...x, canopyDiameterFt: parseInt(e.target.value) } : x))}
-                          className="text-xs bg-white border border-green-200 rounded px-1"
-                        >
-                          <option value={10}>Small (10ft)</option>
-                          <option value={20}>Medium (20ft)</option>
-                          <option value={30}>Large (30ft)</option>
-                          <option value={40}>Very Large (40ft)</option>
-                        </select>
-                        <button onClick={() => setExistingTrees(prev => prev.filter(x => x.id !== t.id))}
-                          className="text-green-400 hover:text-red-500">
-                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-
             {location.address && (
               <div className="bg-surface rounded-lg p-4 border border-stone-200 mb-4">
                 <p className="text-sm"><span className="font-medium">Location:</span> {location.address}</p>
@@ -310,9 +251,41 @@ export default function NewPlanPage() {
 
             <div className="flex justify-end">
               <button
+                onClick={() => setStep('features')}
+                disabled={!location.lat || !location.lng}
+                className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next: Mark Features →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Site Features — 2D Grid Editor */}
+        {step === 'features' && (
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Mark your site features</h2>
+            <p className="text-muted mb-6">Add existing trees, walkways, and patios. Plants will avoid these areas and adapt to tree shade.</p>
+
+            <GridEditor
+              widthFt={areaWidthFt}
+              heightFt={areaHeightFt}
+              centerLat={location.lat}
+              centerLng={location.lng}
+              exclusionZones={exclusionZones}
+              existingTrees={existingTrees}
+              onExclusionZonesChange={setExclusionZones}
+              onExistingTreesChange={setExistingTrees}
+            />
+
+            <div className="flex justify-between mt-6">
+              <button onClick={() => setStep('location')} className="text-muted hover:text-foreground px-4 py-2 transition-colors">
+                ← Back
+              </button>
+              <button
                 onClick={runAnalysis}
-                disabled={!location.lat || !location.lng || analyzing}
-                className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                disabled={analyzing}
+                className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
               >
                 {analyzing ? (
                   <>
@@ -360,7 +333,7 @@ export default function NewPlanPage() {
             </div>
 
             <div className="flex justify-between">
-              <button onClick={() => setStep('location')} className="text-muted hover:text-foreground px-4 py-2 transition-colors">
+              <button onClick={() => setStep('features')} className="text-muted hover:text-foreground px-4 py-2 transition-colors">
                 ← Back
               </button>
               <button
@@ -586,37 +559,19 @@ export default function NewPlanPage() {
               />
             </div>
 
-            {/* 3D Satellite planting map */}
-            <div className="h-[400px] md:h-[500px] rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-2">
-              <MapContainer
-                center={[location.lat, location.lng]}
-                zoom={20}
-                pitch={45}
-                showSearch={false}
-                show3D={true}
-                showSunlight={true}
-                style="satellite-streets"
-                height="100%"
-                areaOutline={location.areaGeoJson}
-                exclusionZones={exclusionZones}
-                existingTrees={existingTrees}
-                plantPlacements={generatedPlan.plants
-                  .filter(p => p.lat && p.lng)
-                  .map(p => ({
-                    lat: p.lat!,
-                    lng: p.lng!,
-                    color: p.bloomColor,
-                    name: p.commonName,
-                    slug: p.plantSlug,
-                    imageUrl: p.imageUrl,
-                    spreadInches: p.spreadInches,
-                    speciesIndex: p.speciesIndex,
-                    plantType: p.plantType,
-                  }))}
-                onPlantClick={(slug) => setSelectedPlantSlug(slug === selectedPlantSlug ? null : slug)}
-              />
-            </div>
-            <p className="text-xs text-muted mb-4 text-center">
+            {/* 2D Grid Plan View */}
+            <GridPlanView
+              widthFt={areaWidthFt}
+              heightFt={areaHeightFt}
+              centerLat={location.lat}
+              centerLng={location.lng}
+              plants={generatedPlan.plants}
+              exclusionZones={exclusionZones}
+              existingTrees={existingTrees}
+              selectedSlug={selectedPlantSlug}
+              onPlantClick={(slug) => setSelectedPlantSlug(slug === selectedPlantSlug ? null : slug)}
+            />
+            <p className="text-xs text-muted mb-4 mt-2 text-center">
               Circles are sized to actual plant spread. Numbers match the legend below.
             </p>
 

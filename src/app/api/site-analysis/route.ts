@@ -4,7 +4,7 @@ import { analyzeSite } from '@/lib/analysis/site-profile';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { lat, lng } = body;
+    const { lat, lng, existingTrees } = body;
 
     if (!lat || !lng || typeof lat !== 'number' || typeof lng !== 'number') {
       return NextResponse.json({ error: 'lat and lng required' }, { status: 400 });
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const profile = await analyzeSite(lat, lng);
+    const profile = await analyzeSite(lat, lng, existingTrees || []);
     return NextResponse.json(profile);
   } catch (error) {
     console.error('Site analysis error:', error);

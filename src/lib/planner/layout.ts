@@ -2,9 +2,17 @@ import type { Plant, PlantType } from '@/types/plant';
 import type { PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
 import * as turf from '@turf/turf';
 
-// Convert inches to approximate degrees at Chicago latitude (~41.88N)
-const INCHES_TO_DEG_LAT = 1 / (111320 * 39.37); // ~0.000000228
-const INCHES_TO_DEG_LNG = 1 / (111320 * Math.cos(41.88 * Math.PI / 180) * 39.37);
+// Conversion constants at Chicago latitude (~41.88N)
+const METERS_PER_DEG_LAT = 111320;
+const METERS_PER_DEG_LNG = 111320 * Math.cos(41.88 * Math.PI / 180);
+const INCHES_PER_METER = 39.37;
+
+function inchesToDegLat(inches: number): number {
+  return inches / (METERS_PER_DEG_LAT * INCHES_PER_METER);
+}
+function inchesToDegLng(inches: number): number {
+  return inches / (METERS_PER_DEG_LNG * INCHES_PER_METER);
+}
 
 interface LayoutConfig {
   areaSqFt: number;
@@ -20,93 +28,87 @@ export function calculateGridSize(areaSqFt: number): LayoutConfig {
   return { areaSqFt, gridCols: Math.min(cols, 20), gridRows: Math.min(rows, 15) };
 }
 
-export function polygonToBounds(polygon: GeoJSON.Polygon | null, center?: [number, number]): {
-  minLat: number; maxLat: number; minLng: number; maxLng: number;
-} {
+export function polygonToBounds(polygon: GeoJSON.Polygon | null, center?: [number, number]) {
   if (polygon?.coordinates?.[0] && polygon.coordinates[0].length > 2) {
     const coords = polygon.coordinates[0];
     const lats = coords.map(c => c[1]);
     const lngs = coords.map(c => c[0]);
     return { minLat: Math.min(...lats), maxLat: Math.max(...lats), minLng: Math.min(...lngs), maxLng: Math.max(...lngs) };
   }
-  // Default: ~20x20 ft area (typical small garden bed)
+  // Default: ~20x20 ft
   const lat = center?.[0] || 41.88;
   const lng = center?.[1] || -87.63;
-  const offsetLat = 0.00003; // ~10 ft in each direction = 20ft total
-  const offsetLng = 0.00004;
-  return { minLat: lat - offsetLat, maxLat: lat + offsetLat, minLng: lng - offsetLng, maxLng: lng + offsetLng };
+  const offset = 10 * 12; // 10 ft in inches
+  return {
+    minLat: lat - inchesToDegLat(offset),
+    maxLat: lat + inchesToDegLat(offset),
+    minLng: lng - inchesToDegLng(offset),
+    maxLng: lng + inchesToDegLng(offset),
+  };
 }
 
-/** Clump sizes by plant type */
-function getClumpSize(type: PlantType, aesthetic: string): number {
+function getClumpSize(type: PlantType, aesthetic: string, smallArea: boolean): number {
+  if (smallArea) {
+    const base: Record<string, [number, number]> = {
+      tree: [1, 1], shrub: [1, 2], vine: [1, 1], fern: [2, 4],
+      forb: [2, 4], grass: [3, 5], sedge: [3, 5],
+    };
+    const [min, max] = base[type] || [1, 3];
+    return min + Math.floor(Math.random() * (max - min + 1));
+  }
   const base: Record<string, [number, number]> = {
-    tree: [1, 1],
-    shrub: [1, 3],
-    vine: [1, 2],
-    fern: [3, 7],
-    forb: [3, 7],
-    grass: [5, 9],
-    sedge: [5, 9],
+    tree: [1, 1], shrub: [1, 3], vine: [1, 2], fern: [3, 7],
+    forb: [3, 7], grass: [5, 9], sedge: [5, 9],
   };
   const [min, max] = base[type] || [2, 5];
-  // Wilder aesthetics use bigger clumps
   const mult = aesthetic === 'wild' ? 1.3 : aesthetic === 'structured' ? 0.7 : 1.0;
   return Math.round(min + Math.random() * (max - min) * mult);
 }
 
-/** Check if a point is inside a GeoJSON polygon using Turf */
 function isInsidePolygon(lat: number, lng: number, polygon: GeoJSON.Polygon): boolean {
   try {
-    const pt = turf.point([lng, lat]);
-    const poly = turf.polygon(polygon.coordinates);
-    return turf.booleanPointInPolygon(pt, poly);
-  } catch {
-    return true; // Fallback: allow placement
-  }
+    return turf.booleanPointInPolygon(turf.point([lng, lat]), turf.polygon(polygon.coordinates));
+  } catch { return true; }
 }
 
-/** Check if point is inside any exclusion zone */
 function isInExclusionZone(lat: number, lng: number, zones: ExclusionZone[]): boolean {
   return zones.some(z => isInsidePolygon(lat, lng, z.geoJson));
 }
 
-/** Check if point is under an existing tree canopy */
-function getTreeShade(lat: number, lng: number, trees: ExistingTree[]): ExistingTree | null {
+function getTreeShade(lat: number, lng: number, trees: ExistingTree[]): boolean {
   for (const tree of trees) {
-    const radiusDegLat = (tree.canopyDiameterFt / 2) * 12 * INCHES_TO_DEG_LAT;
-    const radiusDegLng = (tree.canopyDiameterFt / 2) * 12 * INCHES_TO_DEG_LNG;
-    const dLat = Math.abs(lat - tree.lat) / radiusDegLat;
-    const dLng = Math.abs(lng - tree.lng) / radiusDegLng;
-    if (dLat * dLat + dLng * dLng <= 1) return tree;
-  }
-  return null;
-}
-
-/** Check collision with already-placed plants */
-function hasCollision(
-  lat: number, lng: number, spreadInches: number,
-  placed: { lat: number; lng: number; spreadInches: number }[]
-): boolean {
-  const myRadiusLat = (spreadInches / 2) * INCHES_TO_DEG_LAT;
-  const myRadiusLng = (spreadInches / 2) * INCHES_TO_DEG_LNG;
-
-  for (const p of placed) {
-    const otherRadiusLat = (p.spreadInches / 2) * INCHES_TO_DEG_LAT;
-    const otherRadiusLng = (p.spreadInches / 2) * INCHES_TO_DEG_LNG;
-    const minDistLat = (myRadiusLat + otherRadiusLat) * 0.85; // Allow 15% overlap for natural look
-    const minDistLng = (myRadiusLng + otherRadiusLng) * 0.85;
-    const dLat = Math.abs(lat - p.lat);
-    const dLng = Math.abs(lng - p.lng);
-    if (dLat < minDistLat && dLng < minDistLng) return true;
+    const radiusLat = inchesToDegLat(tree.canopyDiameterFt * 6); // ft to inches radius
+    const radiusLng = inchesToDegLng(tree.canopyDiameterFt * 6);
+    const dLat = (lat - tree.lat) / radiusLat;
+    const dLng = (lng - tree.lng) / radiusLng;
+    if (dLat * dLat + dLng * dLng <= 1) return true;
   }
   return false;
 }
 
-/**
- * V2 layout: spacing-aware placement with exclusion zones and tree shade.
- * Plants are sized to their actual spread, placed without overlap,
- * grouped in natural-looking clumps.
- */
+/** Circular distance collision check — much more accurate than axis-aligned */
+function hasCollision(
+  lat: number, lng: number, spreadInches: number,
+  placed: { lat: number; lng: number; spreadInches: number }[],
+  overlapFactor: number,
+): boolean {
+  const myRadiusLat = inchesToDegLat(spreadInches / 2);
+  const myRadiusLng = inchesToDegLng(spreadInches / 2);
+
+  for (const p of placed) {
+    const otherRadiusLat = inchesToDegLat(p.spreadInches / 2);
+    const otherRadiusLng = inchesToDegLng(p.spreadInches / 2);
+
+    // Circular distance using normalized coordinates
+    const dLat = (lat - p.lat) / (myRadiusLat + otherRadiusLat);
+    const dLng = (lng - p.lng) / (myRadiusLng + otherRadiusLng);
+    const dist = Math.sqrt(dLat * dLat + dLng * dLng);
+
+    if (dist < overlapFactor) return true;
+  }
+  return false;
+}
+
 export function layoutPlants(
   plants: Plant[],
   config: LayoutConfig,
@@ -121,10 +123,11 @@ export function layoutPlants(
   const lngRange = bounds.maxLng - bounds.minLng;
   if (latRange === 0 || lngRange === 0) return [];
 
+  const smallArea = config.areaSqFt < 400;
   const result: PlanPlant[] = [];
   const placedPositions: { lat: number; lng: number; spreadInches: number }[] = [];
 
-  // Sort: trees first, then shrubs, then by spread descending
+  // Sort: trees → shrubs → forbs → grasses (large footprint first)
   const typeOrder: Record<string, number> = { tree: 0, shrub: 1, vine: 2, fern: 3, forb: 4, grass: 5, sedge: 6 };
   const sorted = [...plants].sort((a, b) => {
     const ta = typeOrder[a.plantType] ?? 4;
@@ -135,91 +138,112 @@ export function layoutPlants(
 
   // Assign species indices
   const speciesIndexMap = new Map<string, number>();
-  sorted.forEach((p, i) => { if (!speciesIndexMap.has(p.slug)) speciesIndexMap.set(p.slug, speciesIndexMap.size + 1); });
+  sorted.forEach(p => { if (!speciesIndexMap.has(p.slug)) speciesIndexMap.set(p.slug, speciesIndexMap.size + 1); });
 
-  // Place all selected species — each gets at least 1 clump
+  // Max spread relative to area
+  const areaWidthInches = Math.sqrt(config.areaSqFt) * 12;
+  const maxSpread = areaWidthInches * 0.5;
+
   for (const plant of sorted) {
-    const clumpSize = getClumpSize(plant.plantType, aesthetic);
-    // Cap spread to something reasonable for the area — trees especially
+    const clumpSize = getClumpSize(plant.plantType, aesthetic, smallArea);
     const rawSpread = (plant.spreadMinInches + plant.spreadMaxInches) / 2;
-    const maxSpreadForArea = Math.sqrt(config.areaSqFt * 144) * 0.4; // Max 40% of area width
-    const spread = Math.min(rawSpread, maxSpreadForArea);
+    const spread = Math.min(rawSpread, maxSpread);
 
-    // Height bias: 0 = south edge, 1 = north edge
+    // Overlap tolerance: grasses/groundcovers can overlap more
+    const overlapFactor = (plant.plantType === 'grass' || plant.plantType === 'sedge' || plant.plantType === 'fern')
+      ? 0.5 : 0.65;
+
     const heightBias = Math.min(plant.heightMaxInches / 120, 1);
     const targetLatCenter = bounds.minLat + latRange * (0.2 + heightBias * 0.6);
 
-    let placedInClump = 0;
-    let clumpSeedLat = 0;
-    let clumpSeedLng = 0;
+    let clumpSeedLat = 0, clumpSeedLng = 0;
 
     for (let c = 0; c < clumpSize; c++) {
       let placed = false;
+      const maxAttempts = c === 0 ? 60 : 30;
 
-      for (let attempt = 0; attempt < 40; attempt++) {
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
         let lat: number, lng: number;
 
         if (c === 0) {
-          // Seed point: random within height band
-          const bandSpread = latRange * 0.35;
+          // Seed point
+          const bandSpread = latRange * 0.4;
           lat = targetLatCenter + (Math.random() - 0.5) * bandSpread;
           lng = bounds.minLng + (0.05 + Math.random() * 0.9) * lngRange;
         } else {
-          // Clump member: offset from seed
-          const angle = (Math.PI * 2 * c) / clumpSize + (Math.random() - 0.5) * 0.5;
-          const dist = spread * (1.0 + Math.random() * 0.3);
-          lat = clumpSeedLat + Math.sin(angle) * dist * INCHES_TO_DEG_LAT;
-          lng = clumpSeedLng + Math.cos(angle) * dist * INCHES_TO_DEG_LNG;
+          // Clump member — tight offset from seed
+          const angle = (Math.PI * 2 * c) / clumpSize + (Math.random() - 0.5) * 0.8;
+          const dist = spread * (0.8 + Math.random() * 0.4);
+          lat = clumpSeedLat + Math.sin(angle) * inchesToDegLat(dist);
+          lng = clumpSeedLng + Math.cos(angle) * inchesToDegLng(dist);
         }
 
-        // Clamp to bounds
-        lat = Math.max(bounds.minLat + spread * INCHES_TO_DEG_LAT, Math.min(bounds.maxLat - spread * INCHES_TO_DEG_LAT, lat));
-        lng = Math.max(bounds.minLng + spread * INCHES_TO_DEG_LNG, Math.min(bounds.maxLng - spread * INCHES_TO_DEG_LNG, lng));
+        // Clamp to bounds with margin
+        const margin = 0.02;
+        lat = bounds.minLat + latRange * margin + (lat - bounds.minLat) % (latRange * (1 - 2 * margin));
+        lat = Math.max(bounds.minLat, Math.min(bounds.maxLat, lat));
+        lng = Math.max(bounds.minLng, Math.min(bounds.maxLng, lng));
 
-        // Validation checks
+        // Validation
         if (polygon && !isInsidePolygon(lat, lng, polygon)) continue;
         if (isInExclusionZone(lat, lng, exclusionZones)) continue;
-        if (hasCollision(lat, lng, spread, placedPositions)) continue;
 
-        // Tree shade check: if under a tree canopy, plant must tolerate shade
-        const shadeTree = getTreeShade(lat, lng, existingTrees);
-        if (shadeTree) {
-          const toleratesShade = plant.sun.some(s => s === 'part_shade' || s === 'full_shade');
-          if (!toleratesShade) continue;
+        // Relaxed collision on later attempts
+        const relaxed = attempt > maxAttempts * 0.7;
+        const factor = relaxed ? overlapFactor * 0.5 : overlapFactor;
+        if (hasCollision(lat, lng, spread, placedPositions, factor)) continue;
+
+        // Tree shade: if under canopy, plant must tolerate shade
+        if (getTreeShade(lat, lng, existingTrees)) {
+          const ok = plant.sun.some(s => s === 'part_shade' || s === 'full_shade');
+          if (!ok) continue;
         }
 
-        // Place it
         placedPositions.push({ lat, lng, spreadInches: spread });
         result.push({
           plantSlug: plant.slug,
           commonName: plant.commonName,
           scientificName: plant.scientificName,
-          gridX: 0,
-          gridY: 0,
+          gridX: 0, gridY: 0,
           quantity: 1,
           bloomColor: plant.bloomColor,
           heightMaxInches: plant.heightMaxInches,
           notes: '',
-          lat,
-          lng,
+          lat, lng,
           imageUrl: plant.imageUrl || '',
           spreadInches: spread,
           speciesIndex: speciesIndexMap.get(plant.slug) || 0,
           plantType: plant.plantType,
-          groupId: `${plant.slug}-${Math.floor(placedInClump / clumpSize)}`,
         });
 
-        placedInClump++;
         placed = true;
-
-        if (c === 0) {
-          clumpSeedLat = lat;
-          clumpSeedLng = lng;
-        }
+        if (c === 0) { clumpSeedLat = lat; clumpSeedLng = lng; }
         break;
       }
 
-      if (!placed && c === 0) break; // Can't place seed, skip this species entirely
+      // If seed can't place, try one random position (don't skip species entirely)
+      if (!placed && c === 0) {
+        const lat = bounds.minLat + Math.random() * latRange;
+        const lng = bounds.minLng + Math.random() * lngRange;
+        if (!polygon || isInsidePolygon(lat, lng, polygon)) {
+          if (!isInExclusionZone(lat, lng, exclusionZones)) {
+            placedPositions.push({ lat, lng, spreadInches: spread });
+            result.push({
+              plantSlug: plant.slug, commonName: plant.commonName,
+              scientificName: plant.scientificName,
+              gridX: 0, gridY: 0, quantity: 1,
+              bloomColor: plant.bloomColor, heightMaxInches: plant.heightMaxInches,
+              notes: '', lat, lng,
+              imageUrl: plant.imageUrl || '',
+              spreadInches: spread,
+              speciesIndex: speciesIndexMap.get(plant.slug) || 0,
+              plantType: plant.plantType,
+            });
+            clumpSeedLat = lat; clumpSeedLng = lng;
+          }
+        }
+        // Still continue with remaining clump members
+      }
     }
   }
 

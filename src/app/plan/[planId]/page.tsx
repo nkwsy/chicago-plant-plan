@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import MapContainer from '@/components/map/MapContainer';
 import PlantingLegend from '@/components/plan/PlantingLegend';
+import GridPlanView from '@/components/plan/GridPlanView';
 import type { PlanData, PlanPlant } from '@/types/plan';
 import { SUPPLIERS } from '@/lib/suppliers';
 
@@ -150,36 +151,18 @@ export default function PlanViewPage() {
       {/* Tab content */}
       {activeTab === 'layout' && (
         <div>
-          {/* 3D Satellite planting map */}
-          <div className="h-[400px] md:h-[500px] rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-4">
-            <MapContainer
-              center={[plan.centerLat, plan.centerLng]}
-              zoom={20}
-              pitch={50}
-              showSearch={false}
-              show3D={true}
-              showSunlight={true}
-              style="satellite-streets"
-              height="100%"
-              areaOutline={plan.areaGeoJson as any}
-              exclusionZones={(plan as any).exclusionZones || []}
-              existingTrees={(plan as any).existingTrees || []}
-              plantPlacements={plan.plants
-                .filter(p => p.lat && p.lng)
-                .map(p => ({
-                  lat: p.lat!,
-                  lng: p.lng!,
-                  color: p.bloomColor,
-                  name: p.commonName,
-                  slug: p.plantSlug,
-                  imageUrl: p.imageUrl,
-                  spreadInches: p.spreadInches,
-                  speciesIndex: p.speciesIndex,
-                  plantType: p.plantType,
-                }))}
-              onPlantClick={(slug) => setSelectedPlant(slug === selectedPlant ? null : slug)}
-            />
-          </div>
+          {/* 2D Grid Plan View */}
+          <GridPlanView
+            widthFt={Math.max(10, Math.round(Math.sqrt(plan.areaSqFt || 400) * 1.2))}
+            heightFt={Math.max(10, Math.round((plan.areaSqFt || 400) / Math.max(10, Math.round(Math.sqrt(plan.areaSqFt || 400) * 1.2))))}
+            centerLat={plan.centerLat}
+            centerLng={plan.centerLng}
+            plants={plan.plants}
+            exclusionZones={(plan as any).exclusionZones || []}
+            existingTrees={(plan as any).existingTrees || []}
+            selectedSlug={selectedPlant}
+            onPlantClick={(slug) => setSelectedPlant(slug === selectedPlant ? null : slug)}
+          />
 
           {/* Plant legend */}
           <PlantingLegend
