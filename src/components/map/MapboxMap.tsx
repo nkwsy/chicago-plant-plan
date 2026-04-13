@@ -96,20 +96,39 @@ function addMapLayers(
   areaOutline: GeoJSON.Polygon | null | undefined,
   show3D: boolean,
 ) {
-  // 3D buildings
+  // 3D buildings with shadow support
   if (show3D) {
     const layers = map.getStyle().layers;
     const labelLayerId = layers?.find(l => l.type === 'symbol' && l.layout?.['text-field'])?.id;
-    map.addLayer({
-      id: '3d-buildings', source: 'composite', 'source-layer': 'building',
-      filter: ['==', 'extrude', 'true'], type: 'fill-extrusion', minzoom: 14,
-      paint: {
-        'fill-extrusion-color': '#ddd',
-        'fill-extrusion-height': ['get', 'height'],
-        'fill-extrusion-base': ['get', 'min_height'],
-        'fill-extrusion-opacity': 0.6,
-      },
-    }, labelLayerId);
+    try {
+      map.addLayer({
+        id: '3d-buildings', source: 'composite', 'source-layer': 'building',
+        filter: ['==', 'extrude', 'true'], type: 'fill-extrusion', minzoom: 14,
+        paint: {
+          'fill-extrusion-color': '#ddd',
+          'fill-extrusion-height': ['get', 'height'],
+          'fill-extrusion-base': ['get', 'min_height'],
+          'fill-extrusion-opacity': 0.75,
+          'fill-extrusion-cast-shadows': true,
+          'fill-extrusion-receive-shadows': true,
+        } as any,
+      }, labelLayerId);
+    } catch (e) {
+      // Fallback: add without shadow properties if not supported
+      console.warn('3D buildings shadow setup failed, using fallback:', e);
+      try {
+        map.addLayer({
+          id: '3d-buildings', source: 'composite', 'source-layer': 'building',
+          filter: ['==', 'extrude', 'true'], type: 'fill-extrusion', minzoom: 14,
+          paint: {
+            'fill-extrusion-color': '#ddd',
+            'fill-extrusion-height': ['get', 'height'],
+            'fill-extrusion-base': ['get', 'min_height'],
+            'fill-extrusion-opacity': 0.6,
+          },
+        }, labelLayerId);
+      } catch { /* layer may already exist */ }
+    }
   }
 
   // Area outline
@@ -440,7 +459,18 @@ export default function MapboxMap({
   // Sun position
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !showSunlight) return;
+    if (!map) return;
+    if (!showSunlight) {
+      // Reset lighting when sunlight disabled
+      try {
+        if (map.isStyleLoaded()) {
+          try { (map as any).setLights(null); } catch { /* fallback */ }
+          map.setLight({ anchor: 'viewport', intensity: 0.5, color: '#ffffff' });
+          try { if (map.getLayer('sky')) map.removeLayer('sky'); } catch { /* ok */ }
+        }
+      } catch { /* style not loaded */ }
+      return;
+    }
     const update = () => updateSunPosition(map, center[0], center[1], sunHour);
     if (map.isStyleLoaded()) update();
     else map.once('style.load', update);
@@ -572,11 +602,69 @@ function updateSunPosition(map: mapboxgl.Map, lat: number, lng: number, hour: nu
   const date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), Math.floor(hour), (hour % 1) * 60);
   const sunPos = SunCalc.getPosition(date, lat, lng);
   const altitude = sunPos.altitude * (180 / Math.PI);
-  const azimuth = sunPos.azimuth * (180 / Math.PI) + 180;
-  if (altitude > 0) {
-    map.setLight({ anchor: 'map', position: [1.5, azimuth, altitude], intensity: 0.5, color: altitude < 15 ? '#ff9944' : '#ffffff' });
-  } else {
-    map.setLight({ anchor: 'map', position: [1.5, 0, 5], intensity: 0.15, color: '#334466' });
+  // SunCalc azimuth: 0=south, clockwise. Convert to compass bearing (0=north).
+  const azimuth = (sunPos.azimuth * (180 / Math.PI) + 180) % 360;
+
+  // Use setLights() with directional + ambient for real shadow casting
+  try {
+    if (altitude > 0) {
+      const warmth = altitude < 15 ? '#ff9944' : altitude < 30 ? '#ffe0b2' : '#ffffff';
+      const ambientIntensity = 0.2 + Math.min(altitude / 90, 1) * 0.3;
+      const directionalIntensity = 0.3 + Math.min(altitude / 60, 1) * 0.5;
+
+      (map as any).setLights([
+        { id: 'ambient', type: 'ambient', properties: { color: warmth, intensity: ambientIntensity } },
+        {
+          id: 'sun', type: 'directional', properties: {
+            direction: [azimuth, altitude],
+            color: warmth,
+            intensity: directionalIntensity,
+            'cast-shadows': true,
+            'shadow-intensity': 0.6,
+          },
+        },
+      ]);
+    } else {
+      (map as any).setLights([
+        { id: 'ambient', type: 'ambient', properties: { color: '#334466', intensity: 0.3 } },
+        {
+          id: 'sun', type: 'directional', properties: {
+            direction: [0, 5],
+            color: '#334466',
+            intensity: 0.05,
+            'cast-shadows': false,
+            'shadow-intensity': 0,
+          },
+        },
+      ]);
+    }
+  } catch {
+    // Fallback for older GL JS versions without setLights
+    if (altitude > 0) {
+      map.setLight({ anchor: 'map', position: [1.5, azimuth, altitude], intensity: 0.5, color: altitude < 15 ? '#ff9944' : '#ffffff' });
+    } else {
+      map.setLight({ anchor: 'map', position: [1.5, 0, 5], intensity: 0.15, color: '#334466' });
+    }
+  }
+
+  // Update sky layer for atmospheric sun rendering
+  try {
+    if (map.getLayer('sky')) {
+      map.setPaintProperty('sky', 'sky-atmosphere-sun', altitude > 0 ? [azimuth, altitude] : [0, 0]);
+    } else if (altitude > 0) {
+      map.addLayer({
+        id: 'sky', type: 'sky' as any, paint: {
+          'sky-type': 'atmosphere' as any,
+          'sky-atmosphere-sun': [azimuth, altitude] as any,
+          'sky-atmosphere-sun-intensity': 5,
+          'sky-atmosphere-color': 'rgba(135, 206, 235, 0.5)' as any,
+          'sky-atmosphere-halo-color': 'rgba(255, 200, 100, 0.4)' as any,
+          'sky-opacity': 0.5,
+        },
+      });
+    }
+  } catch {
+    // Sky layer not supported — skip
   }
 }
 
