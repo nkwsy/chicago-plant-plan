@@ -57,6 +57,52 @@ body {
   border-radius: 8px !important;
 }
 
+/* Mapbox GL Draw controls styling */
+.mapboxgl-ctrl-group {
+  border-radius: 10px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+  overflow: hidden;
+}
+.mapboxgl-ctrl-group button {
+  width: 36px !important;
+  height: 36px !important;
+}
+.mapbox-gl-draw_polygon {
+  background-image: none !important;
+  position: relative;
+}
+.mapbox-gl-draw_polygon::after {
+  content: '⬡';
+  font-size: 18px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.mapbox-gl-draw_trash {
+  background-image: none !important;
+  position: relative;
+}
+.mapbox-gl-draw_trash::after {
+  content: '🗑';
+  font-size: 14px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.mapboxgl-ctrl-top-right .mapboxgl-ctrl {
+  margin-top: 8px;
+  margin-right: 8px;
+}
+
+/* Mapbox popup styling */
+.mapboxgl-popup-content {
+  border-radius: 10px !important;
+  padding: 0 !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15) !important;
+}
+
 /* Plant tooltips on satellite map */
 .plant-tooltip {
   background: rgba(0,0,0,0.8) !important;

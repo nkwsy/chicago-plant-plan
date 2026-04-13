@@ -1,6 +1,6 @@
 import type { Plant } from '@/types/plant';
 import type { SiteProfile } from '@/types/analysis';
-import type { UserPreferences, PlanPlant } from '@/types/plan';
+import type { UserPreferences, PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
 import { filterPlantsBySite, filterPlantsByPreferences } from './filter';
 import { scorePlant, calculateDiversityScore } from './score';
 import { calculateGridSize, layoutPlants } from './layout';
@@ -21,15 +21,13 @@ export function generatePlan(
   areaSqFt: number,
   polygon?: GeoJSON.Polygon | null,
   center?: [number, number],
+  exclusionZones: ExclusionZone[] = [],
+  existingTrees: ExistingTree[] = [],
 ): GeneratedPlan {
-  // Step 1: Filter by site conditions
   const siteCompatible = filterPlantsBySite(allPlants, siteProfile);
-
-  // Step 2: Filter by user preferences
   const prefFiltered = filterPlantsByPreferences(siteCompatible, preferences);
 
   if (prefFiltered.length === 0) {
-    // Fallback: relax filters
     const relaxed = filterPlantsByPreferences(siteCompatible, {
       ...preferences,
       maxHeightInches: null,
@@ -38,10 +36,10 @@ export function generatePlan(
     if (relaxed.length === 0) {
       return { plants: [], selectedSpecies: [], gridCols: 3, gridRows: 3, areaSqFt, diversityScore: 0 };
     }
-    return generateFromCandidates(relaxed, preferences, areaSqFt, polygon, center);
+    return generateFromCandidates(relaxed, preferences, areaSqFt, polygon, center, exclusionZones, existingTrees);
   }
 
-  return generateFromCandidates(prefFiltered, preferences, areaSqFt, polygon, center);
+  return generateFromCandidates(prefFiltered, preferences, areaSqFt, polygon, center, exclusionZones, existingTrees);
 }
 
 function generateFromCandidates(
@@ -50,6 +48,8 @@ function generateFromCandidates(
   areaSqFt: number,
   polygon?: GeoJSON.Polygon | null,
   center?: [number, number],
+  exclusionZones: ExclusionZone[] = [],
+  existingTrees: ExistingTree[] = [],
 ): GeneratedPlan {
   const gridConfig = calculateGridSize(areaSqFt);
   const targetSpecies = Math.min(
@@ -57,7 +57,7 @@ function generateFromCandidates(
     preferences.targetSpeciesCount || 10
   );
 
-  // Step 3: Greedy selection with diversity scoring
+  // Greedy selection with diversity scoring
   const selected: Plant[] = [];
   const remaining = [...candidates];
   const ctx = {
@@ -68,7 +68,6 @@ function generateFromCandidates(
     preferences,
   };
 
-  // Ensure mix of plant types - reserve slots
   const typeTargets: Record<string, number> = {
     forb: Math.ceil(targetSpecies * 0.45),
     grass: Math.ceil(targetSpecies * 0.2),
@@ -77,20 +76,15 @@ function generateFromCandidates(
   const typeCounts: Record<string, number> = {};
 
   while (selected.length < targetSpecies && remaining.length > 0) {
-    // Score all remaining
     let bestIdx = 0;
     let bestScore = -1;
 
     for (let i = 0; i < remaining.length; i++) {
       let score = scorePlant(remaining[i], ctx);
-
-      // Boost underrepresented types
       const type = remaining[i].plantType;
       const currentCount = typeCounts[type] || 0;
       const target = typeTargets[type] || 1;
-      if (currentCount < target) {
-        score += 15;
-      }
+      if (currentCount < target) score += 15;
 
       if (score > bestScore) {
         bestScore = score;
@@ -101,7 +95,6 @@ function generateFromCandidates(
     const chosen = remaining.splice(bestIdx, 1)[0];
     selected.push(chosen);
 
-    // Update context
     ctx.selectedFamilies.add(chosen.family);
     ctx.selectedTypes.add(chosen.plantType);
     ctx.selectedColors.add(chosen.bloomColor);
@@ -111,8 +104,12 @@ function generateFromCandidates(
     typeCounts[chosen.plantType] = (typeCounts[chosen.plantType] || 0) + 1;
   }
 
-  // Step 4: Layout (with geo-coordinates if polygon/center available)
-  const planPlants = layoutPlants(selected, gridConfig, polygon, center);
+  // Layout with spacing, exclusion zones, and tree shade
+  const planPlants = layoutPlants(
+    selected, gridConfig, polygon, center,
+    exclusionZones, existingTrees,
+    preferences.aestheticPref || 'mixed',
+  );
   const diversityScore = calculateDiversityScore(selected);
 
   return {

@@ -1,4 +1,5 @@
 import type { SiteProfile } from './analysis';
+import type { PlantType, SunRequirement } from './plant';
 
 export interface UserPreferences {
   effortLevel: 'low' | 'medium' | 'high';
@@ -24,6 +25,26 @@ export interface PlanPlant {
   lat?: number;
   lng?: number;
   imageUrl?: string;
+  // V2 layout fields
+  spreadInches?: number;
+  speciesIndex?: number;
+  plantType?: PlantType;
+  groupId?: string;
+}
+
+export interface ExclusionZone {
+  id: string;
+  geoJson: GeoJSON.Polygon;
+  label: string;
+  type: 'walkway' | 'patio' | 'shed' | 'driveway' | 'other';
+}
+
+export interface ExistingTree {
+  id: string;
+  lat: number;
+  lng: number;
+  canopyDiameterFt: number;
+  label: string;
 }
 
 export interface PlanData {
@@ -44,6 +65,10 @@ export interface PlanData {
   isPublic: boolean;
   createdAt: string;
   updatedAt: string;
+  // V2 fields
+  exclusionZones?: ExclusionZone[];
+  existingTrees?: ExistingTree[];
+  layoutVersion?: number;
 }
 
 export interface QuoteRequest {

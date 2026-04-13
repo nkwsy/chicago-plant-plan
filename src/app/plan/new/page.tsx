@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import MapContainer from '@/components/map/MapContainer';
+import PlantingLegend from '@/components/plan/PlantingLegend';
 import type { SiteProfile } from '@/types/analysis';
-import type { UserPreferences, PlanPlant } from '@/types/plan';
+import type { UserPreferences, PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
 
 type Step = 'location' | 'analysis' | 'preferences' | 'plan';
 
@@ -34,6 +35,10 @@ export default function NewPlanPage() {
     specialFeatures: [],
     targetSpeciesCount: 5,
   });
+  const [exclusionZones, setExclusionZones] = useState<ExclusionZone[]>([]);
+  const [existingTrees, setExistingTrees] = useState<ExistingTree[]>([]);
+  const [editMode, setEditMode] = useState<'none' | 'exclusion' | 'tree'>('none');
+  const [selectedPlantSlug, setSelectedPlantSlug] = useState<string | null>(null);
   const [generatedPlan, setGeneratedPlan] = useState<{
     plants: PlanPlant[];
     gridCols: number;
@@ -87,7 +92,8 @@ export default function NewPlanPage() {
       const areaSqFt = location.areaSqFt || 400; // Default 20x20 ft
       const result = gen(
         allPlants, siteProfile, preferences, areaSqFt,
-        location.areaGeoJson, [location.lat, location.lng]
+        location.areaGeoJson, [location.lat, location.lng],
+        exclusionZones, existingTrees,
       );
 
       setGeneratedPlan({
@@ -136,6 +142,9 @@ export default function NewPlanPage() {
           gridRows: generatedPlan.gridRows,
           areaSqFt: location.areaSqFt || 400,
           diversityScore: generatedPlan.diversityScore,
+          exclusionZones,
+          existingTrees,
+          layoutVersion: 2,
         }),
       });
       const data = await res.json();
@@ -188,7 +197,12 @@ export default function NewPlanPage() {
                 zoom={12}
                 showDrawControls={true}
                 showSearch={true}
+                show3D={false}
+                style="satellite-streets"
                 height="100%"
+                editMode={editMode}
+                exclusionZones={exclusionZones}
+                existingTrees={existingTrees}
                 onLocationSelected={(lat, lng, address) => {
                   setLocation(prev => ({ ...prev, lat, lng, address }));
                 }}
@@ -200,9 +214,84 @@ export default function NewPlanPage() {
                     lng: center[1],
                     areaSqFt,
                   }));
+                  setEditMode('none');
+                }}
+                onExclusionZoneCreated={(zone) => {
+                  setExclusionZones(prev => [...prev, zone]);
+                  setEditMode('none');
+                }}
+                onExistingTreePlaced={(tree) => {
+                  setExistingTrees(prev => [...prev, tree]);
+                  setEditMode('none');
                 }}
               />
             </div>
+
+            {/* Site features toolbar */}
+            {location.lat > 0 && (
+              <div className="mb-4">
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <button
+                    onClick={() => setEditMode(editMode === 'exclusion' ? 'none' : 'exclusion')}
+                    className={`px-3 py-2 text-sm rounded-lg border transition-all flex items-center gap-2 ${
+                      editMode === 'exclusion' ? 'bg-gray-700 text-white border-gray-700' : 'border-stone-300 hover:bg-stone-50'
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+                    {editMode === 'exclusion' ? 'Drawing...' : 'Mark Walkway / Patio'}
+                  </button>
+                  <button
+                    onClick={() => setEditMode(editMode === 'tree' ? 'none' : 'tree')}
+                    className={`px-3 py-2 text-sm rounded-lg border transition-all flex items-center gap-2 ${
+                      editMode === 'tree' ? 'bg-green-700 text-white border-green-700' : 'border-stone-300 hover:bg-stone-50'
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 22V8M12 8C12 8 8 4 5 6C2 8 4 12 7 12C9 12 12 8 12 8ZM12 8C12 8 16 4 19 6C22 8 20 12 17 12C15 12 12 8 12 8Z" /></svg>
+                    {editMode === 'tree' ? 'Click map to place...' : 'Add Existing Tree'}
+                  </button>
+                </div>
+
+                {/* List of exclusion zones */}
+                {exclusionZones.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {exclusionZones.map((z, i) => (
+                      <div key={z.id} className="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded text-xs">
+                        <span className="text-gray-600">{z.label || `Zone ${i + 1}`}</span>
+                        <button onClick={() => setExclusionZones(prev => prev.filter(x => x.id !== z.id))}
+                          className="text-gray-400 hover:text-red-500">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* List of existing trees */}
+                {existingTrees.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    {existingTrees.map((t, i) => (
+                      <div key={t.id} className="flex items-center gap-2 bg-green-50 px-2 py-1 rounded text-xs">
+                        <span className="text-green-700">{t.label} ({t.canopyDiameterFt}ft canopy)</span>
+                        <select
+                          value={t.canopyDiameterFt}
+                          onChange={(e) => setExistingTrees(prev => prev.map(x => x.id === t.id ? { ...x, canopyDiameterFt: parseInt(e.target.value) } : x))}
+                          className="text-xs bg-white border border-green-200 rounded px-1"
+                        >
+                          <option value={10}>Small (10ft)</option>
+                          <option value={20}>Medium (20ft)</option>
+                          <option value={30}>Large (30ft)</option>
+                          <option value={40}>Very Large (40ft)</option>
+                        </select>
+                        <button onClick={() => setExistingTrees(prev => prev.filter(x => x.id !== t.id))}
+                          className="text-green-400 hover:text-red-500">
+                          <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             {location.address && (
               <div className="bg-surface rounded-lg p-4 border border-stone-200 mb-4">
@@ -215,7 +304,7 @@ export default function NewPlanPage() {
 
             {!location.areaGeoJson && location.lat > 0 && (
               <p className="text-sm text-amber-600 mb-4">
-                Use the rectangle or polygon tool (top-right of map) to draw your planting area.
+                Draw your planting area on the map using the polygon tool (top-right).
               </p>
             )}
 
@@ -497,17 +586,21 @@ export default function NewPlanPage() {
               />
             </div>
 
-            {/* Satellite planting map */}
-            <div className="h-[350px] md:h-[450px] rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-2">
+            {/* 3D Satellite planting map */}
+            <div className="h-[400px] md:h-[500px] rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-2">
               <MapContainer
                 center={[location.lat, location.lng]}
                 zoom={19}
+                pitch={50}
                 showSearch={false}
-                showLayerToggle={true}
-                defaultSatellite={true}
+                show3D={true}
+                showSunlight={true}
+                style="satellite-streets"
                 height="100%"
                 areaOutline={location.areaGeoJson}
-                plantMarkers={generatedPlan.plants
+                exclusionZones={exclusionZones}
+                existingTrees={existingTrees}
+                plantPlacements={generatedPlan.plants
                   .filter(p => p.lat && p.lng)
                   .map(p => ({
                     lat: p.lat!,
@@ -515,11 +608,16 @@ export default function NewPlanPage() {
                     color: p.bloomColor,
                     name: p.commonName,
                     slug: p.plantSlug,
+                    imageUrl: p.imageUrl,
+                    spreadInches: p.spreadInches,
+                    speciesIndex: p.speciesIndex,
+                    plantType: p.plantType,
                   }))}
+                onPlantClick={(slug) => setSelectedPlantSlug(slug === selectedPlantSlug ? null : slug)}
               />
             </div>
-            <p className="text-xs text-muted mb-6 text-center">
-              Each dot represents a plant placement. Toggle Map/Satellite view in the bottom-right.
+            <p className="text-xs text-muted mb-4 text-center">
+              Circles are sized to actual plant spread. Numbers match the legend below.
             </p>
 
             {/* Ecological impact */}
@@ -538,42 +636,13 @@ export default function NewPlanPage() {
               <EcoCard label="Diversity" value={`${generatedPlan.diversityScore}/100`} detail="diversity score" />
             </div>
 
-            {/* Plant list */}
-            <h3 className="text-lg font-semibold mb-4">Plant Manifest</h3>
-            <div className="grid gap-3 mb-8">
-              {getUniquePlants(generatedPlan.plants).map(({ plant, count }) => {
-                const species = generatedPlan.species.find((s: any) => s.slug === plant.plantSlug);
-                return (
-                  <div key={plant.plantSlug} className="flex items-start gap-3 p-3 bg-surface rounded-lg border border-stone-200">
-                    {species?.imageUrl ? (
-                      <img src={species.imageUrl} alt="" className="w-14 h-14 rounded-lg object-cover flex-shrink-0" loading="lazy" />
-                    ) : (
-                      <div className="w-14 h-14 rounded-lg flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: getPlantBgColor(plant.bloomColor) }}>
-                        <div className="w-8 h-8 rounded-full" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
-                      </div>
-                    )}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-baseline gap-2 flex-wrap">
-                        <span className="font-medium">{plant.commonName}</span>
-                        <span className="text-sm text-muted italic">{plant.scientificName}</span>
-                      </div>
-                      <div className="text-sm text-muted mt-1">
-                        Qty: {count} | Height: {plant.heightMaxInches}&quot; | Bloom: {plant.bloomColor}
-                      </div>
-                      {species?.description && (
-                        <p className="text-sm text-muted mt-1 line-clamp-2">{species.description}</p>
-                      )}
-                    </div>
-                    <button
-                      onClick={() => removePlantFromPlan(plant.plantSlug, plant.gridX, plant.gridY)}
-                      className="text-stone-400 hover:text-red-500 transition-colors flex-shrink-0 mt-1"
-                      title="Remove from plan"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                  </div>
-                );
-              })}
+            {/* Plant legend */}
+            <div className="mb-8">
+              <PlantingLegend
+                plants={generatedPlan.plants}
+                selectedSlug={selectedPlantSlug}
+                onSelect={setSelectedPlantSlug}
+              />
             </div>
 
             <div className="flex flex-wrap gap-3 justify-between">

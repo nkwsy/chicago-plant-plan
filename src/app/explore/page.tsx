@@ -34,9 +34,10 @@ export default function ExplorePage() {
           center={[41.8781, -87.6298]}
           zoom={10}
           showSearch={true}
-          markers={markers}
-          onMarkerClick={(id) => {
-            const plan = plans.find(p => p.planId === id);
+          style="streets"
+          planMarkers={markers}
+          onPlanMarkerClick={(id) => {
+            const plan = plans.find((p: any) => p.planId === id);
             setSelected(plan);
           }}
           height="100%"

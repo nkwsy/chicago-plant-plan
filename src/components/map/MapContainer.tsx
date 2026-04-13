@@ -2,7 +2,7 @@
 
 import dynamic from 'next/dynamic';
 
-const LeafletMap = dynamic(() => import('./LeafletMap'), {
+const MapboxMap = dynamic(() => import('./MapboxMap'), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full bg-stone-100 rounded-xl flex items-center justify-center">
@@ -16,4 +16,4 @@ const LeafletMap = dynamic(() => import('./LeafletMap'), {
   ),
 });
 
-export default LeafletMap;
+export default MapboxMap;

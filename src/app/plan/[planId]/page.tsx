@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import MapContainer from '@/components/map/MapContainer';
+import PlantingLegend from '@/components/plan/PlantingLegend';
 import type { PlanData, PlanPlant } from '@/types/plan';
 import { SUPPLIERS } from '@/lib/suppliers';
 
@@ -149,17 +150,21 @@ export default function PlanViewPage() {
       {/* Tab content */}
       {activeTab === 'layout' && (
         <div>
-          {/* Satellite planting map */}
+          {/* 3D Satellite planting map */}
           <div className="h-[400px] md:h-[500px] rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-4">
             <MapContainer
               center={[plan.centerLat, plan.centerLng]}
               zoom={19}
+              pitch={50}
               showSearch={false}
-              showLayerToggle={true}
-              defaultSatellite={true}
+              show3D={true}
+              showSunlight={true}
+              style="satellite-streets"
               height="100%"
               areaOutline={plan.areaGeoJson as any}
-              plantMarkers={plan.plants
+              exclusionZones={(plan as any).exclusionZones || []}
+              existingTrees={(plan as any).existingTrees || []}
+              plantPlacements={plan.plants
                 .filter(p => p.lat && p.lng)
                 .map(p => ({
                   lat: p.lat!,
@@ -167,55 +172,21 @@ export default function PlanViewPage() {
                   color: p.bloomColor,
                   name: p.commonName,
                   slug: p.plantSlug,
+                  imageUrl: p.imageUrl,
+                  spreadInches: p.spreadInches,
+                  speciesIndex: p.speciesIndex,
+                  plantType: p.plantType,
                 }))}
               onPlantClick={(slug) => setSelectedPlant(slug === selectedPlant ? null : slug)}
             />
           </div>
 
-          {/* Selected plant detail */}
-          {selectedPlant && (
-            <div className="bg-surface p-4 rounded-lg border border-primary/20 mb-4">
-              {(() => {
-                const p = plan.plants.find(pp => pp.plantSlug === selectedPlant);
-                if (!p) return null;
-                return (
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full flex-shrink-0" style={{ backgroundColor: getPlantColor(p.bloomColor) }} />
-                    <div>
-                      <div className="font-semibold">{p.commonName}</div>
-                      <div className="text-sm text-muted italic">{p.scientificName}</div>
-                      <div className="text-sm text-muted mt-1">Max height: {p.heightMaxInches}&quot; &middot; Bloom: {p.bloomColor}</div>
-                    </div>
-                    <button
-                      onClick={() => removePlant(p.plantSlug)}
-                      className="ml-auto text-stone-400 hover:text-red-500 transition-colors"
-                      title="Remove from plan"
-                    >
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                    </button>
-                  </div>
-                );
-              })()}
-            </div>
-          )}
-
-          {/* Legend */}
-          <div className="flex flex-wrap gap-3 mt-2">
-            {uniquePlants.slice(0, 16).map(({ plant }) => (
-              <button
-                key={plant.plantSlug}
-                onClick={() => setSelectedPlant(plant.plantSlug === selectedPlant ? null : plant.plantSlug)}
-                className={`flex items-center gap-1.5 text-xs px-2 py-1 rounded-full transition-all ${
-                  selectedPlant === plant.plantSlug
-                    ? 'bg-primary/10 ring-1 ring-primary text-primary'
-                    : 'hover:bg-stone-100'
-                }`}
-              >
-                <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
-                {plant.commonName}
-              </button>
-            ))}
-          </div>
+          {/* Plant legend */}
+          <PlantingLegend
+            plants={plan.plants}
+            selectedSlug={selectedPlant}
+            onSelect={setSelectedPlant}
+          />
         </div>
       )}
 

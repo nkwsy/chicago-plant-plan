@@ -86,8 +86,9 @@ export default function HomePage() {
           <MapContainer
             center={[41.8781, -87.6298]}
             zoom={10}
-            markers={markers}
-            onMarkerClick={(id) => { window.location.href = `/plan/${id}`; }}
+            style="streets"
+            planMarkers={markers}
+            onPlanMarkerClick={(id) => { window.location.href = `/plan/${id}`; }}
             height="400px"
           />
         </div>
