@@ -20,6 +20,7 @@ export default function PlanViewPage() {
   const [saving, setSaving] = useState(false);
   const [allPlants, setAllPlants] = useState<any[]>([]);
   const [showSatellite, setShowSatellite] = useState(false);
+  const [showSatBg, setShowSatBg] = useState(false);
   const [showShadows, setShowShadows] = useState(false);
   const [shadowHour, setShadowHour] = useState(14);
 
@@ -179,15 +180,26 @@ export default function PlanViewPage() {
             </div>
 
             {!showSatellite && (
-              <button
-                onClick={() => setShowShadows(s => !s)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
-                  showShadows ? 'bg-slate-700 text-white border-slate-700' : 'border-stone-300 hover:border-stone-400 bg-white'
-                }`}
-              >
-                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
-                Shadows
-              </button>
+              <>
+                <button
+                  onClick={() => setShowSatBg(s => !s)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
+                    showSatBg ? 'bg-blue-600 text-white border-blue-600' : 'border-stone-300 hover:border-stone-400 bg-white'
+                  }`}
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
+                  Satellite
+                </button>
+                <button
+                  onClick={() => setShowShadows(s => !s)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
+                    showShadows ? 'bg-slate-700 text-white border-slate-700' : 'border-stone-300 hover:border-stone-400 bg-white'
+                  }`}
+                >
+                  <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+                  Shadows
+                </button>
+              </>
             )}
 
             <div className="flex items-center gap-2 ml-1">
@@ -243,6 +255,7 @@ export default function PlanViewPage() {
               selectedSlug={selectedPlant}
               onPlantClick={(slug) => setSelectedPlant(slug === selectedPlant ? null : slug)}
               nearbyBuildings={(plan.siteProfile as any)?.nearbyBuildings}
+              showSatellite={showSatBg}
               showShadows={showShadows}
               shadowHour={shadowHour}
             />

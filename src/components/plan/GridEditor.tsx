@@ -16,8 +16,8 @@ interface GridEditorProps {
 
 type Tool = 'select' | 'path' | 'tree';
 
-const GRID_SPACING_FT = 2; // Grid lines every 2 feet
-const PX_PER_FT = 24; // Pixels per foot for display
+const GRID_SPACING_FT = 2;
+const PX_PER_FT = 24;
 const TREE_SIZES = [
   { label: 'Small', diameterFt: 10 },
   { label: 'Medium', diameterFt: 20 },
@@ -42,17 +42,28 @@ export default function GridEditor({
   const svgWidth = widthFt * PX_PER_FT;
   const svgHeight = heightFt * PX_PER_FT;
 
-  // Convert pixel position to feet
   const pxToFt = (px: number) => px / PX_PER_FT;
-  // Convert feet to pixel
   const ftToPx = (ft: number) => ft * PX_PER_FT;
 
-  // Convert grid feet to lat/lng offset from center
+  // ── Satellite background ──────────────────────────────────────────────────
+  const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+  const metersPerFt = 0.3048;
+  const latPerFt = metersPerFt / 111320;
+  const lngPerFt = metersPerFt / (111320 * Math.cos(centerLat * Math.PI / 180));
+  const minLat = centerLat - (heightFt / 2) * latPerFt;
+  const maxLat = centerLat + (heightFt / 2) * latPerFt;
+  const minLng = centerLng - (widthFt / 2) * lngPerFt;
+  const maxLng = centerLng + (widthFt / 2) * lngPerFt;
+
+  const satImgW = Math.min(1280, Math.round(svgWidth));
+  const satImgH = Math.min(1280, Math.round(svgHeight));
+  const satelliteUrl = MAPBOX_TOKEN && centerLat !== 0
+    ? `https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/[${minLng},${minLat},${maxLng},${maxLat}]/${satImgW}x${satImgH}@2x?access_token=${MAPBOX_TOKEN}&padding=0`
+    : null;
+
   const ftToLatLng = useCallback((xFt: number, yFt: number) => {
-    const metersPerFt = 0.3048;
-    // x = east/west (lng), y = north/south (lat). SVG y is inverted (0=top=north)
     const dLng = ((xFt - widthFt / 2) * metersPerFt) / (111320 * Math.cos(centerLat * Math.PI / 180));
-    const dLat = -((yFt - heightFt / 2) * metersPerFt) / 111320; // negative because SVG y is inverted
+    const dLat = -((yFt - heightFt / 2) * metersPerFt) / 111320;
     return { lat: centerLat + dLat, lng: centerLng + dLng };
   }, [widthFt, heightFt, centerLat, centerLng]);
 
@@ -68,7 +79,6 @@ export default function GridEditor({
   function handleMouseDown(e: React.MouseEvent<SVGSVGElement>) {
     if (activeTool === 'path') {
       const pt = getSVGPoint(e);
-      // Snap to grid
       const snappedX = Math.round(pt.x / ftToPx(GRID_SPACING_FT)) * ftToPx(GRID_SPACING_FT);
       const snappedY = Math.round(pt.y / ftToPx(GRID_SPACING_FT)) * ftToPx(GRID_SPACING_FT);
       setDrawStart({ x: snappedX, y: snappedY });
@@ -85,7 +95,6 @@ export default function GridEditor({
         canopyDiameterFt: treeSize,
         label: 'Existing Tree',
       };
-      // Also store grid position for rendering
       (newTree as any).gridXFt = xFt;
       (newTree as any).gridYFt = yFt;
       onExistingTreesChange([...existingTrees, newTree]);
@@ -127,7 +136,6 @@ export default function GridEditor({
     const wFt = pxToFt(w);
     const hFt = pxToFt(h);
 
-    // Convert rectangle corners to lat/lng polygon
     const tl = ftToLatLng(xFt, yFt);
     const tr = ftToLatLng(xFt + wFt, yFt);
     const br = ftToLatLng(xFt + wFt, yFt + hFt);
@@ -144,7 +152,6 @@ export default function GridEditor({
       label: pathLabel || 'Path',
       type: 'walkway',
     };
-    // Store grid coordinates for rendering
     (zone as any).gridRect = { xFt, yFt, wFt, hFt };
 
     onExclusionZonesChange([...exclusionZones, zone]);
@@ -160,20 +167,31 @@ export default function GridEditor({
     onExistingTreesChange(existingTrees.filter(t => t.id !== id));
   }
 
-  // Render grid lines
+  // Grid lines — styled for satellite background
+  const hasSat = !!satelliteUrl;
   const gridLines: React.ReactElement[] = [];
   for (let x = 0; x <= widthFt; x += GRID_SPACING_FT) {
+    const major = x % 10 === 0;
     gridLines.push(
       <line key={`v${x}`} x1={ftToPx(x)} y1={0} x2={ftToPx(x)} y2={svgHeight}
-        stroke="#e5e7eb" strokeWidth={x % 10 === 0 ? 1.5 : 0.5} />
+        stroke={hasSat ? 'rgba(255,255,255,0.3)' : '#e5e7eb'}
+        strokeWidth={major ? 1.5 : 0.5}
+        strokeOpacity={hasSat ? (major ? 0.5 : 0.2) : 1} />
     );
   }
   for (let y = 0; y <= heightFt; y += GRID_SPACING_FT) {
+    const major = y % 10 === 0;
     gridLines.push(
       <line key={`h${y}`} x1={0} y1={ftToPx(y)} x2={svgWidth} y2={ftToPx(y)}
-        stroke="#e5e7eb" strokeWidth={y % 10 === 0 ? 1.5 : 0.5} />
+        stroke={hasSat ? 'rgba(255,255,255,0.3)' : '#e5e7eb'}
+        strokeWidth={major ? 1.5 : 0.5}
+        strokeOpacity={hasSat ? (major ? 0.5 : 0.2) : 1} />
     );
   }
+
+  const labelFill = hasSat ? 'white' : '#9ca3af';
+  const labelStroke = hasSat ? 'rgba(0,0,0,0.5)' : 'none';
+  const labelStrokeW = hasSat ? '2.5' : '0';
 
   return (
     <div>
@@ -211,17 +229,17 @@ export default function GridEditor({
       {/* Hint text */}
       <div className="text-xs text-muted mb-2">
         {activeTool === 'path' && 'Click and drag to draw a rectangular path or patio area.'}
-        {activeTool === 'tree' && 'Click to place an existing tree.'}
-        {activeTool === 'select' && 'Click items to select. Use the tools above to add features.'}
+        {activeTool === 'tree' && 'Click to place an existing tree. You can see them on the satellite image.'}
+        {activeTool === 'select' && 'Click items to remove them. Use the tools above to add features.'}
       </div>
 
-      {/* SVG Grid */}
-      <div className="border border-stone-300 rounded-xl overflow-hidden bg-white relative" style={{ maxWidth: '100%', overflowX: 'auto' }}>
+      {/* SVG Grid with satellite background */}
+      <div className="border border-stone-300 rounded-xl overflow-hidden bg-white relative shadow-sm" style={{ maxWidth: '100%', overflowX: 'auto' }}>
         {/* Dimension labels */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 bg-white px-2 py-0.5 text-xs font-medium text-muted z-10 rounded-b">
+        <div className={`absolute top-0 left-1/2 -translate-x-1/2 px-2 py-0.5 text-xs font-medium z-10 rounded-b ${hasSat ? 'bg-black/50 text-white' : 'bg-white text-muted'}`}>
           {widthFt} ft
         </div>
-        <div className="absolute top-1/2 right-0 -translate-y-1/2 bg-white px-2 py-0.5 text-xs font-medium text-muted z-10 rounded-l" style={{ writingMode: 'vertical-lr' }}>
+        <div className={`absolute top-1/2 right-0 -translate-y-1/2 px-2 py-0.5 text-xs font-medium z-10 rounded-l ${hasSat ? 'bg-black/50 text-white' : 'bg-white text-muted'}`} style={{ writingMode: 'vertical-lr' }}>
           {heightFt} ft
         </div>
 
@@ -235,21 +253,30 @@ export default function GridEditor({
           onMouseUp={handleMouseUp}
           onMouseLeave={() => { if (drawing) handleMouseUp(); }}
         >
-          {/* Background */}
-          <rect width={svgWidth} height={svgHeight} fill="#f0fdf4" />
+          {/* Background: satellite or plain */}
+          {satelliteUrl ? (
+            <image href={satelliteUrl} x={0} y={0} width={svgWidth} height={svgHeight}
+              preserveAspectRatio="xMidYMid slice" />
+          ) : (
+            <rect width={svgWidth} height={svgHeight} fill="#f0fdf4" />
+          )}
 
           {/* Grid lines */}
           {gridLines}
 
           {/* Ft labels on edges */}
           {Array.from({ length: Math.floor(widthFt / 5) + 1 }).map((_, i) => (
-            <text key={`xl${i}`} x={ftToPx(i * 5)} y={svgHeight - 4} fontSize="10" fill="#9ca3af" textAnchor="middle">
-              {i * 5}'
+            <text key={`xl${i}`} x={ftToPx(i * 5)} y={svgHeight - 4} fontSize="10"
+              fill={labelFill} textAnchor="middle"
+              stroke={labelStroke} strokeWidth={labelStrokeW} paintOrder="stroke">
+              {i * 5}&apos;
             </text>
           ))}
           {Array.from({ length: Math.floor(heightFt / 5) + 1 }).map((_, i) => (
-            <text key={`yl${i}`} x={4} y={ftToPx(i * 5)} fontSize="10" fill="#9ca3af" dominantBaseline="middle">
-              {i * 5}'
+            <text key={`yl${i}`} x={4} y={ftToPx(i * 5)} fontSize="10"
+              fill={labelFill} dominantBaseline="middle"
+              stroke={labelStroke} strokeWidth={labelStrokeW} paintOrder="stroke">
+              {i * 5}&apos;
             </text>
           ))}
 
@@ -260,9 +287,14 @@ export default function GridEditor({
             return (
               <g key={z.id} onClick={() => activeTool === 'select' && removeZone(z.id)} style={{ cursor: activeTool === 'select' ? 'pointer' : 'default' }}>
                 <rect x={ftToPx(rect.xFt)} y={ftToPx(rect.yFt)} width={ftToPx(rect.wFt)} height={ftToPx(rect.hFt)}
-                  fill="#9ca3af" fillOpacity={0.3} stroke="#6b7280" strokeWidth={2} strokeDasharray="8,4" rx={4} />
+                  fill={hasSat ? 'rgba(100,116,139,0.4)' : '#9ca3af'}
+                  fillOpacity={hasSat ? 0.4 : 0.3}
+                  stroke={hasSat ? 'rgba(255,255,255,0.7)' : '#6b7280'}
+                  strokeWidth={2} strokeDasharray="8,4" rx={4} />
                 <text x={ftToPx(rect.xFt + rect.wFt / 2)} y={ftToPx(rect.yFt + rect.hFt / 2)}
-                  textAnchor="middle" dominantBaseline="middle" fontSize="12" fill="#374151" fontWeight="500">
+                  textAnchor="middle" dominantBaseline="middle" fontSize="12" fontWeight="500"
+                  fill={hasSat ? 'white' : '#374151'}
+                  stroke={hasSat ? 'rgba(0,0,0,0.5)' : 'none'} strokeWidth={hasSat ? '2.5' : '0'} paintOrder="stroke">
                   {z.label}
                 </text>
               </g>
@@ -277,11 +309,13 @@ export default function GridEditor({
             return (
               <g key={t.id} onClick={() => activeTool === 'select' && removeTree(t.id)} style={{ cursor: activeTool === 'select' ? 'pointer' : 'default' }}>
                 <circle cx={ftToPx(xFt)} cy={ftToPx(yFt)} r={radiusPx}
-                  fill="#166534" fillOpacity={0.15} stroke="#166534" strokeWidth={2} strokeOpacity={0.5} />
+                  fill="#166534" fillOpacity={0.2} stroke={hasSat ? 'rgba(255,255,255,0.6)' : '#166534'} strokeWidth={2} strokeOpacity={0.6} />
                 <circle cx={ftToPx(xFt)} cy={ftToPx(yFt)} r={6}
                   fill="#78350f" stroke="white" strokeWidth={2} />
                 <text x={ftToPx(xFt)} y={ftToPx(yFt) - radiusPx - 6}
-                  textAnchor="middle" fontSize="11" fill="#166534" fontWeight="500">
+                  textAnchor="middle" fontSize="11" fontWeight="500"
+                  fill={hasSat ? 'white' : '#166534'}
+                  stroke={hasSat ? 'rgba(0,0,0,0.5)' : 'white'} strokeWidth="2.5" paintOrder="stroke">
                   {t.label} ({t.canopyDiameterFt}ft)
                 </text>
               </g>
@@ -295,14 +329,18 @@ export default function GridEditor({
               y={Math.min(drawStart.y, drawCurrent.y)}
               width={Math.abs(drawCurrent.x - drawStart.x)}
               height={Math.abs(drawCurrent.y - drawStart.y)}
-              fill="#9ca3af" fillOpacity={0.2} stroke="#6b7280" strokeWidth={2} strokeDasharray="8,4" rx={4}
+              fill={hasSat ? 'rgba(100,116,139,0.3)' : '#9ca3af'}
+              fillOpacity={hasSat ? 0.3 : 0.2}
+              stroke={hasSat ? 'rgba(255,255,255,0.7)' : '#6b7280'}
+              strokeWidth={2} strokeDasharray="8,4" rx={4}
             />
           )}
 
           {/* North arrow */}
           <g transform={`translate(${svgWidth - 30}, 30)`}>
-            <polygon points="0,-15 5,0 -5,0" fill="#374151" />
-            <text x={0} y={12} textAnchor="middle" fontSize="10" fill="#374151" fontWeight="bold">N</text>
+            <circle r={16} fill="rgba(15,23,42,0.55)" />
+            <polygon points="0,-11 3.5,2 -3.5,2" fill="white" />
+            <text x={0} y={12} textAnchor="middle" fontSize="8" fill="white" fontWeight="bold">N</text>
           </g>
         </svg>
       </div>

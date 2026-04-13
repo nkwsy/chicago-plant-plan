@@ -5,12 +5,40 @@ import type { ExistingTree } from '@/types/plan';
 export interface NearbyBuilding {
   lat: number;
   lng: number;
-  heightMeters: number; // estimated or from OSM tags
+  heightMeters: number;
+  widthMeters?: number;
+}
+
+/**
+ * Estimate local solar time offset from UTC using longitude.
+ * Returns hours to subtract from local time to get UTC.
+ * E.g., Chicago (lng ≈ -87.6) → offset ≈ -6 (standard) or -5 (DST).
+ */
+function estimateUTCOffset(lng: number, summer: boolean): number {
+  const stdOffset = Math.round(lng / 15);
+  // Rough DST: northern hemisphere gets +1 in summer
+  return summer ? stdOffset + 1 : stdOffset;
 }
 
 function getDaySunData(date: Date, lat: number, lng: number): DaySunData {
-  const times = SunCalc.getTimes(date, lat, lng);
-  const noonPosition = SunCalc.getPosition(new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0), lat, lng);
+  // Use SunCalc.getTimes with a properly constructed UTC date for this day
+  const utcDate = new Date(Date.UTC(
+    date.getUTCFullYear?.() ?? date.getFullYear(),
+    date.getUTCMonth?.() ?? date.getMonth(),
+    date.getUTCDate?.() ?? date.getDate(),
+    12, 0 // noon UTC as a reference point for the day
+  ));
+
+  const times = SunCalc.getTimes(utcDate, lat, lng);
+
+  // Compute actual local noon: sun is highest when it crosses the meridian
+  // Local noon UTC hour ≈ 12 - (lng / 15)
+  const localNoonUTC = 12 - (lng / 15);
+  const noonDate = new Date(Date.UTC(
+    utcDate.getUTCFullYear(), utcDate.getUTCMonth(), utcDate.getUTCDate(),
+    Math.floor(localNoonUTC), Math.round((localNoonUTC % 1) * 60)
+  ));
+  const noonPosition = SunCalc.getPosition(noonDate, lat, lng);
 
   const sunrise = times.sunrise;
   const sunset = times.sunset;
@@ -18,9 +46,20 @@ function getDaySunData(date: Date, lat: number, lng: number): DaySunData {
   const totalDaylightHours = daylightMs / (1000 * 60 * 60);
   const altitudeDeg = noonPosition.altitude * (180 / Math.PI);
 
+  // Format times in approximate local time
+  const tzOffset = estimateUTCOffset(lng, utcDate.getUTCMonth() >= 2 && utcDate.getUTCMonth() <= 10);
+  const formatLocalTime = (d: Date) => {
+    const localH = d.getUTCHours() + tzOffset;
+    const h = ((localH % 24) + 24) % 24;
+    const m = d.getUTCMinutes();
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return `${h12}:${m.toString().padStart(2, '0')} ${ampm}`;
+  };
+
   return {
-    sunrise: sunrise.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-    sunset: sunset.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+    sunrise: formatLocalTime(sunrise),
+    sunset: formatLocalTime(sunset),
     totalDaylightHours: Math.round(totalDaylightHours * 10) / 10,
     sunPathAltitudeNoon: Math.round(altitudeDeg * 10) / 10,
   };
@@ -29,17 +68,16 @@ function getDaySunData(date: Date, lat: number, lng: number): DaySunData {
 export function analyzeSunExposure(lat: number, lng: number): SunExposure {
   const year = new Date().getFullYear();
   return {
-    summerSolstice: getDaySunData(new Date(year, 5, 21), lat, lng),
-    winterSolstice: getDaySunData(new Date(year, 11, 21), lat, lng),
-    springEquinox: getDaySunData(new Date(year, 2, 20), lat, lng),
-    fallEquinox: getDaySunData(new Date(year, 8, 22), lat, lng),
+    summerSolstice: getDaySunData(new Date(Date.UTC(year, 5, 21)), lat, lng),
+    winterSolstice: getDaySunData(new Date(Date.UTC(year, 11, 21)), lat, lng),
+    springEquinox: getDaySunData(new Date(Date.UTC(year, 2, 20)), lat, lng),
+    fallEquinox: getDaySunData(new Date(Date.UTC(year, 8, 22)), lat, lng),
   };
 }
 
 /**
  * Compute effective sun hours considering existing trees and adjacent buildings.
- * For each hour of the growing season day (6AM-8PM), check if the garden
- * center is shadowed by any tree canopy or building using sun position + shadow projection.
+ * Samples multiple points across the garden area for accuracy.
  */
 export function estimateEffectiveSunHours(
   sunExposure: SunExposure,
@@ -52,7 +90,6 @@ export function estimateEffectiveSunHours(
 ): { summer: number; winter: number; average: number } {
   const hasObstructions = (existingTrees && existingTrees.length > 0) || (nearbyBuildings && nearbyBuildings.length > 0);
 
-  // If no obstructions or no location data, use a reasonable base estimate
   if (!lat || !lng || !hasObstructions) {
     const exposureFactor = 0.7;
     const summer = Math.round(sunExposure.summerSolstice.totalDaylightHours * exposureFactor * 10) / 10;
@@ -64,8 +101,38 @@ export function estimateEffectiveSunHours(
   const cLng = gardenCenterLng || lng;
   const year = new Date().getFullYear();
 
-  const summerHours = countDirectSunHours(new Date(year, 5, 21), cLat, cLng, existingTrees || [], nearbyBuildings || []);
-  const winterHours = countDirectSunHours(new Date(year, 11, 21), cLat, cLng, existingTrees || [], nearbyBuildings || []);
+  // Sample a 3x3 grid of points across the garden (±15ft from center)
+  const offsetFt = 15;
+  const metersPerFt = 0.3048;
+  const latPerFt = metersPerFt / 111320;
+  const lngPerFt = metersPerFt / (111320 * Math.cos(cLat * Math.PI / 180));
+
+  const samplePoints: { lat: number; lng: number }[] = [];
+  for (const dy of [-offsetFt, 0, offsetFt]) {
+    for (const dx of [-offsetFt, 0, offsetFt]) {
+      samplePoints.push({
+        lat: cLat + dy * latPerFt,
+        lng: cLng + dx * lngPerFt,
+      });
+    }
+  }
+
+  let summerTotal = 0;
+  let winterTotal = 0;
+
+  for (const pt of samplePoints) {
+    summerTotal += countDirectSunHours(
+      new Date(Date.UTC(year, 5, 21)), pt.lat, pt.lng,
+      existingTrees || [], nearbyBuildings || [],
+    );
+    winterTotal += countDirectSunHours(
+      new Date(Date.UTC(year, 11, 21)), pt.lat, pt.lng,
+      existingTrees || [], nearbyBuildings || [],
+    );
+  }
+
+  const summerHours = Math.round((summerTotal / samplePoints.length) * 10) / 10;
+  const winterHours = Math.round((winterTotal / samplePoints.length) * 10) / 10;
   const average = Math.round(((summerHours + winterHours) / 2) * 10) / 10;
 
   return { summer: summerHours, winter: winterHours, average };
@@ -73,7 +140,8 @@ export function estimateEffectiveSunHours(
 
 /**
  * Count hours of direct sun at a point, considering tree and building shadows.
- * Checks each hour from 6AM to 8PM.
+ * Iterates all 24 UTC hours and checks if the sun is above the horizon —
+ * no timezone assumptions needed.
  */
 function countDirectSunHours(
   date: Date,
@@ -85,16 +153,18 @@ function countDirectSunHours(
   let sunHours = 0;
   const metersPerFt = 0.3048;
 
-  for (let hour = 6; hour <= 20; hour++) {
-    const time = new Date(date.getFullYear(), date.getMonth(), date.getDate(), hour);
+  for (let utcHour = 0; utcHour < 24; utcHour++) {
+    const time = new Date(Date.UTC(
+      date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), utcHour,
+    ));
     const sunPos = SunCalc.getPosition(time, lat, lng);
     const altitudeDeg = sunPos.altitude * (180 / Math.PI);
 
-    if (altitudeDeg <= 0) continue;
+    // Skip hours when sun is below horizon
+    if (altitudeDeg <= 2) continue;
 
-    const azimuthDeg = sunPos.azimuth * (180 / Math.PI) + 180;
+    const azimuthDeg = sunPos.azimuth * (180 / Math.PI) + 180; // compass bearing
     const altRad = altitudeDeg * Math.PI / 180;
-    // Shadow direction = opposite of sun direction
     const shadowDirRad = ((azimuthDeg + 180) % 360) * Math.PI / 180;
     let inShadow = false;
 
@@ -116,23 +186,21 @@ function countDirectSunHours(
       }
     }
 
-    if (inShadow) { sunHours += 0; continue; }
+    if (inShadow) continue;
 
-    // Check building shadows
+    // Check building shadows — use actual building width for corridor
     for (const building of buildings) {
-      // Shadow length in meters: height / tan(altitude)
       const shadowLenMeters = building.heightMeters / Math.tan(altRad);
-      const shadowLenDegLat = shadowLenMeters / 111320;
-      const shadowLenDegLng = shadowLenMeters / (111320 * Math.cos(lat * Math.PI / 180));
+      const tipLat = building.lat + Math.cos(shadowDirRad) * shadowLenMeters / 111320;
+      const tipLng = building.lng + Math.sin(shadowDirRad) * shadowLenMeters / (111320 * Math.cos(lat * Math.PI / 180));
 
-      const tipLat = building.lat + Math.cos(shadowDirRad) * shadowLenDegLat;
-      const tipLng = building.lng + Math.sin(shadowDirRad) * shadowLenDegLng;
-
-      // Buildings cast a wide shadow — use half of typical building width (~10m) as shadow corridor
-      const shadowWidthDeg = 10 / 111320;
+      // Shadow corridor = half building width
+      const buildingWidthM = building.widthMeters || 15;
+      const shadowWidthDeg = (buildingWidthM / 2) / 111320;
       const distToShadow = pointToSegmentDist(lng, lat, building.lng, building.lat, tipLng, tipLat);
 
       if (distToShadow < shadowWidthDeg) {
+        // Verify garden point is on shadow side (away from sun)
         const dx = lng - building.lng, dy = lat - building.lat;
         const sdx = tipLng - building.lng, sdy = tipLat - building.lat;
         if (dx * sdx + dy * sdy > 0) { inShadow = true; break; }
