@@ -1,26 +1,131 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --green-50: #f0fdf4;
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --green-800: #166534;
+  --green-900: #14532d;
+  --amber-500: #f59e0b;
+  --sky-500: #0ea5e9;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: #fafaf9;
+  --color-foreground: #1c1917;
+  --color-primary: #15803d;
+  --color-primary-light: #22c55e;
+  --color-primary-dark: #14532d;
+  --color-accent: #f59e0b;
+  --color-muted: #78716c;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f5f5f4;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Leaflet overrides */
+.leaflet-container {
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  font-family: inherit;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: 0 1px 5px rgba(0,0,0,0.15) !important;
+}
+
+.leaflet-control-zoom a {
+  border-radius: 8px !important;
+  width: 36px !important;
+  height: 36px !important;
+  line-height: 36px !important;
+  font-size: 18px !important;
+}
+
+.leaflet-draw-toolbar a {
+  border-radius: 8px !important;
+}
+
+/* Plant tooltips on satellite map */
+.plant-tooltip {
+  background: rgba(0,0,0,0.8) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 6px !important;
+  padding: 4px 10px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+}
+.plant-tooltip::before {
+  border-top-color: rgba(0,0,0,0.8) !important;
+}
+
+/* Custom popup styles */
+.leaflet-popup-content-wrapper {
+  border-radius: 12px !important;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12) !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  font-family: inherit;
+}
+
+/* Print styles */
+@media print {
+  .no-print { display: none !important; }
+  .print-only { display: block !important; }
+  body { background: white; }
+}
+
+.print-only { display: none; }
+
+/* Smooth scroll */
+html { scroll-behavior: smooth; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #a8a29e; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #78716c; }
+
+/* Plant card bloom color dot */
+.bloom-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* Grid cell hover */
+.grid-cell {
+  transition: all 0.15s ease;
+}
+.grid-cell:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Wizard step transitions */
+.wizard-step {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }

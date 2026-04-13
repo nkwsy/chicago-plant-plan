@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  serverExternalPackages: ['mongoose'],
+  images: {
+    remotePatterns: [
+      { protocol: 'https', hostname: '**.prairiemoon.com' },
+      { protocol: 'https', hostname: '**.wikimedia.org' },
+    ],
+  },
 };
 
 export default nextConfig;
