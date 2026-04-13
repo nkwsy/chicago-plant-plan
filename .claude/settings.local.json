@@ -1,7 +1,23 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-turbopack)"
+      "Bash(npx create-next-app@latest . --typescript --tailwind --eslint --app --src-dir --import-alias \"@/*\" --use-npm --no-turbopack)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "mcp__Claude_Preview__preview_start",
+      "WebSearch",
+      "Bash(npx tsx:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(git remote:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(node -e ':*)",
+      "Bash(curl -s 'http://localhost:3000/api/plants?all=1')",
+      "Bash(node -e \"const d=require\\('fs'\\).readFileSync\\('/dev/stdin','utf8'\\); const p=JSON.parse\\(d\\); console.log\\('Count:', p.length\\); if\\(p[0]\\) console.log\\('First keys:', Object.keys\\(p[0]\\).join\\(', '\\)\\); if\\(p[0]\\) console.log\\('Has slug:', !!p[0].slug, 'Has sun:', Array.isArray\\(p[0].sun\\)\\);\")",
+      "Bash(npm i:*)",
+      "Bash(git reset:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

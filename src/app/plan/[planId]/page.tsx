@@ -161,61 +161,96 @@ export default function PlanViewPage() {
       {/* Tab content */}
       {activeTab === 'layout' && (
         <div>
-          {/* View controls */}
+          {/* View mode toggle */}
           <div className="flex items-center gap-2 mb-3 flex-wrap">
-            <button
-              onClick={() => setShowSatellite(s => !s)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
-                showSatellite ? 'bg-blue-600 text-white border-blue-600' : 'border-stone-300 hover:border-stone-400 bg-white'
-              }`}
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2} strokeLinecap="round"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" /></svg>
-              Satellite
-            </button>
-            <button
-              onClick={() => setShowShadows(s => !s)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
-                showShadows ? 'bg-slate-700 text-white border-slate-700' : 'border-stone-300 hover:border-stone-400 bg-white'
-              }`}
-            >
-              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
-              Shadows
-            </button>
-            {showShadows && (
-              <div className="flex items-center gap-2 ml-1">
-                <input
-                  type="range" min={6} max={20} step={0.5}
-                  value={shadowHour}
-                  onChange={e => setShadowHour(parseFloat(e.target.value))}
-                  className="w-28 accent-slate-600"
-                />
-                <span className="text-xs text-muted w-16">
-                  {shadowHour < 12 ? `${Math.floor(shadowHour)}:${String(Math.round((shadowHour%1)*60)).padStart(2,'0')} AM`
-                    : shadowHour === 12 ? '12:00 PM'
-                    : `${Math.floor(shadowHour)-12}:${String(Math.round((shadowHour%1)*60)).padStart(2,'0')} PM`}
-                </span>
-              </div>
+            <div className="flex rounded-lg border border-stone-200 overflow-hidden text-sm">
+              <button
+                onClick={() => setShowSatellite(false)}
+                className={`px-3 py-1.5 transition-colors ${!showSatellite ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+              >
+                Plan View
+              </button>
+              <button
+                onClick={() => setShowSatellite(true)}
+                className={`px-3 py-1.5 border-l border-stone-200 transition-colors ${showSatellite ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+              >
+                Satellite + 3D
+              </button>
+            </div>
+
+            {!showSatellite && (
+              <button
+                onClick={() => setShowShadows(s => !s)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
+                  showShadows ? 'bg-slate-700 text-white border-slate-700' : 'border-stone-300 hover:border-stone-400 bg-white'
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+                Shadows
+              </button>
             )}
+
+            <div className="flex items-center gap-2 ml-1">
+              <input
+                type="range" min={6} max={20} step={0.5}
+                value={shadowHour}
+                onChange={e => setShadowHour(parseFloat(e.target.value))}
+                className="w-24 accent-slate-600"
+              />
+              <span className="text-xs text-muted w-14">
+                {shadowHour < 12 ? `${Math.floor(shadowHour)}:${String(Math.round((shadowHour%1)*60)).padStart(2,'0')} AM`
+                  : shadowHour === 12 ? '12:00 PM'
+                  : `${Math.floor(shadowHour)-12}:${String(Math.round((shadowHour%1)*60)).padStart(2,'0')} PM`}
+              </span>
+            </div>
           </div>
 
-          {/* 2D Grid Plan View */}
-          <GridPlanView
-            widthFt={Math.max(10, Math.round(Math.sqrt(plan.areaSqFt || 400) * 1.2))}
-            heightFt={Math.max(10, Math.round((plan.areaSqFt || 400) / Math.max(10, Math.round(Math.sqrt(plan.areaSqFt || 400) * 1.2))))}
-            centerLat={plan.centerLat}
-            centerLng={plan.centerLng}
-            plants={plan.plants}
-            exclusionZones={(plan as any).exclusionZones || []}
-            existingTrees={(plan as any).existingTrees || []}
-            selectedSlug={selectedPlant}
-            onPlantClick={(slug) => setSelectedPlant(slug === selectedPlant ? null : slug)}
-            nearbyBuildings={(plan.siteProfile as any)?.nearbyBuildings}
-            showSatellite={showSatellite}
-            showShadows={showShadows}
-            shadowHour={shadowHour}
-          />
+          {/* Plan view: satellite 3D map OR clean SVG layout */}
+          {showSatellite ? (
+            <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-2" style={{ height: '460px' }}>
+              <MapContainer
+                center={[plan.centerLat, plan.centerLng]}
+                zoom={20}
+                style="satellite-streets"
+                show3D={true}
+                showSunlight={true}
+                showSearch={false}
+                areaOutline={(plan as any).areaGeoJson}
+                exclusionZones={(plan as any).exclusionZones || []}
+                existingTrees={(plan as any).existingTrees || []}
+                plantPlacements={plan.plants
+                  .filter(p => p.lat && p.lng)
+                  .map(p => ({
+                    lat: p.lat!, lng: p.lng!,
+                    color: p.bloomColor, name: p.commonName,
+                    slug: p.plantSlug, imageUrl: p.imageUrl,
+                    spreadInches: p.spreadInches, speciesIndex: p.speciesIndex,
+                    plantType: p.plantType,
+                  }))}
+                onPlantClick={(slug) => setSelectedPlant(slug === selectedPlant ? null : slug)}
+                height="100%"
+              />
+            </div>
+          ) : (
+            <GridPlanView
+              widthFt={Math.max(10, Math.round(Math.sqrt(plan.areaSqFt || 400) * 1.2))}
+              heightFt={Math.max(10, Math.round((plan.areaSqFt || 400) / Math.max(10, Math.round(Math.sqrt(plan.areaSqFt || 400) * 1.2))))}
+              centerLat={plan.centerLat}
+              centerLng={plan.centerLng}
+              plants={plan.plants}
+              exclusionZones={(plan as any).exclusionZones || []}
+              existingTrees={(plan as any).existingTrees || []}
+              selectedSlug={selectedPlant}
+              onPlantClick={(slug) => setSelectedPlant(slug === selectedPlant ? null : slug)}
+              nearbyBuildings={(plan.siteProfile as any)?.nearbyBuildings}
+              showShadows={showShadows}
+              shadowHour={shadowHour}
+            />
+          )}
           <p className="text-xs text-muted mt-2 mb-6 text-center">
-            Circles sized to plant spread. Numbers match legend below.
+            {showSatellite
+              ? '3D view — buildings cast real shadows. Use the time slider above to see shadow movement.'
+              : 'Numbered circles match the legend below. Colors show species zones.'}
           </p>
 
           {/* Plant legend with remove/swap */}
