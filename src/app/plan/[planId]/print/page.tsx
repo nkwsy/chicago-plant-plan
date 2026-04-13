@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import type { PlanPlant } from '@/types/plan';
 import { SUPPLIERS } from '@/lib/suppliers';
+import GridPlanView from '@/components/plan/GridPlanView';
 
 export default function PrintPlanPage() {
   const params = useParams();
@@ -42,6 +43,67 @@ export default function PrintPlanPage() {
         <p className="text-muted text-sm mb-6">
           {plan.areaSqFt?.toLocaleString()} sq ft | {uniquePlants.length} species | {plan.plants?.length || 0} plants | Diversity: {plan.diversityScore}/100
         </p>
+
+        {/* Plant layout diagram */}
+        {plan.plants?.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-2 border-b pb-1">Planting Layout</h2>
+            <GridPlanView
+              widthFt={Math.max(10, Math.round(Math.sqrt(plan.areaSqFt || 400) * 1.2))}
+              heightFt={Math.max(10, Math.round((plan.areaSqFt || 400) / Math.max(10, Math.round(Math.sqrt(plan.areaSqFt || 400) * 1.2))))}
+              centerLat={plan.centerLat}
+              centerLng={plan.centerLng}
+              plants={plan.plants}
+              exclusionZones={plan.exclusionZones || []}
+              existingTrees={plan.existingTrees || []}
+            />
+            <p className="text-xs text-muted text-center mt-1">
+              Circles sized to plant spread. Numbers correspond to species in the manifest below.
+            </p>
+          </div>
+        )}
+
+        {/* Bloom calendar */}
+        {uniquePlants.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold mb-2 border-b pb-1">Bloom Calendar</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead>
+                  <tr>
+                    <th className="text-left py-1 font-medium w-32">Plant</th>
+                    {['J','F','M','A','M','J','J','A','S','O','N','D'].map((m, i) => (
+                      <th key={i} className="text-center py-1 font-medium w-8">{m}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {uniquePlants.map(({ plant }) => {
+                    const start = (plant as any).bloomStartMonth ?? 5;
+                    const end = (plant as any).bloomEndMonth ?? 8;
+                    return (
+                      <tr key={plant.plantSlug} className="border-t border-stone-100">
+                        <td className="py-1 text-xs truncate max-w-[128px]">{plant.commonName}</td>
+                        {Array.from({ length: 12 }).map((_, i) => {
+                          const month = i + 1;
+                          const blooming = month >= start && month <= end;
+                          return (
+                            <td key={i} className="text-center py-0.5">
+                              {blooming && (
+                                <div className="w-5 h-5 rounded-full mx-auto"
+                                  style={{ backgroundColor: getPlantColor(plant.bloomColor), opacity: 0.75 }} />
+                              )}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
 
         {/* Site conditions */}
         {plan.siteProfile && (
@@ -108,6 +170,16 @@ export default function PrintPlanPage() {
       </div>
     </div>
   );
+}
+
+function getPlantColor(bloomColor: string): string {
+  const colors: Record<string, string> = {
+    purple: '#8b5cf6', blue: '#3b82f6', pink: '#ec4899', red: '#ef4444',
+    orange: '#f97316', yellow: '#eab308', white: '#94a3b8', green: '#22c55e',
+    lavender: '#a78bfa', gold: '#ca8a04', crimson: '#dc2626', coral: '#fb923c',
+    violet: '#7c3aed', magenta: '#d946ef', cream: '#d4a574', rose: '#f43f5e',
+  };
+  return colors[bloomColor?.toLowerCase()] || '#9ca3af';
 }
 
 function getUniquePlants(plants: PlanPlant[]): { plant: PlanPlant; count: number }[] {
