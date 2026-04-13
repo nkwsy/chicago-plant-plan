@@ -141,6 +141,7 @@ export function layoutPlants(
           notes: '',
           lat,
           lng,
+          imageUrl: plant.imageUrl || '',
         });
         placedInClump++;
         i++;

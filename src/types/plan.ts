@@ -8,6 +8,7 @@ export interface UserPreferences {
   maxHeightInches: number | null;
   avoidSlugs: string[];
   specialFeatures: string[];
+  targetSpeciesCount: number;
 }
 
 export interface PlanPlant {
@@ -22,6 +23,7 @@ export interface PlanPlant {
   notes: string;
   lat?: number;
   lng?: number;
+  imageUrl?: string;
 }
 
 export interface PlanData {

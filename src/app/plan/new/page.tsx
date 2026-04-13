@@ -32,6 +32,7 @@ export default function NewPlanPage() {
     maxHeightInches: null,
     avoidSlugs: [],
     specialFeatures: [],
+    targetSpeciesCount: 5,
   });
   const [generatedPlan, setGeneratedPlan] = useState<{
     plants: PlanPlant[];
@@ -396,6 +397,31 @@ export default function NewPlanPage() {
                 </div>
               </div>
 
+              {/* Species count */}
+              <div>
+                <label className="block font-medium mb-1">How many different species?</label>
+                <p className="text-sm text-muted mb-3">Start small and add more for greater diversity.</p>
+                <div className="flex items-center gap-4">
+                  <input
+                    type="range"
+                    min={3}
+                    max={40}
+                    step={1}
+                    value={preferences.targetSpeciesCount}
+                    onChange={(e) => setPreferences(p => ({ ...p, targetSpeciesCount: parseInt(e.target.value) }))}
+                    className="flex-1 accent-primary h-2 rounded-lg cursor-pointer"
+                  />
+                  <div className="w-16 text-center">
+                    <span className="text-2xl font-bold text-primary">{preferences.targetSpeciesCount}</span>
+                    <span className="text-xs text-muted block">species</span>
+                  </div>
+                </div>
+                <div className="flex justify-between text-xs text-muted mt-1 px-0.5">
+                  <span>Simple</span>
+                  <span>Diverse</span>
+                </div>
+              </div>
+
               {/* Special features */}
               <div>
                 <label className="block font-medium mb-3">Any special features? (optional)</label>
@@ -518,11 +544,14 @@ export default function NewPlanPage() {
               {getUniquePlants(generatedPlan.plants).map(({ plant, count }) => {
                 const species = generatedPlan.species.find((s: any) => s.slug === plant.plantSlug);
                 return (
-                  <div key={plant.plantSlug} className="flex items-start gap-4 p-4 bg-surface rounded-lg border border-stone-200">
-                    <div
-                      className="w-10 h-10 rounded-full flex-shrink-0 mt-1"
-                      style={{ backgroundColor: getPlantColor(plant.bloomColor) }}
-                    />
+                  <div key={plant.plantSlug} className="flex items-start gap-3 p-3 bg-surface rounded-lg border border-stone-200">
+                    {species?.imageUrl ? (
+                      <img src={species.imageUrl} alt="" className="w-14 h-14 rounded-lg object-cover flex-shrink-0" loading="lazy" />
+                    ) : (
+                      <div className="w-14 h-14 rounded-lg flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: getPlantBgColor(plant.bloomColor) }}>
+                        <div className="w-8 h-8 rounded-full" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
+                      </div>
+                    )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-baseline gap-2 flex-wrap">
                         <span className="font-medium">{plant.commonName}</span>
@@ -532,7 +561,7 @@ export default function NewPlanPage() {
                         Qty: {count} | Height: {plant.heightMaxInches}&quot; | Bloom: {plant.bloomColor}
                       </div>
                       {species?.description && (
-                        <p className="text-sm text-muted mt-1">{species.description}</p>
+                        <p className="text-sm text-muted mt-1 line-clamp-2">{species.description}</p>
                       )}
                     </div>
                     <button

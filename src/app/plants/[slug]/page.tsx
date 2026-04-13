@@ -37,10 +37,19 @@ export default function PlantDetailPage() {
       <Link href="/plants" className="text-muted text-sm hover:text-foreground mb-4 inline-block">← Back to plant guide</Link>
 
       <div className="md:flex gap-8">
-        {/* Image placeholder */}
-        <div className="w-full md:w-64 h-48 md:h-64 rounded-xl flex-shrink-0 flex items-center justify-center mb-6 md:mb-0"
-          style={{ backgroundColor: getPlantBgColor(plant.bloomColor) }}>
-          <div className="w-24 h-24 rounded-full" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
+        {/* Plant image */}
+        <div className="w-full md:w-72 h-56 md:h-72 rounded-xl flex-shrink-0 overflow-hidden mb-6 md:mb-0 bg-stone-100">
+          {plant.imageUrl ? (
+            <img
+              src={plant.imageUrl}
+              alt={plant.commonName}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: getPlantBgColor(plant.bloomColor) }}>
+              <div className="w-24 h-24 rounded-full" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
+            </div>
+          )}
         </div>
 
         <div className="flex-1">

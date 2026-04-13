@@ -4,8 +4,8 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ['mongoose'],
   images: {
     remotePatterns: [
-      { protocol: 'https', hostname: '**.prairiemoon.com' },
-      { protocol: 'https', hostname: '**.wikimedia.org' },
+      { protocol: 'https', hostname: 'static.inaturalist.org' },
+      { protocol: 'https', hostname: 'inaturalist-open-data.s3.amazonaws.com' },
     ],
   },
 };

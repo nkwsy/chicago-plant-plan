@@ -52,10 +52,9 @@ function generateFromCandidates(
   center?: [number, number],
 ): GeneratedPlan {
   const gridConfig = calculateGridSize(areaSqFt);
-  const totalCells = gridConfig.gridCols * gridConfig.gridRows;
   const targetSpecies = Math.min(
     candidates.length,
-    Math.max(8, Math.floor(totalCells * 0.7 / 2)) // Aim for good diversity
+    preferences.targetSpeciesCount || 10
   );
 
   // Step 3: Greedy selection with diversity scoring

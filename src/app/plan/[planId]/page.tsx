@@ -222,8 +222,14 @@ export default function PlanViewPage() {
       {activeTab === 'plants' && (
         <div className="space-y-3">
           {uniquePlants.map(({ plant, count }) => (
-            <div key={plant.plantSlug} className="flex items-start gap-4 p-4 bg-surface rounded-lg border border-stone-200">
-              <div className="w-12 h-12 rounded-full flex-shrink-0" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
+            <div key={plant.plantSlug} className="flex items-start gap-3 p-3 bg-surface rounded-lg border border-stone-200">
+              {plant.imageUrl ? (
+                <img src={plant.imageUrl} alt="" className="w-14 h-14 rounded-lg object-cover flex-shrink-0" loading="lazy" />
+              ) : (
+                <div className="w-14 h-14 rounded-lg flex-shrink-0 flex items-center justify-center" style={{ backgroundColor: getPlantBgColor(plant.bloomColor) }}>
+                  <div className="w-8 h-8 rounded-full" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
+                </div>
+              )}
               <div className="flex-1">
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <span className="font-semibold">{plant.commonName}</span>

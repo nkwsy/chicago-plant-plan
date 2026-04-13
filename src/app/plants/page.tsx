@@ -115,8 +115,19 @@ export default function PlantsPage() {
               href={`/plants/${plant.slug}`}
               className="bg-surface rounded-xl border border-stone-200 overflow-hidden hover:shadow-md transition-shadow group"
             >
-              <div className="h-32 flex items-center justify-center" style={{ backgroundColor: getPlantBgColor(plant.bloomColor) }}>
-                <div className="w-16 h-16 rounded-full" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
+              <div className="h-36 overflow-hidden bg-stone-100">
+                {plant.imageUrl ? (
+                  <img
+                    src={plant.imageUrl}
+                    alt={plant.commonName}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: getPlantBgColor(plant.bloomColor) }}>
+                    <div className="w-16 h-16 rounded-full" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
+                  </div>
+                )}
               </div>
               <div className="p-4">
                 <h3 className="font-semibold group-hover:text-primary transition-colors">{plant.commonName}</h3>
@@ -145,7 +156,11 @@ export default function PlantsPage() {
               href={`/plants/${plant.slug}`}
               className="flex items-center gap-4 p-4 bg-surface rounded-lg border border-stone-200 hover:shadow-sm transition-shadow"
             >
-              <div className="w-10 h-10 rounded-full flex-shrink-0" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
+              {plant.imageUrl ? (
+                <img src={plant.imageUrl} alt="" className="w-10 h-10 rounded-full object-cover flex-shrink-0" loading="lazy" />
+              ) : (
+                <div className="w-10 h-10 rounded-full flex-shrink-0" style={{ backgroundColor: getPlantColor(plant.bloomColor) }} />
+              )}
               <div className="flex-1 min-w-0">
                 <span className="font-medium">{plant.commonName}</span>
                 <span className="text-muted italic ml-2 text-sm">{plant.scientificName}</span>
