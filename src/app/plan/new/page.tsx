@@ -43,6 +43,9 @@ export default function NewPlanPage() {
   const [existingTrees, setExistingTrees] = useState<ExistingTree[]>([]);
   const [editMode, setEditMode] = useState<'none' | 'exclusion' | 'tree'>('none');
   const [selectedPlantSlug, setSelectedPlantSlug] = useState<string | null>(null);
+  const [showSatellite, setShowSatellite] = useState(false);
+  const [showShadows, setShowShadows] = useState(false);
+  const [shadowHour, setShadowHour] = useState(14);
   const [generatedPlan, setGeneratedPlan] = useState<{
     plants: PlanPlant[];
     gridCols: number;
@@ -549,13 +552,9 @@ export default function NewPlanPage() {
         {step === 'plan' && generatedPlan && (
           <div>
             <h2 className="text-2xl font-bold mb-2">Your Planting Plan</h2>
-            <p className="text-muted mb-6">
-              {generatedPlan.species.length} species selected across a {generatedPlan.gridCols}x{generatedPlan.gridRows} grid.
-              Diversity score: {generatedPlan.diversityScore}/100
-            </p>
 
             {/* Plan title */}
-            <div className="mb-6">
+            <div className="mb-4">
               <input
                 type="text"
                 value={planTitle}
@@ -563,6 +562,69 @@ export default function NewPlanPage() {
                 className="text-lg font-medium border-b-2 border-stone-200 focus:border-primary outline-none pb-1 w-full bg-transparent"
                 placeholder="Name your plan..."
               />
+            </div>
+
+            {/* Species count + quick regenerate */}
+            <div className="flex items-center gap-3 mb-4 p-3 bg-stone-50 rounded-lg border border-stone-200 flex-wrap">
+              <span className="text-sm font-medium text-muted">Species count:</span>
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setPreferences(p => ({ ...p, targetSpeciesCount: Math.max(3, p.targetSpeciesCount - 1) }))}
+                  className="w-7 h-7 rounded-full border border-stone-300 bg-white hover:bg-stone-100 flex items-center justify-center text-lg font-bold leading-none"
+                >−</button>
+                <span className="w-10 text-center text-xl font-bold text-primary">{preferences.targetSpeciesCount}</span>
+                <button
+                  onClick={() => setPreferences(p => ({ ...p, targetSpeciesCount: Math.min(40, p.targetSpeciesCount + 1) }))}
+                  className="w-7 h-7 rounded-full border border-stone-300 bg-white hover:bg-stone-100 flex items-center justify-center text-lg font-bold leading-none"
+                >+</button>
+              </div>
+              <button
+                onClick={generatePlan}
+                disabled={generating}
+                className="ml-auto text-sm px-4 py-1.5 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
+              >
+                {generating ? 'Generating…' : 'Regenerate'}
+              </button>
+            </div>
+
+            {/* View controls: satellite + shadow */}
+            <div className="flex items-center gap-2 mb-3 flex-wrap">
+              <button
+                onClick={() => setShowSatellite(s => !s)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
+                  showSatellite ? 'bg-blue-600 text-white border-blue-600' : 'border-stone-300 hover:border-stone-400 bg-white'
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="currentColor" fill="none" strokeWidth={2} strokeLinecap="round" /></svg>
+                Satellite
+              </button>
+              <button
+                onClick={() => setShowShadows(s => !s)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
+                  showShadows ? 'bg-slate-700 text-white border-slate-700' : 'border-stone-300 hover:border-stone-400 bg-white'
+                }`}
+              >
+                <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" /></svg>
+                Shadows
+              </button>
+              {showShadows && (
+                <div className="flex items-center gap-2 ml-1">
+                  <input
+                    type="range" min={6} max={20} step={0.5}
+                    value={shadowHour}
+                    onChange={(e) => setShadowHour(parseFloat(e.target.value))}
+                    className="w-28 accent-slate-600"
+                  />
+                  <span className="text-xs text-muted w-16">
+                    {shadowHour < 12 ? `${Math.floor(shadowHour)}:${String(Math.round((shadowHour%1)*60)).padStart(2,'0')} AM`
+                      : shadowHour === 12 ? '12:00 PM'
+                      : `${Math.floor(shadowHour)-12}:${String(Math.round((shadowHour%1)*60)).padStart(2,'0')} PM`}
+                  </span>
+                </div>
+              )}
+              <span className="ml-auto text-xs text-muted">
+                {generatedPlan.species.length} species · {generatedPlan.plants.length} plants · score {generatedPlan.diversityScore}/100
+              </span>
             </div>
 
             {/* 2D Grid Plan View */}
@@ -576,6 +638,10 @@ export default function NewPlanPage() {
               existingTrees={existingTrees}
               selectedSlug={selectedPlantSlug}
               onPlantClick={(slug) => setSelectedPlantSlug(slug === selectedPlantSlug ? null : slug)}
+              nearbyBuildings={siteProfile?.nearbyBuildings}
+              showSatellite={showSatellite}
+              showShadows={showShadows}
+              shadowHour={shadowHour}
             />
             <p className="text-xs text-muted mb-4 mt-2 text-center">
               Circles are sized to actual plant spread. Numbers match the legend below.
@@ -642,22 +708,13 @@ export default function NewPlanPage() {
               <button onClick={() => setStep('preferences')} className="text-muted hover:text-foreground px-4 py-2 transition-colors">
                 ← Adjust goals
               </button>
-              <div className="flex gap-3">
-                <button
-                  onClick={generatePlan}
-                  disabled={generating}
-                  className="border border-stone-300 px-4 py-2 rounded-lg hover:bg-stone-50 transition-colors text-sm"
-                >
-                  Regenerate
-                </button>
-                <button
-                  onClick={savePlan}
-                  disabled={saving}
-                  className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
-                >
-                  {saving ? 'Saving...' : 'Save Plan'}
-                </button>
-              </div>
+              <button
+                onClick={savePlan}
+                disabled={saving}
+                className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                {saving ? 'Saving...' : 'Save Plan'}
+              </button>
             </div>
           </div>
         )}

@@ -16,6 +16,7 @@ export interface SiteProfile {
     floodZoneDescription?: string;
     elevationFeet?: number;
   };
+  nearbyBuildings?: Array<{ lat: number; lng: number; heightMeters: number; widthMeters?: number }>;
 }
 
 export interface SunExposure {

@@ -86,6 +86,9 @@ export async function analyzeSite(
     slopePercent: 1,
     moistureCategory,
     effectiveSunHours,
+    nearbyBuildings: nearbyBuildings.map(b => ({
+      lat: b.lat, lng: b.lng, heightMeters: b.heightMeters, widthMeters: 15,
+    })),
     rawData: {
       soilDescription: soilResult.description,
       floodZoneDescription: floodResult.description,
