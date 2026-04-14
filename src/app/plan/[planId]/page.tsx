@@ -204,7 +204,32 @@ export default function PlanViewPage() {
       {plan.siteProfile && (
         <div className="mb-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <StatCard label="Sun" value={`${(plan.siteProfile as any).effectiveSunHours?.average || '?'}h/day`} />
+            <div className="p-3 bg-surface rounded-lg border border-stone-200 text-center">
+              <div className="text-xs text-muted">Sun</div>
+              {emailVerified ? (
+                <div className="flex items-center justify-center gap-1 mt-0.5">
+                  <input
+                    type="number"
+                    step="0.5"
+                    min="0"
+                    max="16"
+                    value={(plan.siteProfile as any).effectiveSunHours?.average ?? ''}
+                    onChange={(e) => {
+                      const val = parseFloat(e.target.value);
+                      if (isNaN(val)) return;
+                      const sp = { ...plan.siteProfile as any };
+                      sp.effectiveSunHours = { ...sp.effectiveSunHours, average: val };
+                      setPlan({ ...plan, siteProfile: sp });
+                      setEditing(true);
+                    }}
+                    className="w-12 text-center font-semibold text-sm bg-transparent border-b border-dashed border-stone-400 focus:border-primary outline-none"
+                  />
+                  <span className="font-semibold text-sm">h/day</span>
+                </div>
+              ) : (
+                <div className="font-semibold text-sm mt-0.5">{(plan.siteProfile as any).effectiveSunHours?.average || '?'}h/day</div>
+              )}
+            </div>
             <StatCard label="Soil" value={(plan.siteProfile as any).soilType?.replace('_', ' ') || 'Unknown'} />
             <StatCard label="Moisture" value={(plan.siteProfile as any).moistureCategory || 'Unknown'} />
             <StatCard label="Elevation" value={`${(plan.siteProfile as any).elevation || '?'} ft`} />
