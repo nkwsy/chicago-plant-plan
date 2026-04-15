@@ -377,6 +377,9 @@ export default function MapboxMap({
       if (layersAddedRef.current) return;
       layersAddedRef.current = true;
 
+      const sg = sunGridRef.current;
+      const sgGeoJSON = sg ? buildSunGridGeoJSON(sg) : null;
+
       addMapLayers(
         map,
         buildPlantGeoJSON(plantPlacementsRef.current),
@@ -384,7 +387,7 @@ export default function MapboxMap({
         buildTreeGeoJSON(existingTreesRef.current),
         areaOutline,
         show3D,
-        sunGridRef.current ? buildSunGridGeoJSON(sunGridRef.current) : null,
+        sgGeoJSON,
         showSunGrid,
       );
 
@@ -577,21 +580,28 @@ export default function MapboxMap({
     map.easeTo({ pitch, duration: 500 });
   }, [pitch]);
 
-  // Toggle sun grid visibility
+  // Toggle sun grid visibility — use a ref so we can also call from style.load
+  const showSunGridRef = useRef(showSunGrid);
+  showSunGridRef.current = showSunGrid;
+
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
-    try {
-      if (map.getLayer('sun-grid-fill')) {
-        map.setPaintProperty('sun-grid-fill', 'fill-opacity', showSunGrid ? 0.7 : 0);
-      }
-      if (map.getLayer('sun-grid-lines')) {
-        map.setPaintProperty('sun-grid-lines', 'line-opacity', showSunGrid ? 1 : 0);
-      }
-      if (map.getLayer('sun-grid-labels')) {
-        map.setPaintProperty('sun-grid-labels', 'text-opacity', showSunGrid ? 1 : 0);
-      }
-    } catch { /* layers may not exist yet */ }
+    if (!map) return;
+
+    // Try immediately, also schedule for after style loads
+    function applyGridVisibility() {
+      const show = showSunGridRef.current;
+      try {
+        if (!map!.getLayer('sun-grid-fill')) return;
+        map!.setPaintProperty('sun-grid-fill', 'fill-opacity', show ? 0.7 : 0);
+        map!.setPaintProperty('sun-grid-lines', 'line-opacity', show ? 1 : 0);
+        map!.setPaintProperty('sun-grid-labels', 'text-opacity', show ? 1 : 0);
+      } catch { /* layers may not exist yet */ }
+    }
+
+    // Use a small delay to ensure layers are added after style.load
+    const timer = setTimeout(applyGridVisibility, 100);
+    return () => clearTimeout(timer);
   }, [showSunGrid]);
 
   function switchStyle(s: string) {
