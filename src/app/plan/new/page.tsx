@@ -238,10 +238,157 @@ export default function NewPlanPage() {
                 }}
                 onExistingTreePlaced={(tree) => {
                   setExistingTrees(prev => [...prev, tree]);
-                  setEditMode('none');
+                  // Stay in tree mode so user can place multiple trees
                 }}
               />
             </div>
+
+            {/* Exclusion zones + trees toolbar */}
+            {location.areaGeoJson && (
+              <div className="bg-surface rounded-lg p-4 border border-stone-200 mb-4">
+                <p className="text-sm font-medium mb-3">Mark features on your property <span className="text-muted font-normal">(optional)</span></p>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  <button
+                    onClick={() => setEditMode(editMode === 'exclusion' ? 'none' : 'exclusion')}
+                    className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border transition-all ${
+                      editMode === 'exclusion'
+                        ? 'bg-stone-700 text-white border-stone-700'
+                        : 'border-stone-300 hover:border-stone-400 bg-white'
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+                    </svg>
+                    {editMode === 'exclusion' ? 'Drawing... (double-click to finish)' : 'Mark Path / Area to Exclude'}
+                  </button>
+                  <button
+                    onClick={() => setEditMode(editMode === 'tree' ? 'none' : 'tree')}
+                    className={`flex items-center gap-1.5 px-3 py-2 text-sm rounded-lg border transition-all ${
+                      editMode === 'tree'
+                        ? 'bg-green-700 text-white border-green-700'
+                        : 'border-stone-300 hover:border-stone-400 bg-white'
+                    }`}
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-6m0 0l-3 3m3-3l3 3M6.75 9a5.25 5.25 0 1110.5 0C17.25 12.75 12 15 12 15S6.75 12.75 6.75 9z" />
+                    </svg>
+                    {editMode === 'tree' ? 'Click map to place tree...' : 'Add Nearby Tree'}
+                  </button>
+                  {editMode !== 'none' && (
+                    <button
+                      onClick={() => setEditMode('none')}
+                      className="px-3 py-2 text-sm text-muted hover:text-foreground"
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
+
+                {/* Listed exclusion zones */}
+                {exclusionZones.length > 0 && (
+                  <div className="mb-2">
+                    <p className="text-xs font-medium text-muted mb-1">Excluded areas:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {exclusionZones.map((z) => (
+                        <div key={z.id} className="flex items-center gap-1 bg-stone-100 rounded px-2 py-1 text-xs">
+                          <select
+                            value={z.type}
+                            onChange={(e) => setExclusionZones(prev =>
+                              prev.map(ez => ez.id === z.id ? { ...ez, type: e.target.value as ExclusionZone['type'], label: e.target.value === 'other' ? 'Excluded Area' : e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1) } : ez)
+                            )}
+                            className="bg-transparent text-xs border-none outline-none cursor-pointer pr-1"
+                          >
+                            <option value="sidewalk">Sidewalk</option>
+                            <option value="walkway">Walkway</option>
+                            <option value="patio">Patio</option>
+                            <option value="driveway">Driveway</option>
+                            <option value="shed">Shed</option>
+                            <option value="other">Other</option>
+                          </select>
+                          <button
+                            onClick={() => setExclusionZones(prev => prev.filter(ez => ez.id !== z.id))}
+                            className="text-stone-400 hover:text-red-500 ml-1"
+                          >×</button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Listed trees */}
+                {existingTrees.length > 0 && (
+                  <div>
+                    <p className="text-xs font-medium text-muted mb-1">Nearby trees:</p>
+                    <div className="flex flex-col gap-1.5">
+                      {existingTrees.map((t) => (
+                        <div key={t.id} className="flex items-center gap-2 bg-green-50 rounded px-2 py-1.5 text-xs">
+                          <span className="text-green-800">🌳</span>
+                          <input
+                            type="text"
+                            value={t.label}
+                            onChange={(e) => setExistingTrees(prev =>
+                              prev.map(et => et.id === t.id ? { ...et, label: e.target.value } : et)
+                            )}
+                            className="bg-transparent border-none outline-none text-xs w-24"
+                            placeholder="Label"
+                          />
+                          <label className="flex items-center gap-1 text-xs text-muted">
+                            Canopy:
+                            <select
+                              value={t.canopyDiameterFt}
+                              onChange={(e) => setExistingTrees(prev =>
+                                prev.map(et => et.id === t.id ? { ...et, canopyDiameterFt: Number(e.target.value) } : et)
+                              )}
+                              className="bg-white border border-stone-200 rounded px-1 py-0.5 text-xs"
+                            >
+                              <option value={10}>10ft</option>
+                              <option value={15}>15ft</option>
+                              <option value={20}>20ft</option>
+                              <option value={30}>30ft</option>
+                              <option value={40}>40ft</option>
+                              <option value={50}>50ft</option>
+                            </select>
+                          </label>
+                          <label className="flex items-center gap-1 text-xs text-muted">
+                            Height:
+                            <select
+                              value={t.heightFt || 30}
+                              onChange={(e) => setExistingTrees(prev =>
+                                prev.map(et => et.id === t.id ? { ...et, heightFt: Number(e.target.value) } : et)
+                              )}
+                              className="bg-white border border-stone-200 rounded px-1 py-0.5 text-xs"
+                            >
+                              <option value={15}>15ft</option>
+                              <option value={20}>20ft</option>
+                              <option value={30}>30ft</option>
+                              <option value={40}>40ft</option>
+                              <option value={50}>50ft</option>
+                              <option value={60}>60ft</option>
+                              <option value={80}>80ft</option>
+                            </select>
+                          </label>
+                          <label className="flex items-center gap-1 text-xs text-muted ml-1">
+                            <input
+                              type="checkbox"
+                              checked={t.outsideProperty || false}
+                              onChange={(e) => setExistingTrees(prev =>
+                                prev.map(et => et.id === t.id ? { ...et, outsideProperty: e.target.checked } : et)
+                              )}
+                              className="w-3 h-3"
+                            />
+                            Outside
+                          </label>
+                          <button
+                            onClick={() => setExistingTrees(prev => prev.filter(et => et.id !== t.id))}
+                            className="text-stone-400 hover:text-red-500 ml-auto"
+                          >×</button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {location.address && (
               <div className="bg-surface rounded-lg p-4 border border-stone-200 mb-4">
