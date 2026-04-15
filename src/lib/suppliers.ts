@@ -11,6 +11,7 @@ export const SUPPLIERS: Supplier[] = [
     pickup: false,
     specialties: ['seed', 'plug', 'bare_root'],
     phone: '(507) 452-1362',
+    email: 'orders@prairiemoon.com',
   },
   {
     slug: 'pizzo',
@@ -22,6 +23,7 @@ export const SUPPLIERS: Supplier[] = [
     pickup: true,
     specialties: ['plug', 'potted'],
     phone: '(815) 981-8000',
+    email: 'info@pizzonursery.com',
   },
   {
     slug: 'possibility-place',
@@ -33,6 +35,7 @@ export const SUPPLIERS: Supplier[] = [
     pickup: true,
     specialties: ['potted', 'bare_root'],
     phone: '(708) 534-3988',
+    email: 'info@possibilityplace.com',
   },
   {
     slug: 'the-growing-place',
@@ -44,6 +47,7 @@ export const SUPPLIERS: Supplier[] = [
     pickup: true,
     specialties: ['potted'],
     phone: '(630) 355-4000',
+    email: 'info@thegrowingplace.com',
   },
   {
     slug: 'red-buffalo',
@@ -55,6 +59,7 @@ export const SUPPLIERS: Supplier[] = [
     pickup: true,
     specialties: ['seed', 'plug', 'potted'],
     phone: '(815) 648-4848',
+    email: 'info@redbuffalonursery.com',
   },
   {
     slug: 'living-habitats',
@@ -66,6 +71,7 @@ export const SUPPLIERS: Supplier[] = [
     pickup: true,
     specialties: ['potted', 'plug'],
     phone: '(773) 467-1634',
+    email: 'info@livinghabitats.com',
   },
   {
     slug: 'red-stem',
@@ -77,6 +83,7 @@ export const SUPPLIERS: Supplier[] = [
     pickup: true,
     specialties: ['potted', 'plug'],
     phone: '(773) 454-4800',
+    email: 'info@redstemnativelandscapes.com',
   },
 ];
 

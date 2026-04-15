@@ -1,5 +1,6 @@
-import type { Plant, PlantType } from '@/types/plant';
-import type { PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
+import type { Plant, PlantType, SunRequirement } from '@/types/plant';
+import type { PlanPlant, ExclusionZone, ExistingTree, SunGrid } from '@/types/plan';
+import { getCellAt } from '@/lib/analysis/sun-grid';
 import * as turf from '@turf/turf';
 
 // Conversion at Chicago latitude (~41.88N)
@@ -51,6 +52,43 @@ function isUnderTreeCanopy(lat: number, lng: number, trees: ExistingTree[]): boo
   return false;
 }
 
+/** Check if a plant is sun-compatible with a specific grid cell */
+function isPlantSunCompatible(plant: Plant, lat: number, lng: number, grid?: SunGrid | null): boolean {
+  if (!grid) return true; // No grid = skip check (use global filter)
+  const cell = getCellAt(grid, lat, lng);
+  if (!cell) return true;
+
+  const sunOrder: SunRequirement[] = ['full_sun', 'part_sun', 'part_shade', 'full_shade'];
+  const cellIdx = sunOrder.indexOf(cell.sunCategory);
+
+  return plant.sun.some(ps => {
+    const plantIdx = sunOrder.indexOf(ps);
+    return Math.abs(plantIdx - cellIdx) <= 1; // Allow adjacent tolerance
+  });
+}
+
+/** Pick the best species for a location from a list, considering local sun */
+function pickSpeciesForLocation(
+  candidates: Plant[], lat: number, lng: number, grid?: SunGrid | null,
+): Plant | null {
+  if (!grid) return candidates[Math.floor(Math.random() * candidates.length)];
+
+  const cell = getCellAt(grid, lat, lng);
+  if (!cell) return candidates[Math.floor(Math.random() * candidates.length)];
+
+  // Score candidates by sun match
+  const sunOrder: SunRequirement[] = ['full_sun', 'part_sun', 'part_shade', 'full_shade'];
+  const cellIdx = sunOrder.indexOf(cell.sunCategory);
+
+  const compatible = candidates.filter(p => isPlantSunCompatible(p, lat, lng, grid));
+  if (compatible.length === 0) return candidates[Math.floor(Math.random() * candidates.length)];
+
+  // Prefer exact matches, then adjacent
+  const exact = compatible.filter(p => p.sun.includes(cell.sunCategory));
+  if (exact.length > 0) return exact[Math.floor(Math.random() * exact.length)];
+  return compatible[Math.floor(Math.random() * compatible.length)];
+}
+
 /** Professional spacing in feet on-center by plant type */
 function getSpacingFt(type: PlantType, densityMultiplier: number): number {
   // Professional standards: trees 14ft, shrubs 6ft, herbaceous 1.5ft
@@ -86,6 +124,7 @@ export function layoutPlants(
   existingTrees: ExistingTree[] = [],
   aesthetic: string = 'mixed',
   densityMultiplier: number = 1.0,
+  sunGrid?: SunGrid | null,
 ): PlanPlant[] {
   const bounds = polygonToBounds(polygon || null, centerCoords);
   const latRange = bounds.maxLat - bounds.minLat;
@@ -176,8 +215,9 @@ export function layoutPlants(
       if (!isValid(lat, lng)) continue;
       if (isOccupied(lat, lng, radiusFt)) continue;
 
-      // Check shade compatibility
-      if (isUnderTreeCanopy(lat, lng, existingTrees)) {
+      // Check shade compatibility via sun grid or tree canopy
+      if (!isPlantSunCompatible(plant, lat, lng, sunGrid)) continue;
+      if (!sunGrid && isUnderTreeCanopy(lat, lng, existingTrees)) {
         if (!plant.sun.some(s => s === 'part_shade' || s === 'full_shade')) continue;
       }
 
@@ -203,11 +243,12 @@ export function layoutPlants(
         if (!isValid(jLat, jLng)) continue;
         if (isOccupied(jLat, jLng, spacingFt * 0.4)) continue;
 
-        // Pick a random matrix species
-        const species = matrix[Math.floor(Math.random() * matrix.length)];
+        // Pick best matrix species for this location's sun conditions
+        const species = pickSpeciesForLocation(matrix, jLat, jLng, sunGrid);
+        if (!species) continue;
 
-        // Under tree canopy? Check shade tolerance
-        if (isUnderTreeCanopy(jLat, jLng, existingTrees)) {
+        // Fallback shade check when no sun grid
+        if (!sunGrid && isUnderTreeCanopy(jLat, jLng, existingTrees)) {
           if (!species.sun.some(s => s === 'part_shade' || s === 'full_shade')) continue;
         }
 
@@ -232,9 +273,12 @@ export function layoutPlants(
         const seedLng = bounds.minLng + lngRange * (0.1 + Math.random() * 0.8);
         if (!isValid(seedLat, seedLng)) continue;
 
-        // Under canopy shade check
-        const underCanopy = isUnderTreeCanopy(seedLat, seedLng, existingTrees);
-        if (underCanopy && !species.sun.some(s => s === 'part_shade' || s === 'full_shade')) continue;
+        // Sun compatibility check
+        if (!isPlantSunCompatible(species, seedLat, seedLng, sunGrid)) continue;
+        if (!sunGrid) {
+          const underCanopy = isUnderTreeCanopy(seedLat, seedLng, existingTrees);
+          if (underCanopy && !species.sun.some(s => s === 'part_shade' || s === 'full_shade')) continue;
+        }
 
         // Place the drift
         for (let d = 0; d < driftSize; d++) {

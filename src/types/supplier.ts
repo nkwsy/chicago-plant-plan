@@ -8,4 +8,19 @@ export interface Supplier {
   pickup: boolean;
   specialties: string[];
   phone: string;
+  email: string;
+}
+
+export interface SupplierPriceInquiry {
+  supplierSlug: string;
+  supplierName: string;
+  supplierEmail: string;
+  plants: {
+    slug: string;
+    commonName: string;
+    scientificName: string;
+    formats: string[];
+  }[];
+  sentAt: Date;
+  status: 'draft' | 'sent' | 'responded' | 'failed';
 }

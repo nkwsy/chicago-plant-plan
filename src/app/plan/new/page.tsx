@@ -49,6 +49,7 @@ export default function NewPlanPage() {
     gridRows: number;
     diversityScore: number;
     species: any[];
+    sunGrid?: any;
   } | null>(null);
   const [generating, setGenerating] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -99,10 +100,12 @@ export default function NewPlanPage() {
       // Import and run generation client-side (using the JSON data)
       const { generatePlan: gen } = await import('@/lib/planner/generate');
       const areaSqFt = location.areaSqFt || 400; // Default 20x20 ft
+      // Pass global sun override if user manually set it
+      const sunOverride = (siteProfile.effectiveSunHours as any)?.userOverride ?? null;
       const result = gen(
         allPlants, siteProfile, preferences, areaSqFt,
         location.areaGeoJson, [location.lat, location.lng],
-        exclusionZones, existingTrees,
+        exclusionZones, existingTrees, sunOverride,
       );
 
       setGeneratedPlan({
@@ -111,6 +114,7 @@ export default function NewPlanPage() {
         gridRows: result.gridRows,
         diversityScore: result.diversityScore,
         species: result.selectedSpecies,
+        sunGrid: result.sunGrid,
       });
       setStep('plan');
     } catch (err) {
@@ -154,7 +158,8 @@ export default function NewPlanPage() {
           diversityScore: generatedPlan.diversityScore,
           exclusionZones,
           existingTrees,
-          layoutVersion: 2,
+          sunGrid: generatedPlan.sunGrid,
+          layoutVersion: 3,
         }),
       });
       const data = await res.json();

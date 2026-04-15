@@ -6214,5 +6214,1607 @@
       }
     ],
     "imageAttribution": "(c) Eric Hunt, all rights reserved, uploaded by Eric Hunt"
+  },
+  {
+    "slug": "white-snakeroot",
+    "commonName": "White Snakeroot",
+    "scientificName": "Ageratina altissima",
+    "family": "Asteraceae",
+    "plantType": "forb",
+    "heightMinInches": 24,
+    "heightMaxInches": 48,
+    "spreadMinInches": 18,
+    "spreadMaxInches": 30,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "clay",
+      "loam"
+    ],
+    "bloomStartMonth": 7,
+    "bloomEndMonth": 10,
+    "bloomColor": "white",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators",
+      "butterflies"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Reliable woodland native with flat-topped clusters of bright white flowers in late summer to fall. Thrives in deep shade.",
+    "careNotes": "Cut back to prevent reseeding if needed. Very low maintenance.",
+    "plantingInstructions": "Plant plugs in spring. Direct sow in fall.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/1259/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed",
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "zigzag-goldenrod",
+    "commonName": "Zigzag Goldenrod",
+    "scientificName": "Solidago flexicaulis",
+    "family": "Asteraceae",
+    "plantType": "forb",
+    "heightMinInches": 12,
+    "heightMaxInches": 36,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 24,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "clay",
+      "loam"
+    ],
+    "bloomStartMonth": 8,
+    "bloomEndMonth": 10,
+    "bloomColor": "yellow",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators",
+      "butterflies"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "One of the few goldenrods that thrives in full shade. Distinctive zigzag stems with golden flower clusters.",
+    "careNotes": "Spreads slowly by rhizomes. Excellent shade groundcover.",
+    "plantingInstructions": "Plant plugs in spring or fall.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/75847/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed",
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "pizzo",
+        "availability": [
+          "plug"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "blue-cohosh",
+    "commonName": "Blue Cohosh",
+    "scientificName": "Caulophyllum thalictroides",
+    "family": "Berberidaceae",
+    "plantType": "forb",
+    "heightMinInches": 12,
+    "heightMaxInches": 30,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 18,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 5,
+    "bloomColor": "blue",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Early spring woodland ephemeral with blue-green foliage and striking blue berries in fall.",
+    "careNotes": "Slow to establish but very long-lived once settled.",
+    "plantingInstructions": "Plant bare root in fall. Needs stratification from seed.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/1817/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "bare_root"
+        ]
+      },
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "woodland-phlox",
+    "commonName": "Woodland Phlox",
+    "scientificName": "Phlox divaricata",
+    "family": "Polemoniaceae",
+    "plantType": "forb",
+    "heightMinInches": 8,
+    "heightMaxInches": 15,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 18,
+    "sun": [
+      "part_sun",
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 5,
+    "bloomColor": "lavender",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators",
+      "butterflies"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Fragrant lavender-blue spring flowers carpet the woodland floor. Semi-evergreen in mild winters.",
+    "careNotes": "Mulch lightly. Spreads by stolons to form attractive groundcover.",
+    "plantingInstructions": "Plant plugs in spring or fall. Space 12 inches apart.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/18427/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      },
+      {
+        "supplierSlug": "the-growing-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "foam-flower",
+    "commonName": "Foam Flower",
+    "scientificName": "Tiarella cordifolia",
+    "family": "Saxifragaceae",
+    "plantType": "forb",
+    "heightMinInches": 6,
+    "heightMaxInches": 12,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 24,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 5,
+    "bloomColor": "white",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Delicate white flower spikes rise above maple-shaped leaves. Excellent shade groundcover that spreads by runners.",
+    "careNotes": "Keep moist in summer. Mulch to retain moisture.",
+    "plantingInstructions": "Plant plugs in spring. Space 12 inches for groundcover.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/23154/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      },
+      {
+        "supplierSlug": "the-growing-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "mayapple",
+    "commonName": "Mayapple",
+    "scientificName": "Podophyllum peltatum",
+    "family": "Berberidaceae",
+    "plantType": "forb",
+    "heightMinInches": 12,
+    "heightMaxInches": 18,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 36,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 5,
+    "bloomColor": "white",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "mammals"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Colonial woodland native with umbrella-like leaves and hidden white flowers. Forms dense attractive colonies.",
+    "careNotes": "Goes dormant in mid-summer. Interplant with later-emerging species.",
+    "plantingInstructions": "Plant rhizomes in fall 2 inches deep.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/61917/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "bare_root"
+        ]
+      },
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "jack-in-the-pulpit",
+    "commonName": "Jack-in-the-Pulpit",
+    "scientificName": "Arisaema triphyllum",
+    "family": "Araceae",
+    "plantType": "forb",
+    "heightMinInches": 12,
+    "heightMaxInches": 24,
+    "spreadMinInches": 6,
+    "spreadMaxInches": 12,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium",
+      "wet"
+    ],
+    "soilTypes": [
+      "loam"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 5,
+    "bloomColor": "green",
+    "nativeHabitats": [
+      "woodland",
+      "wetland"
+    ],
+    "wildlifeValue": [
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Unique hooded flower in spring, followed by a cluster of bright red berries in fall. A woodland conversation piece.",
+    "careNotes": "Keep soil consistently moist. Goes dormant after fruiting.",
+    "plantingInstructions": "Plant corms in fall 3-4 inches deep.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/6485/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "bare_root"
+        ]
+      },
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "dutchmans-breeches",
+    "commonName": "Dutchman's Breeches",
+    "scientificName": "Dicentra cucullaria",
+    "family": "Papaveraceae",
+    "plantType": "forb",
+    "heightMinInches": 6,
+    "heightMaxInches": 10,
+    "spreadMinInches": 6,
+    "spreadMaxInches": 12,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam"
+    ],
+    "bloomStartMonth": 3,
+    "bloomEndMonth": 4,
+    "bloomColor": "white",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Charming spring ephemeral with pantaloon-shaped white flowers. One of the earliest woodland bloomers.",
+    "careNotes": "Goes dormant by June. Mark location so you don't disturb bulbs.",
+    "plantingInstructions": "Plant bulblets in fall.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/14576/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "bare_root"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "tall-bellflower",
+    "commonName": "Tall Bellflower",
+    "scientificName": "Campanula americana",
+    "family": "Campanulaceae",
+    "plantType": "forb",
+    "heightMinInches": 24,
+    "heightMaxInches": 72,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 18,
+    "sun": [
+      "part_sun",
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 6,
+    "bloomEndMonth": 8,
+    "bloomColor": "blue",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators",
+      "butterflies"
+    ],
+    "effortLevel": "low",
+    "deerResistant": false,
+    "description": "Tall spikes of star-shaped blue flowers brighten shady summer gardens. Biennial that self-sows reliably.",
+    "careNotes": "Allow to self-sow. Biennial — plant two years in a row for annual flowers.",
+    "plantingInstructions": "Direct sow in fall or early spring.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/69403/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed",
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "pizzo",
+        "availability": [
+          "plug"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "white-wood-aster",
+    "commonName": "White Wood Aster",
+    "scientificName": "Eurybia divaricata",
+    "family": "Asteraceae",
+    "plantType": "forb",
+    "heightMinInches": 12,
+    "heightMaxInches": 24,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 24,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "dry",
+      "medium"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 8,
+    "bloomEndMonth": 10,
+    "bloomColor": "white",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators",
+      "butterflies"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Late-season shade bloomer with clouds of small white daisies. Tolerates dry shade — a rare and valuable trait.",
+    "careNotes": "One of the best natives for dry shade. Spreads gradually by rhizomes.",
+    "plantingInstructions": "Plant plugs in spring or fall.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/134925/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed",
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "hepatica",
+    "commonName": "Sharp-lobed Hepatica",
+    "scientificName": "Hepatica acutiloba",
+    "family": "Ranunculaceae",
+    "plantType": "forb",
+    "heightMinInches": 4,
+    "heightMaxInches": 6,
+    "spreadMinInches": 6,
+    "spreadMaxInches": 10,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam"
+    ],
+    "bloomStartMonth": 3,
+    "bloomEndMonth": 4,
+    "bloomColor": "lavender",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Among the earliest native wildflowers, blooming before trees leaf out. Delicate lavender, pink, or white flowers.",
+    "careNotes": "Extremely long-lived. Leave leaf litter in place around plants.",
+    "plantingInstructions": "Plant divisions or potted plants in fall.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/20517/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "bare_root"
+        ]
+      },
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "sweet-cicely",
+    "commonName": "Sweet Cicely",
+    "scientificName": "Osmorhiza claytonii",
+    "family": "Apiaceae",
+    "plantType": "forb",
+    "heightMinInches": 12,
+    "heightMaxInches": 30,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 18,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam"
+    ],
+    "bloomStartMonth": 5,
+    "bloomEndMonth": 6,
+    "bloomColor": "white",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators"
+    ],
+    "effortLevel": "low",
+    "deerResistant": false,
+    "description": "Delicate woodland plant with anise-scented roots and lacy white flower clusters. Fern-like foliage.",
+    "careNotes": "Self-sows gently in suitable conditions.",
+    "plantingInstructions": "Sow seed in fall for spring germination.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/97325/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "golden-groundsel",
+    "commonName": "Golden Groundsel",
+    "scientificName": "Packera aurea",
+    "family": "Asteraceae",
+    "plantType": "forb",
+    "heightMinInches": 6,
+    "heightMaxInches": 24,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 24,
+    "sun": [
+      "part_sun",
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium",
+      "wet"
+    ],
+    "soilTypes": [
+      "clay",
+      "loam"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 6,
+    "bloomColor": "yellow",
+    "nativeHabitats": [
+      "woodland",
+      "wetland"
+    ],
+    "wildlifeValue": [
+      "pollinators",
+      "butterflies"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Bright yellow daisy-like flowers in spring above semi-evergreen rosettes. Excellent shade groundcover that tolerates wet clay.",
+    "careNotes": "One of the easiest native groundcovers. Deer-proof.",
+    "plantingInstructions": "Plant plugs 12 inches apart in spring.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/57213/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed",
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "pizzo",
+        "availability": [
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "green-and-gold",
+    "commonName": "Green and Gold",
+    "scientificName": "Chrysogonum virginianum",
+    "family": "Asteraceae",
+    "plantType": "forb",
+    "heightMinInches": 4,
+    "heightMaxInches": 8,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 24,
+    "sun": [
+      "part_sun",
+      "part_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 6,
+    "bloomColor": "yellow",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Low-growing, long-blooming native groundcover with cheerful yellow flowers. Semi-evergreen.",
+    "careNotes": "Divide every few years to maintain vigor.",
+    "plantingInstructions": "Plant plugs 10 inches apart.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/85413/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      },
+      {
+        "supplierSlug": "the-growing-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "barren-strawberry",
+    "commonName": "Barren Strawberry",
+    "scientificName": "Geum fragarioides",
+    "family": "Rosaceae",
+    "plantType": "forb",
+    "heightMinInches": 3,
+    "heightMaxInches": 6,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 24,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 5,
+    "bloomColor": "yellow",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "pollinators"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Strawberry-like leaves with yellow spring flowers. Excellent shade groundcover alternative to non-native pachysandra.",
+    "careNotes": "Spreads by runners. Very low maintenance once established.",
+    "plantingInstructions": "Plant plugs 8-12 inches apart in spring.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/163847/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "spreading-sedge",
+    "commonName": "Spreading Sedge",
+    "scientificName": "Carex laxiculmis",
+    "family": "Cyperaceae",
+    "plantType": "sedge",
+    "heightMinInches": 6,
+    "heightMaxInches": 12,
+    "spreadMinInches": 8,
+    "spreadMaxInches": 16,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 5,
+    "bloomColor": "green",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Blue-green woodland sedge that forms attractive low clumps. Excellent for shade gardens as lawn replacement.",
+    "careNotes": "No mowing needed. Evergreen in mild winters.",
+    "plantingInstructions": "Plant plugs 8 inches apart.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/321847/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "pizzo",
+        "availability": [
+          "plug"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "james-sedge",
+    "commonName": "James' Sedge",
+    "scientificName": "Carex jamesii",
+    "family": "Cyperaceae",
+    "plantType": "sedge",
+    "heightMinInches": 4,
+    "heightMaxInches": 10,
+    "spreadMinInches": 6,
+    "spreadMaxInches": 12,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "dry",
+      "medium"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 5,
+    "bloomColor": "green",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Fine-textured sedge that tolerates dry shade. One of the best native lawn alternatives for shaded areas.",
+    "careNotes": "Tolerates foot traffic. Can be mowed once in spring if desired.",
+    "plantingInstructions": "Plant plugs 6 inches apart for groundcover.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/298327/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed",
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "pizzo",
+        "availability": [
+          "plug"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "pagoda-dogwood",
+    "commonName": "Pagoda Dogwood",
+    "scientificName": "Cornus alternifolia",
+    "family": "Cornaceae",
+    "plantType": "tree",
+    "heightMinInches": 180,
+    "heightMaxInches": 300,
+    "spreadMinInches": 180,
+    "spreadMaxInches": 300,
+    "sun": [
+      "part_sun",
+      "part_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam"
+    ],
+    "bloomStartMonth": 5,
+    "bloomEndMonth": 6,
+    "bloomColor": "white",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "birds",
+      "pollinators",
+      "butterflies"
+    ],
+    "effortLevel": "low",
+    "deerResistant": false,
+    "description": "Elegant small tree with horizontal branching pattern. White spring flowers and blue berries loved by birds.",
+    "careNotes": "Prefers afternoon shade. Mulch to keep roots cool.",
+    "plantingInstructions": "Plant balled-and-burlapped in spring.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/66547/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "bare_root",
+          "potted"
+        ]
+      },
+      {
+        "supplierSlug": "the-growing-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "maple-leaf-viburnum",
+    "commonName": "Maple-leaf Viburnum",
+    "scientificName": "Viburnum acerifolium",
+    "family": "Adoxaceae",
+    "plantType": "shrub",
+    "heightMinInches": 36,
+    "heightMaxInches": 72,
+    "spreadMinInches": 36,
+    "spreadMaxInches": 60,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "dry",
+      "medium"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 5,
+    "bloomEndMonth": 6,
+    "bloomColor": "white",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "birds",
+      "pollinators"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Understory shrub with maple-like leaves that turn pink-purple in fall. Tolerates deep shade and dry soil.",
+    "careNotes": "Colonies by suckering. Excellent fall color in shade.",
+    "plantingInstructions": "Plant bare root or potted in spring or fall.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/44587/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "bare_root",
+          "potted"
+        ]
+      },
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "bare_root"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "bladdernut",
+    "commonName": "Bladdernut",
+    "scientificName": "Staphylea trifolia",
+    "family": "Staphyleaceae",
+    "plantType": "shrub",
+    "heightMinInches": 72,
+    "heightMaxInches": 180,
+    "spreadMinInches": 60,
+    "spreadMaxInches": 120,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium",
+      "wet"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 5,
+    "bloomColor": "white",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Understory shrub with drooping clusters of white bell-shaped flowers. Papery inflated seed pods rattle in wind.",
+    "careNotes": "Prune to maintain size. Suckering habit.",
+    "plantingInstructions": "Plant potted in spring or fall.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/103847/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "american-wahoo",
+    "commonName": "American Wahoo",
+    "scientificName": "Euonymus atropurpureus",
+    "family": "Celastraceae",
+    "plantType": "shrub",
+    "heightMinInches": 72,
+    "heightMaxInches": 180,
+    "spreadMinInches": 72,
+    "spreadMaxInches": 144,
+    "sun": [
+      "part_sun",
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 5,
+    "bloomEndMonth": 6,
+    "bloomColor": "purple",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Native alternative to invasive burning bush. Brilliant pink-red fall color with ornamental fruit capsules.",
+    "careNotes": "Can be pruned as hedge. Excellent native replacement for Euonymus alatus.",
+    "plantingInstructions": "Plant bare root or potted in spring.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/113457/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "bare_root",
+          "potted"
+        ]
+      },
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "bare_root"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "common-blue-violet",
+    "commonName": "Common Blue Violet",
+    "scientificName": "Viola sororia",
+    "family": "Violaceae",
+    "plantType": "forb",
+    "heightMinInches": 4,
+    "heightMaxInches": 8,
+    "spreadMinInches": 6,
+    "spreadMaxInches": 12,
+    "sun": [
+      "full_sun",
+      "part_sun",
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium",
+      "wet"
+    ],
+    "soilTypes": [
+      "clay",
+      "loam"
+    ],
+    "bloomStartMonth": 4,
+    "bloomEndMonth": 5,
+    "bloomColor": "violet",
+    "nativeHabitats": [
+      "woodland",
+      "prairie"
+    ],
+    "wildlifeValue": [
+      "pollinators",
+      "butterflies"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "The state flower of Illinois. Grows in sun or deep shade, wet or dry. Host plant for fritillary butterflies.",
+    "careNotes": "Will spread freely — great for naturalized areas.",
+    "plantingInstructions": "Plant plugs or divisions in spring or fall.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/50213/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed",
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "tall-coreopsis",
+    "commonName": "Tall Coreopsis",
+    "scientificName": "Coreopsis tripteris",
+    "family": "Asteraceae",
+    "plantType": "forb",
+    "heightMinInches": 48,
+    "heightMaxInches": 96,
+    "spreadMinInches": 18,
+    "spreadMaxInches": 24,
+    "sun": [
+      "full_sun",
+      "part_sun"
+    ],
+    "moisture": [
+      "dry",
+      "medium"
+    ],
+    "soilTypes": [
+      "clay",
+      "loam",
+      "sand"
+    ],
+    "bloomStartMonth": 7,
+    "bloomEndMonth": 9,
+    "bloomColor": "yellow",
+    "nativeHabitats": [
+      "prairie"
+    ],
+    "wildlifeValue": [
+      "pollinators",
+      "butterflies",
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Towering prairie native with airy yellow daisy flowers and anise-scented foliage. Great back-of-border plant.",
+    "careNotes": "No staking needed despite height. Drought tolerant.",
+    "plantingInstructions": "Sow seed in fall or plant plugs in spring.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/142713/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed",
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "pizzo",
+        "availability": [
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "red-buffalo",
+        "availability": [
+          "seed"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "partridge-pea",
+    "commonName": "Partridge Pea",
+    "scientificName": "Chamaecrista fasciculata",
+    "family": "Fabaceae",
+    "plantType": "forb",
+    "heightMinInches": 12,
+    "heightMaxInches": 36,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 18,
+    "sun": [
+      "full_sun"
+    ],
+    "moisture": [
+      "dry",
+      "medium"
+    ],
+    "soilTypes": [
+      "sand",
+      "loam"
+    ],
+    "bloomStartMonth": 7,
+    "bloomEndMonth": 9,
+    "bloomColor": "yellow",
+    "nativeHabitats": [
+      "prairie"
+    ],
+    "wildlifeValue": [
+      "pollinators",
+      "birds",
+      "butterflies"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Annual legume with bright yellow flowers and sensitive fern-like leaves. Fixes nitrogen in soil.",
+    "careNotes": "Annual that self-sows reliably. Great for establishing new gardens.",
+    "plantingInstructions": "Direct sow in spring after last frost.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/28913/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed"
+        ]
+      },
+      {
+        "supplierSlug": "pizzo",
+        "availability": [
+          "seed"
+        ]
+      },
+      {
+        "supplierSlug": "red-buffalo",
+        "availability": [
+          "seed"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "rose-milkweed",
+    "commonName": "Rose Milkweed",
+    "scientificName": "Asclepias incarnata",
+    "family": "Apocynaceae",
+    "plantType": "forb",
+    "heightMinInches": 36,
+    "heightMaxInches": 60,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 24,
+    "sun": [
+      "full_sun",
+      "part_sun"
+    ],
+    "moisture": [
+      "medium",
+      "wet"
+    ],
+    "soilTypes": [
+      "clay",
+      "loam"
+    ],
+    "bloomStartMonth": 6,
+    "bloomEndMonth": 8,
+    "bloomColor": "pink",
+    "nativeHabitats": [
+      "wetland",
+      "prairie"
+    ],
+    "wildlifeValue": [
+      "pollinators",
+      "butterflies",
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Pink milkweed variety that thrives in moist soil. Essential monarch butterfly host plant.",
+    "careNotes": "Tolerates clay. Much less aggressive than common milkweed.",
+    "plantingInstructions": "Sow seed in fall or cold stratify. Plant plugs in spring.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/7459/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed",
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "pizzo",
+        "availability": [
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "living-habitats",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "christmas-fern",
+    "commonName": "Christmas Fern",
+    "scientificName": "Polystichum acrostichoides",
+    "family": "Dryopteridaceae",
+    "plantType": "fern",
+    "heightMinInches": 12,
+    "heightMaxInches": 24,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 24,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "loam"
+    ],
+    "bloomStartMonth": 0,
+    "bloomEndMonth": 0,
+    "bloomColor": "green",
+    "nativeHabitats": [
+      "woodland"
+    ],
+    "wildlifeValue": [
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Evergreen fern native to eastern woodlands. Dark green leathery fronds persist through winter.",
+    "careNotes": "One of the easiest native ferns. Evergreen in Zone 5.",
+    "plantingInstructions": "Plant potted ferns in spring. Keep moist first year.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/55784/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      },
+      {
+        "supplierSlug": "the-growing-place",
+        "availability": [
+          "potted"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "ostrich-fern",
+    "commonName": "Ostrich Fern",
+    "scientificName": "Matteuccia struthiopteris",
+    "family": "Onocleaceae",
+    "plantType": "fern",
+    "heightMinInches": 36,
+    "heightMaxInches": 72,
+    "spreadMinInches": 24,
+    "spreadMaxInches": 48,
+    "sun": [
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium",
+      "wet"
+    ],
+    "soilTypes": [
+      "loam"
+    ],
+    "bloomStartMonth": 0,
+    "bloomEndMonth": 0,
+    "bloomColor": "green",
+    "nativeHabitats": [
+      "woodland",
+      "wetland"
+    ],
+    "wildlifeValue": [
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Dramatic vase-shaped fern with tall arching fronds. Produces edible fiddleheads in spring.",
+    "careNotes": "Spreads by runners — give room. Needs consistent moisture.",
+    "plantingInstructions": "Plant divisions in spring. Space 3 feet apart.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/46285/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      },
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "bare_root"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "sensitive-fern",
+    "commonName": "Sensitive Fern",
+    "scientificName": "Onoclea sensibilis",
+    "family": "Onocleaceae",
+    "plantType": "fern",
+    "heightMinInches": 12,
+    "heightMaxInches": 24,
+    "spreadMinInches": 18,
+    "spreadMaxInches": 36,
+    "sun": [
+      "part_sun",
+      "part_shade",
+      "full_shade"
+    ],
+    "moisture": [
+      "medium",
+      "wet"
+    ],
+    "soilTypes": [
+      "loam",
+      "clay"
+    ],
+    "bloomStartMonth": 0,
+    "bloomEndMonth": 0,
+    "bloomColor": "green",
+    "nativeHabitats": [
+      "woodland",
+      "wetland"
+    ],
+    "wildlifeValue": [
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Bold-textured fern with broad triangular fronds. Named for sensitivity to frost. Excellent wet shade groundcover.",
+    "careNotes": "Spreads freely in moist soil. Cut back after frost.",
+    "plantingInstructions": "Plant divisions in spring.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/73891/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "possibility-place",
+        "availability": [
+          "potted"
+        ]
+      },
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "bare_root"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "virginia-wild-rye",
+    "commonName": "Virginia Wild Rye",
+    "scientificName": "Elymus virginicus",
+    "family": "Poaceae",
+    "plantType": "grass",
+    "heightMinInches": 24,
+    "heightMaxInches": 48,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 24,
+    "sun": [
+      "full_sun",
+      "part_sun",
+      "part_shade"
+    ],
+    "moisture": [
+      "medium"
+    ],
+    "soilTypes": [
+      "clay",
+      "loam"
+    ],
+    "bloomStartMonth": 6,
+    "bloomEndMonth": 8,
+    "bloomColor": "green",
+    "nativeHabitats": [
+      "woodland",
+      "prairie"
+    ],
+    "wildlifeValue": [
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Cool-season grass that grows well in partial shade. Excellent for woodland edges and shaded areas.",
+    "careNotes": "One of the best grasses for partial shade. Cut back in early spring.",
+    "plantingInstructions": "Sow seed in fall or spring.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/188432/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed"
+        ]
+      },
+      {
+        "supplierSlug": "pizzo",
+        "availability": [
+          "seed",
+          "plug"
+        ]
+      },
+      {
+        "supplierSlug": "red-buffalo",
+        "availability": [
+          "seed"
+        ]
+      }
+    ]
+  },
+  {
+    "slug": "canada-wild-rye",
+    "commonName": "Canada Wild Rye",
+    "scientificName": "Elymus canadensis",
+    "family": "Poaceae",
+    "plantType": "grass",
+    "heightMinInches": 36,
+    "heightMaxInches": 60,
+    "spreadMinInches": 12,
+    "spreadMaxInches": 24,
+    "sun": [
+      "full_sun",
+      "part_sun"
+    ],
+    "moisture": [
+      "dry",
+      "medium"
+    ],
+    "soilTypes": [
+      "clay",
+      "loam",
+      "sand"
+    ],
+    "bloomStartMonth": 6,
+    "bloomEndMonth": 8,
+    "bloomColor": "green",
+    "nativeHabitats": [
+      "prairie"
+    ],
+    "wildlifeValue": [
+      "birds"
+    ],
+    "effortLevel": "low",
+    "deerResistant": true,
+    "description": "Fast-establishing cool-season grass with attractive nodding seed heads. Good nurse crop for slower species.",
+    "careNotes": "Short-lived perennial but reseeds. Good for establishing new gardens.",
+    "plantingInstructions": "Sow seed in spring or fall. Germinates quickly.",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/177328/medium.jpg",
+    "suppliers": [
+      {
+        "supplierSlug": "prairie-moon",
+        "availability": [
+          "seed"
+        ]
+      },
+      {
+        "supplierSlug": "pizzo",
+        "availability": [
+          "seed"
+        ]
+      },
+      {
+        "supplierSlug": "red-buffalo",
+        "availability": [
+          "seed"
+        ]
+      }
+    ]
   }
 ]

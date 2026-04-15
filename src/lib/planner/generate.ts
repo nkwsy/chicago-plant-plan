@@ -1,9 +1,11 @@
 import type { Plant } from '@/types/plant';
 import type { SiteProfile } from '@/types/analysis';
-import type { UserPreferences, PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
+import type { UserPreferences, PlanPlant, ExclusionZone, ExistingTree, SunGrid } from '@/types/plan';
+import type { NearbyBuilding } from '@/lib/analysis/sun';
 import { filterPlantsBySite, filterPlantsByPreferences } from './filter';
 import { scorePlant, calculateDiversityScore } from './score';
-import { calculateGridSize, layoutPlants } from './layout';
+import { calculateGridSize, layoutPlants, polygonToBounds } from './layout';
+import { buildSunGrid } from '@/lib/analysis/sun-grid';
 
 interface GeneratedPlan {
   plants: PlanPlant[];
@@ -12,6 +14,7 @@ interface GeneratedPlan {
   gridRows: number;
   areaSqFt: number;
   diversityScore: number;
+  sunGrid?: SunGrid;
 }
 
 export function generatePlan(
@@ -23,7 +26,13 @@ export function generatePlan(
   center?: [number, number],
   exclusionZones: ExclusionZone[] = [],
   existingTrees: ExistingTree[] = [],
+  globalSunOverride?: number | null,
 ): GeneratedPlan {
+  // Build the 5x5ft sun grid for per-plot analysis
+  const bounds = polygonToBounds(polygon || null, center);
+  const buildings: NearbyBuilding[] = siteProfile.nearbyBuildings || [];
+  const sunGrid = buildSunGrid(bounds, existingTrees, buildings, exclusionZones, polygon, globalSunOverride);
+
   const siteCompatible = filterPlantsBySite(allPlants, siteProfile);
   const prefFiltered = filterPlantsByPreferences(siteCompatible, preferences);
 
@@ -34,12 +43,12 @@ export function generatePlan(
       effortLevel: 'high',
     });
     if (relaxed.length === 0) {
-      return { plants: [], selectedSpecies: [], gridCols: 3, gridRows: 3, areaSqFt, diversityScore: 0 };
+      return { plants: [], selectedSpecies: [], gridCols: 3, gridRows: 3, areaSqFt, diversityScore: 0, sunGrid };
     }
-    return generateFromCandidates(relaxed, preferences, areaSqFt, polygon, center, exclusionZones, existingTrees);
+    return generateFromCandidates(relaxed, preferences, areaSqFt, polygon, center, exclusionZones, existingTrees, sunGrid);
   }
 
-  return generateFromCandidates(prefFiltered, preferences, areaSqFt, polygon, center, exclusionZones, existingTrees);
+  return generateFromCandidates(prefFiltered, preferences, areaSqFt, polygon, center, exclusionZones, existingTrees, sunGrid);
 }
 
 function generateFromCandidates(
@@ -50,6 +59,7 @@ function generateFromCandidates(
   center?: [number, number],
   exclusionZones: ExclusionZone[] = [],
   existingTrees: ExistingTree[] = [],
+  sunGrid?: SunGrid,
 ): GeneratedPlan {
   const gridConfig = calculateGridSize(areaSqFt);
   const targetSpecies = Math.min(
@@ -104,12 +114,13 @@ function generateFromCandidates(
     typeCounts[chosen.plantType] = (typeCounts[chosen.plantType] || 0) + 1;
   }
 
-  // Layout with spacing, exclusion zones, and tree shade
+  // Layout with spacing, exclusion zones, tree shade, and per-plot sun
   const planPlants = layoutPlants(
     selected, gridConfig, polygon, center,
     exclusionZones, existingTrees,
     preferences.aestheticPref || 'mixed',
     preferences.densityMultiplier || 1.0,
+    sunGrid,
   );
   const diversityScore = calculateDiversityScore(selected);
 
@@ -120,5 +131,6 @@ function generateFromCandidates(
     gridRows: gridConfig.gridRows,
     areaSqFt,
     diversityScore,
+    sunGrid,
   };
 }

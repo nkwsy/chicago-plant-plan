@@ -25,7 +25,12 @@ export interface IPlant extends Document {
   careNotes: string;
   plantingInstructions: string;
   imageUrl: string;
-  suppliers: { supplierSlug: string; availability: string[] }[];
+  suppliers: {
+    supplierSlug: string;
+    availability: string[];
+    pricing: { format: string; price: number | null; inStock: boolean }[];
+    lastPriceUpdate: Date | null;
+  }[];
 }
 
 const PlantSchema = new Schema<IPlant>({
@@ -55,6 +60,12 @@ const PlantSchema = new Schema<IPlant>({
   suppliers: [{
     supplierSlug: String,
     availability: [String],
+    pricing: [{
+      format: { type: String, enum: ['seed', 'plug', 'potted', 'bare_root'] },
+      price: { type: Number, default: null },
+      inStock: { type: Boolean, default: true },
+    }],
+    lastPriceUpdate: { type: Date, default: null },
   }],
 });
 
@@ -183,8 +194,50 @@ const ApiCacheSchema = new Schema<IApiCache>({
 
 ApiCacheSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
+// Price Inquiry
+export interface IPriceInquiry extends Document {
+  inquiryId: string;
+  supplierSlug: string;
+  supplierName: string;
+  supplierEmail: string;
+  plants: {
+    slug: string;
+    commonName: string;
+    scientificName: string;
+    formats: string[];
+  }[];
+  emailSubject: string;
+  emailBody: string;
+  status: string;
+  sentAt: Date;
+  respondedAt: Date | null;
+  createdAt: Date;
+}
+
+const PriceInquirySchema = new Schema<IPriceInquiry>({
+  inquiryId: { type: String, required: true, unique: true },
+  supplierSlug: { type: String, required: true, index: true },
+  supplierName: String,
+  supplierEmail: String,
+  plants: [{
+    slug: String,
+    commonName: String,
+    scientificName: String,
+    formats: [String],
+  }],
+  emailSubject: String,
+  emailBody: String,
+  status: { type: String, default: 'draft', enum: ['draft', 'sent', 'responded', 'failed'] },
+  sentAt: Date,
+  respondedAt: { type: Date, default: null },
+}, { timestamps: true });
+
+PriceInquirySchema.index({ status: 1 });
+PriceInquirySchema.index({ sentAt: -1 });
+
 // Model getters (prevent re-compilation in dev)
 export const Plant = mongoose.models.Plant || mongoose.model<IPlant>('Plant', PlantSchema);
 export const Plan = mongoose.models.Plan || mongoose.model<IPlan>('Plan', PlanSchema);
 export const QuoteRequest = mongoose.models.QuoteRequest || mongoose.model<IQuoteRequest>('QuoteRequest', QuoteRequestSchema);
 export const ApiCache = mongoose.models.ApiCache || mongoose.model<IApiCache>('ApiCache', ApiCacheSchema);
+export const PriceInquiry = mongoose.models.PriceInquiry || mongoose.model<IPriceInquiry>('PriceInquiry', PriceInquirySchema);

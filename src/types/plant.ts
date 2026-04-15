@@ -33,7 +33,15 @@ export interface Plant {
   suppliers: PlantSupplier[];
 }
 
+export interface SupplierPricing {
+  format: AvailabilityType;
+  price: number | null;
+  inStock: boolean;
+}
+
 export interface PlantSupplier {
   supplierSlug: string;
   availability: AvailabilityType[];
+  pricing: SupplierPricing[];
+  lastPriceUpdate: string | null;
 }
