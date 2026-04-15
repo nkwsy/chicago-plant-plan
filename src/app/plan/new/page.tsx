@@ -42,6 +42,7 @@ export default function NewPlanPage() {
   const [editMode, setEditMode] = useState<'none' | 'exclusion' | 'tree'>('none');
   const [selectedPlantSlug, setSelectedPlantSlug] = useState<string | null>(null);
   const detectBuildingsRef = useRef<(() => ExclusionZone[]) | null>(null);
+  const computeSunGridRef = useRef<(() => Promise<import('@/types/plan').SunGrid | null>) | null>(null);
   const [view3D, setView3D] = useState(false);
   const [showSunlight, setShowSunlight] = useState(true);
   const [showSunGrid, setShowSunGrid] = useState(false);
@@ -124,6 +125,35 @@ export default function NewPlanPage() {
       alert('Plan generation failed. Please try again.');
     } finally {
       setGenerating(false);
+    }
+  }
+
+  const [recalculating, setRecalculating] = useState(false);
+
+  async function regenerateSunGrid() {
+    if (!generatedPlan || !location.areaGeoJson) return;
+    setRecalculating(true);
+    try {
+      // Try ShadeMap-powered computation (uses actual building geometry from map tiles)
+      if (computeSunGridRef.current) {
+        const newSunGrid = await computeSunGridRef.current();
+        if (newSunGrid) {
+          setGeneratedPlan(prev => prev ? { ...prev, sunGrid: newSunGrid } : prev);
+          return;
+        }
+      }
+      // Fallback: manual computation with polygon ray-casting
+      const { polygonToBounds } = await import('@/lib/planner/layout');
+      const { buildSunGrid } = await import('@/lib/analysis/sun-grid');
+      const bounds = polygonToBounds(location.areaGeoJson, [location.lat, location.lng]);
+      const buildings = siteProfile?.nearbyBuildings || [];
+      const sunOverride = (siteProfile?.effectiveSunHours as any)?.userOverride ?? null;
+      const newSunGrid = buildSunGrid(bounds, existingTrees, buildings, exclusionZones, location.areaGeoJson, sunOverride);
+      setGeneratedPlan(prev => prev ? { ...prev, sunGrid: newSunGrid } : prev);
+    } catch (err) {
+      console.error('Sun grid regeneration failed:', err);
+    } finally {
+      setRecalculating(false);
     }
   }
 
@@ -611,6 +641,22 @@ export default function NewPlanPage() {
                 </button>
               )}
 
+              <button
+                onClick={regenerateSunGrid}
+                disabled={recalculating || !generatedPlan}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border border-amber-400 hover:border-amber-500 bg-white text-amber-700 hover:bg-amber-50 transition-all disabled:opacity-50"
+                title="Recalculate sun hours using current trees and building exclusions"
+              >
+                {recalculating ? (
+                  <svg className="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="31" /></svg>
+                ) : (
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182" />
+                  </svg>
+                )}
+                {recalculating ? 'Recalculating...' : 'Recalculate Sun'}
+              </button>
+
               <span className="ml-auto text-xs text-muted">
                 {generatedPlan.species.length} spp · {generatedPlan.plants.length} plants
               </span>
@@ -803,6 +849,7 @@ export default function NewPlanPage() {
                   setExistingTrees(prev => [...prev, tree]);
                 }}
                 detectBuildingsRef={detectBuildingsRef}
+                computeSunGridRef={computeSunGridRef}
                 plantPlacements={generatedPlan.plants
                   .filter((p: PlanPlant) => p.lat && p.lng)
                   .map((p: PlanPlant) => ({

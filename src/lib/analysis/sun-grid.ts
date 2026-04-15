@@ -72,7 +72,7 @@ export function buildSunGrid(
         // User override — but still reduce for canopy
         sunHours = underCanopy ? Math.max(1, globalOverride * 0.4) : globalOverride;
       } else {
-        sunHours = computeCellSunHours(sampleDate, centerLat, centerLng, trees, buildings);
+        sunHours = computeCellSunHours(sampleDate, centerLat, centerLng, trees, buildings, exclusionZones);
       }
 
       sunHours = Math.round(sunHours * 10) / 10;
@@ -137,8 +137,30 @@ function isInAnyExclusion(lat: number, lng: number, zones: ExclusionZone[]): boo
 }
 
 /**
+ * Ray-segment intersection test (2D ground plane).
+ * Returns distance along ray to intersection, or null if no hit.
+ */
+function rayIntersectsSegment(
+  px: number, py: number,  // ray origin (cell position in meters)
+  dx: number, dy: number,  // ray direction (toward sun)
+  ax: number, ay: number,  // segment start
+  bx: number, by: number,  // segment end
+): number | null {
+  const ex = bx - ax, ey = by - ay;
+  const denom = dx * ey - dy * ex;
+  if (Math.abs(denom) < 1e-10) return null;
+  const t = ((ax - px) * ey - (ay - py) * ex) / denom;
+  const u = ((ax - px) * dy - (ay - py) * dx) / denom;
+  if (t > 0 && u >= 0 && u <= 1) return t;
+  return null;
+}
+
+/** Default building height for ExclusionZone buildings without explicit height */
+const DEFAULT_BUILDING_HEIGHT_M = 8;
+
+/**
  * Compute sun hours at a specific point for a sample day.
- * Factors in tree shadows and building shadows using the rectangular model.
+ * Factors in tree shadows, center-point building shadows, and polygon building shadows.
  */
 function computeCellSunHours(
   date: Date,
@@ -146,8 +168,21 @@ function computeCellSunHours(
   lng: number,
   trees: ExistingTree[],
   buildings: NearbyBuilding[],
+  exclusionZones: ExclusionZone[],
 ): number {
   let sunHours = 0;
+
+  // Pre-extract building polygons from exclusion zones and convert coords to meters
+  const buildingPolygons = exclusionZones
+    .filter(z => z.type === 'building')
+    .map(z => {
+      const coords = z.geoJson.coordinates[0];
+      const verticesM = coords.map(c => ({
+        x: (c[0] - lng) * M_PER_DEG_LNG,
+        y: (c[1] - lat) * M_PER_DEG_LAT,
+      }));
+      return { verticesM, heightM: z.heightMeters || DEFAULT_BUILDING_HEIGHT_M };
+    });
 
   // Sample every 30 min for accuracy
   for (let halfHour = 0; halfHour < 60; halfHour++) {
@@ -167,6 +202,11 @@ function computeCellSunHours(
     const sdy = Math.cos(shadowBearingRad);
     const perpX = -sdy;
     const perpY = sdx;
+
+    // Sun direction is opposite of shadow direction
+    const sunDx = -sdx;
+    const sunDy = -sdy;
+
     let inShadow = false;
 
     // Tree shadows
@@ -190,7 +230,7 @@ function computeCellSunHours(
 
     if (inShadow) continue;
 
-    // Building shadows (rectangular model)
+    // Building shadows (center-point rectangular model from Overpass API)
     for (const building of buildings) {
       const bldgM = {
         x: (building.lng - lng) * M_PER_DEG_LNG,
@@ -206,6 +246,29 @@ function computeCellSunHours(
       if (across < halfWidthM) {
         inShadow = true; break;
       }
+    }
+
+    if (inShadow) continue;
+
+    // Building polygon shadows (from ExclusionZone buildings detected via Mapbox)
+    // Cast a ray from cell toward the sun. If it hits a building polygon edge
+    // within shadow range, the building is between us and the sun = we're in shadow.
+    for (const bldg of buildingPolygons) {
+      const shadowLenM = Math.min(bldg.heightM / Math.tan(altRad), 300);
+      const verts = bldg.verticesM;
+      for (let i = 0; i < verts.length - 1; i++) {
+        const hitDist = rayIntersectsSegment(
+          0, 0,                    // cell is at origin (vertices already relative)
+          sunDx, sunDy,            // ray toward sun
+          verts[i].x, verts[i].y,  // edge start
+          verts[i + 1].x, verts[i + 1].y, // edge end
+        );
+        if (hitDist !== null && hitDist <= shadowLenM) {
+          inShadow = true;
+          break;
+        }
+      }
+      if (inShadow) break;
     }
 
     if (!inShadow) sunHours += 0.5;

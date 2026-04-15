@@ -16,6 +16,7 @@
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "mapbox-gl": "^3.21.0",
+    "mapbox-gl-shadow-simulator": "^0.68.2",
     "mongoose": "^9.4.1",
     "nanoid": "^5.1.7",
     "next": "16.2.3",
