@@ -3,6 +3,8 @@ import { connectDB } from '@/lib/db/connection';
 import { Plant } from '@/lib/db/models';
 import plantsData from '../../../../data/plants.json';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const slug = searchParams.get('slug');
