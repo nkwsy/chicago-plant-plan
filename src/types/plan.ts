@@ -37,7 +37,7 @@ export interface ExclusionZone {
   id: string;
   geoJson: GeoJSON.Polygon;
   label: string;
-  type: 'walkway' | 'patio' | 'shed' | 'driveway' | 'sidewalk' | 'other';
+  type: 'walkway' | 'patio' | 'shed' | 'driveway' | 'sidewalk' | 'building' | 'other';
 }
 
 export interface ExistingTree {

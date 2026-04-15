@@ -38,6 +38,7 @@ interface MapboxMapProps {
   style?: 'satellite' | 'streets' | 'satellite-streets';
   sunGrid?: SunGrid | null;
   showSunGrid?: boolean;
+  detectBuildingsRef?: React.MutableRefObject<(() => ExclusionZone[]) | null>;
 }
 
 const STYLE_URLS: Record<string, string> = {
@@ -325,6 +326,7 @@ export default function MapboxMap({
   editMode = 'none', onExclusionZoneCreated, onExistingTreePlaced,
   height = '100%', style = 'satellite-streets',
   sunGrid, showSunGrid = false,
+  detectBuildingsRef,
 }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -457,7 +459,8 @@ export default function MapboxMap({
         const feature = data.features[data.features.length - 1];
         if (feature.geometry.type !== 'Polygon') return;
 
-        if (editModeRef.current === 'exclusion') {
+        // If areaOutline exists, we're in plan-edit mode — all draws are exclusions
+        if (editModeRef.current === 'exclusion' || areaOutline) {
           draw.deleteAll();
           onExclusionZoneCreated?.({
             id: `excl-${Date.now()}`, geoJson: feature.geometry as GeoJSON.Polygon,
@@ -466,7 +469,7 @@ export default function MapboxMap({
           return;
         }
 
-        // Planting area
+        // Planting area (only in location step when no areaOutline)
         const ids = data.features.map((f: any) => f.id);
         if (ids.length > 1) ids.slice(0, -1).forEach((id: string) => draw.delete(id));
         const polygon = feature.geometry as GeoJSON.Polygon;
@@ -604,6 +607,43 @@ export default function MapboxMap({
     return () => clearTimeout(timer);
   }, [showSunGrid]);
 
+  // Expose building detection via ref
+  useEffect(() => {
+    if (!detectBuildingsRef) return;
+    detectBuildingsRef.current = () => {
+      const map = mapRef.current;
+      if (!map || !areaOutline) return [];
+
+      // Query building footprints from rendered tiles
+      const buildingLayers = map.getStyle().layers
+        ?.filter(l => (l as any)['source-layer'] === 'building')
+        .map(l => l.id) || [];
+      const features = buildingLayers.length
+        ? (map as any).queryRenderedFeatures({ layers: buildingLayers })
+        : [];
+
+      if (!features.length) return [];
+
+      // Deduplicate by building ID and convert to ExclusionZones
+      const seen = new Set<string>();
+      const zones: ExclusionZone[] = [];
+      for (const f of features) {
+        const id = f.id?.toString() || JSON.stringify(f.geometry).substring(0, 50);
+        if (seen.has(id)) continue;
+        seen.add(id);
+        if (f.geometry.type === 'Polygon') {
+          zones.push({
+            id: `bldg-${Date.now()}-${zones.length}`,
+            geoJson: f.geometry as GeoJSON.Polygon,
+            label: 'Building',
+            type: 'building',
+          });
+        }
+      }
+      return zones;
+    };
+  }, [areaOutline, detectBuildingsRef]);
+
   function switchStyle(s: string) {
     if (!mapRef.current) return;
     mapRef.current.setStyle(STYLE_URLS[s]);
@@ -657,7 +697,7 @@ export default function MapboxMap({
       </div>
 
       {/* Draw hint */}
-      {showDrawControls && editMode === 'none' && (
+      {showDrawControls && editMode === 'none' && !areaOutline && (
         <div className="absolute top-16 left-3 z-10 bg-white/90 backdrop-blur-sm px-3 py-2 rounded-lg shadow text-xs text-gray-600 max-w-[240px]">
           Use the <strong>polygon tool</strong> (top-right) to draw your planting area.
         </div>
