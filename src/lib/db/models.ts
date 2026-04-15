@@ -105,6 +105,7 @@ export interface IPlan extends Document {
   isPublic: boolean;
   exclusionZones: object[];
   existingTrees: object[];
+  sunGrid: object | null;
   layoutVersion: number;
   createdAt: Date;
   updatedAt: Date;
@@ -144,6 +145,7 @@ const PlanSchema = new Schema<IPlan>({
   }],
   exclusionZones: Schema.Types.Mixed,
   existingTrees: Schema.Types.Mixed,
+  sunGrid: Schema.Types.Mixed,
   layoutVersion: { type: Number, default: 1 },
   gridCols: { type: Number, default: 0 },
   gridRows: { type: Number, default: 0 },

@@ -84,6 +84,7 @@ export async function POST(request: Request) {
     diversityScore: body.diversityScore || 0,
     exclusionZones: body.exclusionZones || [],
     existingTrees: body.existingTrees || [],
+    sunGrid: body.sunGrid || null,
     layoutVersion: body.layoutVersion || 2,
     isPublic: body.isPublic !== false,
     createdAt: now,
