@@ -43,6 +43,7 @@ export default function NewPlanPage() {
   const [selectedPlantSlug, setSelectedPlantSlug] = useState<string | null>(null);
   const [view3D, setView3D] = useState(false);
   const [showSunlight, setShowSunlight] = useState(true);
+  const [showSunGrid, setShowSunGrid] = useState(false);
   const [generatedPlan, setGeneratedPlan] = useState<{
     plants: PlanPlant[];
     gridCols: number;
@@ -607,6 +608,20 @@ export default function NewPlanPage() {
                 Sunlight
               </button>
 
+              {generatedPlan.sunGrid && (
+                <button
+                  onClick={() => setShowSunGrid(s => !s)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
+                    showSunGrid ? 'bg-blue-600 text-white border-blue-600' : 'border-stone-300 hover:border-stone-400 bg-white'
+                  }`}
+                >
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                  </svg>
+                  Sun Grid
+                </button>
+              )}
+
               <span className="ml-auto text-xs text-muted">
                 {generatedPlan.species.length} spp · {generatedPlan.plants.length} plants
               </span>
@@ -621,6 +636,8 @@ export default function NewPlanPage() {
                 style="satellite-streets"
                 show3D={true}
                 showSunlight={showSunlight}
+                showSunGrid={showSunGrid}
+                sunGrid={generatedPlan.sunGrid}
                 showSearch={false}
                 areaOutline={location.areaGeoJson}
                 exclusionZones={exclusionZones}

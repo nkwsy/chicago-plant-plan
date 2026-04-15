@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 import SunCalc from 'suncalc';
-import type { ExclusionZone, ExistingTree } from '@/types/plan';
+import type { ExclusionZone, ExistingTree, SunGrid } from '@/types/plan';
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
 
@@ -36,6 +36,8 @@ interface MapboxMapProps {
   onExistingTreePlaced?: (tree: ExistingTree) => void;
   height?: string;
   style?: 'satellite' | 'streets' | 'satellite-streets';
+  sunGrid?: SunGrid | null;
+  showSunGrid?: boolean;
 }
 
 const STYLE_URLS: Record<string, string> = {
@@ -85,6 +87,54 @@ function buildTreeGeoJSON(trees: ExistingTree[]): GeoJSON.FeatureCollection {
   };
 }
 
+const M_PER_DEG_LAT = 111320;
+const M_PER_DEG_LNG = 111320 * Math.cos(41.88 * Math.PI / 180);
+const FT_TO_M = 0.3048;
+const CELL_FT = 5;
+
+function sunHoursToColor(hours: number): string {
+  // Yellow (full sun) → Orange (part sun) → Blue-gray (part shade) → Dark blue (full shade)
+  if (hours >= 6) return `rgba(255, 200, 0, 0.45)`;      // full sun — warm yellow
+  if (hours >= 4) return `rgba(255, 140, 0, 0.45)`;       // part sun — orange
+  if (hours >= 2) return `rgba(100, 140, 200, 0.45)`;     // part shade — cool blue
+  return `rgba(50, 70, 130, 0.50)`;                        // full shade — deep blue
+}
+
+function buildSunGridGeoJSON(grid: SunGrid): GeoJSON.FeatureCollection {
+  const halfLatDeg = (CELL_FT / 2) * FT_TO_M / M_PER_DEG_LAT;
+  const halfLngDeg = (CELL_FT / 2) * FT_TO_M / M_PER_DEG_LNG;
+
+  return {
+    type: 'FeatureCollection',
+    features: grid.cells
+      .filter(c => !c.inExclusion)
+      .map(cell => {
+        const lat = cell.centerLat;
+        const lng = cell.centerLng;
+        return {
+          type: 'Feature' as const,
+          geometry: {
+            type: 'Polygon' as const,
+            coordinates: [[
+              [lng - halfLngDeg, lat - halfLatDeg],
+              [lng + halfLngDeg, lat - halfLatDeg],
+              [lng + halfLngDeg, lat + halfLatDeg],
+              [lng - halfLngDeg, lat + halfLatDeg],
+              [lng - halfLngDeg, lat - halfLatDeg],
+            ]],
+          },
+          properties: {
+            sunHours: cell.sunHours,
+            sunCategory: cell.sunCategory,
+            color: sunHoursToColor(cell.sunHours),
+            underCanopy: cell.underCanopy,
+            label: `${cell.sunHours}h`,
+          },
+        };
+      }),
+  };
+}
+
 // Meters-per-pixel at Chicago latitude for zoom levels
 // Formula: 40075016.686 * cos(41.88°) / (256 * 2^zoom)
 // z17=1.11, z18=0.556, z19=0.278, z20=0.139, z21=0.0694
@@ -95,6 +145,8 @@ function addMapLayers(
   treeData: GeoJSON.FeatureCollection,
   areaOutline: GeoJSON.Polygon | null | undefined,
   show3D: boolean,
+  sunGridData?: GeoJSON.FeatureCollection | null,
+  showSunGrid?: boolean,
 ) {
   // 3D buildings with shadow support
   if (show3D) {
@@ -140,6 +192,41 @@ function addMapLayers(
       paint: { 'fill-color': '#22c55e', 'fill-opacity': 0.1 } });
     map.addLayer({ id: 'area-outline-line', type: 'line', source: 'area-outline',
       paint: { 'line-color': '#22c55e', 'line-width': 3, 'line-dasharray': [3, 2] } });
+  }
+
+  // Sun grid heatmap overlay
+  if (sunGridData) {
+    map.addSource('sun-grid', { type: 'geojson', data: sunGridData });
+    map.addLayer({
+      id: 'sun-grid-fill', type: 'fill', source: 'sun-grid',
+      paint: {
+        'fill-color': ['get', 'color'],
+        'fill-opacity': showSunGrid ? 0.7 : 0,
+      },
+    });
+    map.addLayer({
+      id: 'sun-grid-lines', type: 'line', source: 'sun-grid',
+      paint: {
+        'line-color': 'rgba(255,255,255,0.4)',
+        'line-width': 0.5,
+        'line-opacity': showSunGrid ? 1 : 0,
+      },
+    });
+    map.addLayer({
+      id: 'sun-grid-labels', type: 'symbol', source: 'sun-grid',
+      layout: {
+        'text-field': ['get', 'label'],
+        'text-size': 10,
+        'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'],
+        'text-allow-overlap': true,
+      },
+      paint: {
+        'text-color': '#fff',
+        'text-halo-color': 'rgba(0,0,0,0.6)',
+        'text-halo-width': 1,
+        'text-opacity': showSunGrid ? 1 : 0,
+      },
+    });
   }
 
   // Exclusion zones
@@ -237,6 +324,7 @@ export default function MapboxMap({
   areaOutline, exclusionZones = [], existingTrees = [],
   editMode = 'none', onExclusionZoneCreated, onExistingTreePlaced,
   height = '100%', style = 'satellite-streets',
+  sunGrid, showSunGrid = false,
 }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -260,6 +348,8 @@ export default function MapboxMap({
   exclusionZonesRef.current = exclusionZones;
   const existingTreesRef = useRef(existingTrees);
   existingTreesRef.current = existingTrees;
+  const sunGridRef = useRef(sunGrid);
+  sunGridRef.current = sunGrid;
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -294,6 +384,8 @@ export default function MapboxMap({
         buildTreeGeoJSON(existingTreesRef.current),
         areaOutline,
         show3D,
+        sunGridRef.current ? buildSunGridGeoJSON(sunGridRef.current) : null,
+        showSunGrid,
       );
 
       // Sun lighting
@@ -328,6 +420,8 @@ export default function MapboxMap({
           buildTreeGeoJSON(existingTreesRef.current),
           areaOutline,
           show3D,
+          sunGridRef.current ? buildSunGridGeoJSON(sunGridRef.current) : null,
+          showSunGrid,
         );
       } catch (e) { /* sources may already exist */ }
     });
@@ -482,6 +576,23 @@ export default function MapboxMap({
     if (!map) return;
     map.easeTo({ pitch, duration: 500 });
   }, [pitch]);
+
+  // Toggle sun grid visibility
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.isStyleLoaded()) return;
+    try {
+      if (map.getLayer('sun-grid-fill')) {
+        map.setPaintProperty('sun-grid-fill', 'fill-opacity', showSunGrid ? 0.7 : 0);
+      }
+      if (map.getLayer('sun-grid-lines')) {
+        map.setPaintProperty('sun-grid-lines', 'line-opacity', showSunGrid ? 1 : 0);
+      }
+      if (map.getLayer('sun-grid-labels')) {
+        map.setPaintProperty('sun-grid-labels', 'text-opacity', showSunGrid ? 1 : 0);
+      }
+    } catch { /* layers may not exist yet */ }
+  }, [showSunGrid]);
 
   function switchStyle(s: string) {
     if (!mapRef.current) return;
