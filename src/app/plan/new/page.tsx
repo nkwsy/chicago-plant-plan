@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import MapContainer from '@/components/map/MapContainer';
 import PlantingLegend from '@/components/plan/PlantingLegend';
@@ -156,6 +156,20 @@ export default function NewPlanPage() {
       setRecalculating(false);
     }
   }
+
+  // Auto-regenerate sun grid when trees or exclusions change (debounced)
+  const autoRegenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    if (!generatedPlan || !location.areaGeoJson) return;
+    // Debounce 800ms so rapid changes don't spam recalculations
+    if (autoRegenTimerRef.current) clearTimeout(autoRegenTimerRef.current);
+    autoRegenTimerRef.current = setTimeout(() => {
+      regenerateSunGrid();
+    }, 800);
+    return () => {
+      if (autoRegenTimerRef.current) clearTimeout(autoRegenTimerRef.current);
+    };
+  }, [exclusionZones, existingTrees]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function removePlantFromPlan(plantSlug: string, gridX: number, gridY: number) {
     if (!generatedPlan) return;

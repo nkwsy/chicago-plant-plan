@@ -7,7 +7,6 @@ import SunCalc from 'suncalc';
 import type { ExclusionZone, ExistingTree, SunGrid, SunGridCell } from '@/types/plan';
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || '';
-const SHADEMAP_KEY = process.env.NEXT_PUBLIC_SHADEMAP_KEY || '';
 
 interface PlantPlacement {
   lat: number; lng: number; color: string; name: string; slug: string;
@@ -94,6 +93,67 @@ const M_PER_DEG_LAT = 111320;
 const M_PER_DEG_LNG = 111320 * Math.cos(41.88 * Math.PI / 180);
 const FT_TO_M = 0.3048;
 const CELL_FT = 5;
+
+/**
+ * Build GeoJSON for tree shadow polygons at a given time of day.
+ * Each tree casts a capsule-shaped shadow based on SunCalc position.
+ */
+function computeTreeShadowGeoJSON(
+  trees: ExistingTree[], lat: number, lng: number, hour: number,
+): GeoJSON.FeatureCollection {
+  const now = new Date();
+  const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(),
+    Math.floor(hour), (hour % 1) * 60);
+  const sunPos = SunCalc.getPosition(date, lat, lng);
+  const altDeg = sunPos.altitude * (180 / Math.PI);
+
+  if (altDeg <= 2 || trees.length === 0) {
+    return { type: 'FeatureCollection', features: [] };
+  }
+
+  const azDeg = sunPos.azimuth * (180 / Math.PI) + 180;
+  const altRad = altDeg * Math.PI / 180;
+  const shadowDir = ((azDeg + 180) % 360) * Math.PI / 180;
+  const sdx = Math.sin(shadowDir);
+  const sdy = Math.cos(shadowDir);
+
+  return {
+    type: 'FeatureCollection',
+    features: trees.map(tree => {
+      const hM = (tree.heightFt || tree.canopyDiameterFt * 1.5) * FT_TO_M;
+      const rM = (tree.canopyDiameterFt / 2) * FT_TO_M;
+      const shadowDist = Math.min(hM / Math.tan(altRad), 80);
+
+      // Capsule shape: semicircle at tree (sun-side) + semicircle at shadow tip
+      const coords: [number, number][] = [];
+      const n = 12;
+      const baseAngle = Math.atan2(-sdx, -sdy);
+
+      for (let i = 0; i <= n; i++) {
+        const a = baseAngle - Math.PI / 2 + (i / n) * Math.PI;
+        coords.push([
+          tree.lng + Math.cos(a) * rM / M_PER_DEG_LNG,
+          tree.lat + Math.sin(a) * rM / M_PER_DEG_LAT,
+        ]);
+      }
+      const tipAngle = Math.atan2(sdx, sdy);
+      for (let i = 0; i <= n; i++) {
+        const a = tipAngle - Math.PI / 2 + (i / n) * Math.PI;
+        coords.push([
+          tree.lng + (sdx * shadowDist + Math.cos(a) * rM) / M_PER_DEG_LNG,
+          tree.lat + (sdy * shadowDist + Math.sin(a) * rM) / M_PER_DEG_LAT,
+        ]);
+      }
+      coords.push(coords[0]);
+
+      return {
+        type: 'Feature' as const,
+        geometry: { type: 'Polygon' as const, coordinates: [coords] },
+        properties: { label: tree.label || 'Tree shadow' },
+      };
+    }),
+  };
+}
 
 /**
  * Compute fraction of daylight hours a cell is shadowed by trees.
@@ -280,6 +340,16 @@ function addMapLayers(
     });
   }
 
+  // Tree shadow polygons (visual, updated with sun position)
+  map.addSource('tree-shadows', {
+    type: 'geojson',
+    data: { type: 'FeatureCollection', features: [] },
+  });
+  map.addLayer({
+    id: 'tree-shadow-fill', type: 'fill', source: 'tree-shadows',
+    paint: { 'fill-color': '#1a1a2e', 'fill-opacity': 0.25 },
+  });
+
   // Exclusion zones
   map.addSource('exclusions', { type: 'geojson', data: exclusionData });
   map.addLayer({ id: 'exclusion-fill', type: 'fill', source: 'exclusions',
@@ -390,6 +460,8 @@ export default function MapboxMap({
   const [mapStyle, setMapStyle] = useState(style);
   const [sunHour, setSunHour] = useState(12);
   const [showSunPanel, setShowSunPanel] = useState(false);
+  const [animatingSun, setAnimatingSun] = useState(false);
+  const animationRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const editModeRef = useRef(editMode);
   editModeRef.current = editMode;
 
@@ -657,6 +729,62 @@ export default function MapboxMap({
     return () => clearTimeout(timer);
   }, [showSunGrid]);
 
+  // Auto-activate draw_polygon when editMode switches to 'exclusion'
+  useEffect(() => {
+    if (editMode === 'exclusion' && drawRef.current) {
+      try { drawRef.current.changeMode('draw_polygon'); } catch {}
+    }
+  }, [editMode]);
+
+  // Update tree shadow polygons when sun hour or trees change
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !showSunlight) return;
+    const update = () => {
+      try {
+        const src = map.getSource('tree-shadows') as mapboxgl.GeoJSONSource;
+        if (src) {
+          src.setData(computeTreeShadowGeoJSON(existingTrees, center[0], center[1], sunHour));
+        }
+      } catch {}
+    };
+    if (map.isStyleLoaded() && layersAddedRef.current) update();
+    else map.once('idle', update);
+  }, [sunHour, existingTrees, showSunlight]);
+
+  // Sun animation: cycle sun hour from 5 AM to 9 PM
+  useEffect(() => {
+    if (animatingSun) {
+      animationRef.current = setInterval(() => {
+        setSunHour(prev => {
+          const next = prev + 0.25;
+          if (next > 21) {
+            setAnimatingSun(false);
+            return 5;
+          }
+          return next;
+        });
+      }, 150);
+    }
+    return () => {
+      if (animationRef.current) clearInterval(animationRef.current);
+    };
+  }, [animatingSun]);
+
+  // Update sun grid data source when sunGrid prop changes
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !sunGrid) return;
+    const update = () => {
+      try {
+        const src = map.getSource('sun-grid') as mapboxgl.GeoJSONSource;
+        if (src) src.setData(buildSunGridGeoJSON(sunGrid));
+      } catch {}
+    };
+    if (map.isStyleLoaded() && layersAddedRef.current) update();
+    else map.once('idle', update);
+  }, [sunGrid]);
+
   // Expose building detection via ref
   useEffect(() => {
     if (!detectBuildingsRef) return;
@@ -697,187 +825,65 @@ export default function MapboxMap({
     };
   }, [areaOutline, detectBuildingsRef]);
 
-  // ShadeMap sun exposure → sun grid computation
-  const shadeMapRef = useRef<any>(null);
-
+  // Compute sun grid using building polygons from Mapbox tiles + SunCalc ray-casting (free, no API key)
   useEffect(() => {
     if (!computeSunGridRef) return;
     computeSunGridRef.current = async () => {
       const map = mapRef.current;
       if (!map || !areaOutline) return null;
 
+      // Detect building polygons from Mapbox vector tiles
+      const buildingLayers = map.getStyle().layers
+        ?.filter(l => (l as any)['source-layer'] === 'building')
+        .map(l => l.id) || [];
+      const features = buildingLayers.length
+        ? (map as any).queryRenderedFeatures({ layers: buildingLayers })
+        : [];
+
+      // Convert buildings to ExclusionZones for ray-casting
+      const detectedBuildings: ExclusionZone[] = [];
+      const seen = new Set<string>();
+      for (const f of features) {
+        const id = f.id?.toString() || JSON.stringify(f.geometry).substring(0, 50);
+        if (seen.has(id)) continue;
+        seen.add(id);
+        if (f.geometry.type === 'Polygon') {
+          const h = f.properties?.height
+            || (f.properties?.['building:levels'] ? f.properties['building:levels'] * 3.5 : null);
+          detectedBuildings.push({
+            id: `bldg-auto-${detectedBuildings.length}`,
+            geoJson: f.geometry as GeoJSON.Polygon,
+            label: 'Building', type: 'building',
+            heightMeters: h || 8,
+          });
+        }
+      }
+
+      // Merge detected buildings with user-drawn exclusion zones
+      const allExclusions = [
+        ...exclusionZonesRef.current,
+        ...detectedBuildings.filter(db =>
+          !exclusionZonesRef.current.some(ez =>
+            ez.type === 'building' && Math.abs(
+              JSON.stringify(ez.geoJson).length - JSON.stringify(db.geoJson).length
+            ) < 10
+          )
+        ),
+      ];
+
       const coords = areaOutline.coordinates[0];
       const lats = coords.map(c => c[1]);
       const lngs = coords.map(c => c[0]);
-      const minLat = Math.min(...lats), maxLat = Math.max(...lats);
-      const minLng = Math.min(...lngs), maxLng = Math.max(...lngs);
+      const bounds = {
+        minLat: Math.min(...lats), maxLat: Math.max(...lats),
+        minLng: Math.min(...lngs), maxLng: Math.max(...lngs),
+      };
 
-      const M_DEG_LAT = 111320;
-      const M_DEG_LNG = 111320 * Math.cos(41.88 * Math.PI / 180);
-      const FT_M = 0.3048;
-      const CELL_FT = 5;
-      const ftDegLat = (ft: number) => ft * FT_M / M_DEG_LAT;
-      const ftDegLng = (ft: number) => ft * FT_M / M_DEG_LNG;
-
-      const widthFt = (maxLng - minLng) * M_DEG_LNG / FT_M;
-      const heightFt = (maxLat - minLat) * M_DEG_LAT / FT_M;
-      const cols = Math.max(1, Math.ceil(widthFt / CELL_FT));
-      const rows = Math.max(1, Math.ceil(heightFt / CELL_FT));
-
-      // Fit the map to the garden bounds so all cells are visible for ShadeMap queries
-      map.fitBounds([[minLng, minLat], [maxLng, maxLat]], { padding: 40, duration: 0 });
-      // Wait for map to settle
-      await new Promise(r => setTimeout(r, 500));
-
-      // Try ShadeMap for building shadows
-      let shadeMapHours: Map<string, number> | null = null;
-
-      if (SHADEMAP_KEY) {
-        try {
-          const ShadeMap = (await import('mapbox-gl-shadow-simulator')).default;
-
-          // Remove previous ShadeMap instance
-          if (shadeMapRef.current) {
-            try { shadeMapRef.current.remove(); } catch {}
-            shadeMapRef.current = null;
-          }
-
-          const year = new Date().getFullYear();
-          // Summer solstice — representative growing season day
-          const solstice = new Date(year, 5, 21);
-          const dayBefore = new Date(year, 5, 20);
-          const dayAfter = new Date(year, 5, 22);
-
-          const shadeMap = new ShadeMap({
-            apiKey: SHADEMAP_KEY,
-            date: solstice,
-            color: '#01112f',
-            opacity: 0.5,
-            terrainSource: {
-              tileSize: 514,
-              maxZoom: 14,
-              getSourceUrl: ({ x, y, z }: { x: number; y: number; z: number }) => {
-                const sub = ['a', 'b', 'c', 'd'][(x + y) % 4];
-                return `https://${sub}.tiles.mapbox.com/raster/v1/mapbox.mapbox-terrain-dem-v1/${z}/${x}/${y}.webp?sku=101wuwGrczDtH&access_token=${MAPBOX_TOKEN}`;
-              },
-              getElevation: ({ r, g, b }: { r: number; g: number; b: number }) =>
-                -10000 + ((r * 256 * 256 + g * 256 + b) * 0.1),
-            },
-            getFeatures: async () => {
-              return map.querySourceFeatures('composite', {
-                sourceLayer: 'building',
-              }).filter((f: any) =>
-                f.properties && f.properties.underground !== 'true' &&
-                (f.properties.height || f.properties.render_height)
-              );
-            },
-            sunExposure: {
-              enabled: true,
-              startDate: dayBefore,
-              endDate: dayAfter,
-              iterations: 48, // ~30 min intervals across 2 days → good resolution
-            },
-          }).addTo(map);
-
-          shadeMapRef.current = shadeMap;
-
-          // Wait for ShadeMap to finish computing sun exposure
-          await new Promise<void>((resolve) => {
-            shadeMap.on('idle', () => resolve());
-            // Timeout fallback
-            setTimeout(resolve, 15000);
-          });
-
-          // Query sun hours for each grid cell
-          shadeMapHours = new Map();
-          for (let r = 0; r < rows; r++) {
-            for (let c = 0; c < cols; c++) {
-              const cellLat = minLat + (r + 0.5) * ftDegLat(CELL_FT);
-              const cellLng = minLng + (c + 0.5) * ftDegLng(CELL_FT);
-              const screenPt = map.project([cellLng, cellLat]);
-              const hours = shadeMap.getHoursOfSun(screenPt.x, screenPt.y);
-              shadeMapHours.set(`${r}-${c}`, hours);
-            }
-          }
-
-          // Clean up ShadeMap
-          try { shadeMap.remove(); } catch {}
-          shadeMapRef.current = null;
-        } catch (err) {
-          console.warn('ShadeMap sun exposure failed, falling back to manual calc:', err);
-          shadeMapHours = null;
-        }
-      }
-
-      // Build the sun grid cells, combining ShadeMap data with tree shadows
+      // Use buildSunGrid with all building polygons + trees for accurate ray-casting
+      const { buildSunGrid } = await import('@/lib/analysis/sun-grid');
       const trees = existingTreesRef.current;
-      const { sunHoursToCategory } = await import('@/lib/analysis/sun');
-      const cells: SunGridCell[] = [];
-
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          const cellLat = minLat + (r + 0.5) * ftDegLat(CELL_FT);
-          const cellLng = minLng + (c + 0.5) * ftDegLng(CELL_FT);
-
-          // Check tree canopy
-          let underCanopy = false;
-          for (const tree of trees) {
-            const rLat = ftDegLat(tree.canopyDiameterFt / 2);
-            const rLng = ftDegLng(tree.canopyDiameterFt / 2);
-            const d = ((cellLat - tree.lat) / rLat) ** 2 + ((cellLng - tree.lng) / rLng) ** 2;
-            if (d <= 1) { underCanopy = true; break; }
-          }
-
-          // Check exclusion zone (bounding box)
-          let inExclusion = false;
-          for (const zone of exclusionZonesRef.current) {
-            try {
-              const zCoords = zone.geoJson.coordinates[0];
-              const zLats = zCoords.map((co: number[]) => co[1]);
-              const zLngs = zCoords.map((co: number[]) => co[0]);
-              if (cellLat >= Math.min(...zLats) && cellLat <= Math.max(...zLats) &&
-                  cellLng >= Math.min(...zLngs) && cellLng <= Math.max(...zLngs)) {
-                inExclusion = true; break;
-              }
-            } catch {}
-          }
-
-          let sunHours: number;
-          if (shadeMapHours) {
-            // Use ShadeMap data (accounts for building shadows accurately)
-            sunHours = shadeMapHours.get(`${r}-${c}`) ?? 14;
-          } else {
-            // Fallback: estimate ~14h max on summer solstice at Chicago latitude
-            // (buildings not accounted for without ShadeMap)
-            sunHours = 14;
-          }
-
-          // Apply tree shadow reduction using SunCalc ray-casting
-          if (trees.length > 0 && sunHours > 0) {
-            const treeShadowFraction = computeTreeShadowFraction(cellLat, cellLng, trees);
-            sunHours = sunHours * (1 - treeShadowFraction);
-          }
-
-          // Canopy further reduces light (dappled shade)
-          if (underCanopy) {
-            sunHours = Math.max(0.5, sunHours * 0.35);
-          }
-
-          sunHours = Math.round(sunHours * 10) / 10;
-
-          cells.push({
-            row: r, col: c, centerLat: cellLat, centerLng: cellLng,
-            sunHours, sunCategory: sunHoursToCategory(sunHours),
-            underCanopy, inExclusion,
-          });
-        }
-      }
-
-      return {
-        cellSizeFt: CELL_FT, rows, cols,
-        originLat: minLat, originLng: minLng,
-        cells, globalOverride: null,
-      } as SunGrid;
+      const grid = buildSunGrid(bounds, trees, [], allExclusions, areaOutline, null);
+      return grid;
     };
   }, [areaOutline, computeSunGridRef]);
 
@@ -958,10 +964,40 @@ export default function MapboxMap({
             <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-5a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm0 18a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm9-9h1a1 1 0 110 2h-1a1 1 0 110-2zM3 12a1 1 0 110 2H2a1 1 0 110-2h1z" /></svg>
           </button>
           {showSunPanel && (
-            <div className="mt-2 bg-white rounded-lg shadow-lg p-3 w-56">
-              <div className="text-xs font-medium text-gray-600 mb-2">Time: {formatHour(sunHour)}</div>
-              <input type="range" min={5} max={21} step={0.5} value={sunHour}
-                onChange={(e) => setSunHour(parseFloat(e.target.value))} className="w-full accent-amber-500" />
+            <div className="mt-2 bg-white rounded-lg shadow-lg p-3 w-64">
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-xs font-medium text-gray-600">Time: {formatHour(sunHour)}</div>
+                <button
+                  onClick={() => {
+                    if (animatingSun) {
+                      setAnimatingSun(false);
+                    } else {
+                      if (sunHour >= 20.5) setSunHour(5);
+                      setAnimatingSun(true);
+                    }
+                  }}
+                  className={`flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full transition-all ${
+                    animatingSun
+                      ? 'bg-amber-500 text-white'
+                      : 'bg-amber-100 text-amber-700 hover:bg-amber-200'
+                  }`}
+                >
+                  {animatingSun ? (
+                    <>
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>
+                      Pause
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                      Animate Sun
+                    </>
+                  )}
+                </button>
+              </div>
+              <input type="range" min={5} max={21} step={0.25} value={sunHour}
+                onChange={(e) => { setAnimatingSun(false); setSunHour(parseFloat(e.target.value)); }}
+                className="w-full accent-amber-500" />
               <div className="flex justify-between text-xs text-gray-400 mt-1"><span>5 AM</span><span>9 PM</span></div>
             </div>
           )}
