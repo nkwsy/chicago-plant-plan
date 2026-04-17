@@ -1,0 +1,165 @@
+[
+  {
+    "slug": "piet-oudolf-prairie-matrix",
+    "name": "Piet Oudolf — Prairie Matrix",
+    "description": "Grass-heavy matrix with structural perennials, seed heads, and strong autumn–winter architecture.",
+    "longDescription": "Modeled on Piet Oudolf's naturalistic New Perennial style: a repeating matrix of warm-season grasses (~35%) interwoven with long-blooming structural perennials (Echinacea, Rudbeckia, Baptisia, Monarda) and scatter accents (Liatris, Veronicastrum). Emphasizes form over flower, rewards plants whose seed heads persist through winter, and tilts bloom coverage toward late summer and fall.",
+    "author": "Built-in",
+    "isBuiltIn": true,
+    "typeRatios": { "grass": 0.35, "forb": 0.60, "shrub": 0.05 },
+    "roleRatios": { "matrix": 0.65, "structure": 0.20, "scatter": 0.15 },
+    "weights": {
+      "winterInterest": 2.0,
+      "seedHead": 2.0,
+      "bloomCoverage": 0.7,
+      "colorDiversity": 0.5,
+      "familyDiversity": 1.2,
+      "favorability": 1.0
+    },
+    "tagBonuses": {
+      "warm-season-grass": 10,
+      "seed-head": 8,
+      "keystone": 5,
+      "prairie-structural": 8
+    },
+    "tagPenalties": {
+      "aggressive-spreader": -10,
+      "short-lived": -5
+    },
+    "characteristicSpecies": [
+      "purple-coneflower",
+      "black-eyed-susan",
+      "wild-bergamot",
+      "joe-pye-weed",
+      "culvers-root",
+      "rough-blazing-star",
+      "new-england-aster",
+      "showy-goldenrod",
+      "white-wild-indigo",
+      "rattlesnake-master",
+      "little-bluestem",
+      "prairie-dropseed",
+      "switchgrass"
+    ],
+    "pinBonus": 30,
+    "bloomEmphasisMonths": [8, 9, 10],
+    "bloomEmphasisBonus": 10
+  },
+  {
+    "slug": "pollinator-powerhouse",
+    "name": "Pollinator Powerhouse",
+    "description": "Maximum wildlife value with overlapping bloom from April through October.",
+    "longDescription": "Prioritizes nectar- and pollen-rich forbs with special weight on monarch-host milkweeds, specialist-bee forage, and keystone species. Bloom emphasis covers the full growing season so something is feeding pollinators every week.",
+    "author": "Built-in",
+    "isBuiltIn": true,
+    "typeRatios": { "forb": 0.70, "grass": 0.15, "shrub": 0.15 },
+    "roleRatios": { "matrix": 0.30, "structure": 0.30, "scatter": 0.40 },
+    "weights": {
+      "wildlife": 2.5,
+      "bloomCoverage": 1.8,
+      "colorDiversity": 1.2,
+      "favorability": 1.0
+    },
+    "tagBonuses": {
+      "monarch-host": 15,
+      "specialist-bee": 10,
+      "keystone": 8,
+      "pollinator-magnet": 6
+    },
+    "tagPenalties": {
+      "aggressive-spreader": -6
+    },
+    "characteristicSpecies": [
+      "common-milkweed",
+      "swamp-milkweed",
+      "prairie-milkweed",
+      "whorled-milkweed",
+      "wild-bergamot",
+      "common-mountain-mint",
+      "rough-blazing-star",
+      "new-england-aster",
+      "showy-goldenrod",
+      "purple-coneflower",
+      "buttonbush"
+    ],
+    "pinBonus": 25,
+    "bloomEmphasisMonths": [4, 5, 6, 7, 8, 9, 10],
+    "bloomEmphasisBonus": 5
+  },
+  {
+    "slug": "woodland-shade",
+    "name": "Woodland Shade",
+    "description": "Shade-tolerant forbs, sedges, and ferns — the understory companions beneath mature trees.",
+    "longDescription": "Designed for dappled shade and deep shade plots. Heavy on ephemerals that bloom before the canopy leafs out, ground-covering sedges, and ferns for year-round texture. Pairs naturally with Oudolf-style open beds as woodland edge treatments.",
+    "author": "Built-in",
+    "isBuiltIn": true,
+    "typeRatios": { "forb": 0.55, "sedge": 0.25, "fern": 0.15, "shrub": 0.05 },
+    "roleRatios": { "matrix": 0.50, "filler": 0.30, "scatter": 0.20 },
+    "weights": {
+      "familyDiversity": 1.5,
+      "effort": 1.2,
+      "bloomCoverage": 1.1,
+      "favorability": 1.0
+    },
+    "tagBonuses": {
+      "spring-ephemeral": 10,
+      "shade-tolerant": 8,
+      "native-groundcover": 6
+    },
+    "tagPenalties": {},
+    "characteristicSpecies": [
+      "wild-ginger",
+      "virginia-bluebells",
+      "white-trillium",
+      "bloodroot",
+      "wild-geranium",
+      "wild-columbine",
+      "jacobs-ladder",
+      "mayapple",
+      "white-trout-lily",
+      "pennsylvania-sedge",
+      "christmas-fern",
+      "ostrich-fern",
+      "white-wood-aster",
+      "zigzag-goldenrod"
+    ],
+    "pinBonus": 30,
+    "bloomEmphasisMonths": [3, 4, 5],
+    "bloomEmphasisBonus": 8
+  },
+  {
+    "slug": "rain-garden",
+    "name": "Rain Garden",
+    "description": "Flood-tolerant species for bioswales, downspout runoff, and seasonally wet depressions.",
+    "longDescription": "Targets plots that hold water or receive stormwater runoff. Heavy on sedges and rushes that tolerate inundation, with showy forbs (Lobelia, Iris, Chelone) for visual interest. Good wildlife value as a secondary goal — rain gardens are great for amphibians and birds.",
+    "author": "Built-in",
+    "isBuiltIn": true,
+    "typeRatios": { "forb": 0.50, "grass": 0.25, "sedge": 0.20, "shrub": 0.05 },
+    "roleRatios": { "matrix": 0.50, "structure": 0.25, "scatter": 0.25 },
+    "weights": {
+      "wildlife": 1.3,
+      "bloomCoverage": 1.2,
+      "favorability": 1.0
+    },
+    "tagBonuses": {
+      "flood-tolerant": 12,
+      "deep-rooted": 8,
+      "wet-meadow": 6
+    },
+    "tagPenalties": {
+      "drought-required": -10
+    },
+    "characteristicSpecies": [
+      "swamp-milkweed",
+      "blue-flag-iris",
+      "tussock-sedge",
+      "turtlehead",
+      "joe-pye-weed",
+      "cardinal-flower",
+      "buttonbush"
+    ],
+    "pinBonus": 30,
+    "bloomEmphasisMonths": [6, 7, 8, 9],
+    "bloomEmphasisBonus": 6
+  }
+]

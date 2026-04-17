@@ -1,0 +1,87 @@
+{
+  "generatedAt": "2026-04-17T21:23:13.453Z",
+  "plantPoolSize": 170,
+  "baseline": {
+    "count": 20,
+    "grassShare": 0.05,
+    "typeBreakdown": {
+      "forb": 10,
+      "tree": 1,
+      "shrub": 4,
+      "vine": 2,
+      "fern": 1,
+      "grass": 1,
+      "sedge": 1
+    },
+    "characteristicHits": 2,
+    "seedHeadCount": 0,
+    "winterStructureCount": 0,
+    "slugs": [
+      "purple-coneflower",
+      "river-birch",
+      "witch-hazel",
+      "trumpet-honeysuckle",
+      "buttonbush",
+      "swamp-milkweed",
+      "woodland-phlox",
+      "common-blue-violet",
+      "cream-wild-indigo",
+      "royal-fern",
+      "blue-vervain",
+      "indian-grass",
+      "pennsylvania-sedge",
+      "common-mountain-mint",
+      "golden-alexanders",
+      "wild-columbine",
+      "common-spicebush",
+      "trumpet-creeper",
+      "new-jersey-tea",
+      "culvers-root"
+    ]
+  },
+  "oudolf": {
+    "count": 20,
+    "grassShare": 0.15,
+    "typeBreakdown": {
+      "forb": 12,
+      "grass": 3,
+      "vine": 1,
+      "shrub": 1,
+      "tree": 1,
+      "fern": 1,
+      "sedge": 1
+    },
+    "characteristicHits": 13,
+    "seedHeadCount": 0,
+    "winterStructureCount": 0,
+    "slugs": [
+      "purple-coneflower",
+      "culvers-root",
+      "wild-bergamot",
+      "little-bluestem",
+      "white-wild-indigo",
+      "rattlesnake-master",
+      "trumpet-honeysuckle",
+      "witch-hazel",
+      "rough-blazing-star",
+      "black-eyed-susan",
+      "joe-pye-weed",
+      "river-birch",
+      "showy-goldenrod",
+      "blue-vervain",
+      "new-england-aster",
+      "butterfly-weed",
+      "prairie-dropseed",
+      "royal-fern",
+      "switchgrass",
+      "pennsylvania-sedge"
+    ]
+  },
+  "delta": {
+    "grassShareDelta": 0.09999999999999999,
+    "characteristicHitsDelta": 11,
+    "seedHeadDelta": 0,
+    "winterStructureDelta": 0
+  },
+  "failures": []
+}

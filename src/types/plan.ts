@@ -11,6 +11,10 @@ export interface UserPreferences {
   specialFeatures: string[];
   targetSpeciesCount: number;
   densityMultiplier: number; // 0.5 = sparse, 1.0 = standard (1 plant/sqft), 2.0 = dense
+  /** Slug of the chosen DesignFormula (see src/types/formula.ts). Undefined /
+   *  empty string = classic selection with no formula bias. Orthogonal to
+   *  `aestheticPref`, which only affects layout clustering. */
+  formulaSlug?: string;
 }
 
 export interface PlanPlant {

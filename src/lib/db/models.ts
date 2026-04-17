@@ -37,6 +37,10 @@ export interface IPlant extends Document {
   notes?: string;
   lastEnrichedAt?: Date | null;
   inatTaxonId?: number | null;
+  // Oudolf / design-formula metadata (see src/types/plant.ts for doc).
+  oudolfRole?: string | null;
+  seedHeadInterest?: boolean;
+  winterStructure?: boolean;
 }
 
 const PlantSchema = new Schema<IPlant>({
@@ -80,6 +84,14 @@ const PlantSchema = new Schema<IPlant>({
   notes: { type: String, default: '' },
   lastEnrichedAt: { type: Date, default: null },
   inatTaxonId: { type: Number, default: null },
+  // Oudolf / design-formula metadata
+  oudolfRole: {
+    type: String,
+    enum: ['matrix', 'structure', 'scatter', 'filler', null],
+    default: null,
+  },
+  seedHeadInterest: { type: Boolean, default: false },
+  winterStructure: { type: Boolean, default: false },
 }, { timestamps: true });
 
 PlantSchema.index({ sun: 1 });
@@ -251,9 +263,54 @@ const PriceInquirySchema = new Schema<IPriceInquiry>({
 PriceInquirySchema.index({ status: 1 });
 PriceInquirySchema.index({ sentAt: -1 });
 
+// DesignFormula — named preset of scoring weights + ratios + pinned species.
+// See src/types/formula.ts for the shape used on the client side.
+export interface IFormula extends Document {
+  slug: string;
+  name: string;
+  description: string;
+  longDescription?: string;
+  author?: string;
+  isBuiltIn: boolean;
+  parentSlug?: string | null;
+  typeRatios: Record<string, number>;
+  roleRatios: Record<string, number>;
+  weights: Record<string, number>;
+  tagBonuses: Record<string, number>;
+  tagPenalties: Record<string, number>;
+  characteristicSpecies: string[];
+  pinBonus?: number;
+  bloomEmphasisMonths?: number[];
+  bloomEmphasisBonus?: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const FormulaSchema = new Schema<IFormula>({
+  slug: { type: String, required: true, unique: true, index: true },
+  name: { type: String, required: true },
+  description: { type: String, default: '' },
+  longDescription: { type: String, default: '' },
+  author: { type: String, default: '' },
+  isBuiltIn: { type: Boolean, default: false, index: true },
+  parentSlug: { type: String, default: null },
+  // Use Mixed for the record-shaped fields so we don't need to enumerate every
+  // possible key (PlantType, weight name, tag, etc.) in the schema.
+  typeRatios: { type: Schema.Types.Mixed, default: {} },
+  roleRatios: { type: Schema.Types.Mixed, default: {} },
+  weights: { type: Schema.Types.Mixed, default: {} },
+  tagBonuses: { type: Schema.Types.Mixed, default: {} },
+  tagPenalties: { type: Schema.Types.Mixed, default: {} },
+  characteristicSpecies: { type: [String], default: [] },
+  pinBonus: { type: Number, default: 30 },
+  bloomEmphasisMonths: { type: [Number], default: [] },
+  bloomEmphasisBonus: { type: Number, default: 0 },
+}, { timestamps: true, minimize: false });
+
 // Model getters (prevent re-compilation in dev)
 export const Plant = mongoose.models.Plant || mongoose.model<IPlant>('Plant', PlantSchema);
 export const Plan = mongoose.models.Plan || mongoose.model<IPlan>('Plan', PlanSchema);
 export const QuoteRequest = mongoose.models.QuoteRequest || mongoose.model<IQuoteRequest>('QuoteRequest', QuoteRequestSchema);
 export const ApiCache = mongoose.models.ApiCache || mongoose.model<IApiCache>('ApiCache', ApiCacheSchema);
 export const PriceInquiry = mongoose.models.PriceInquiry || mongoose.model<IPriceInquiry>('PriceInquiry', PriceInquirySchema);
+export const Formula = mongoose.models.Formula || mongoose.model<IFormula>('Formula', FormulaSchema);

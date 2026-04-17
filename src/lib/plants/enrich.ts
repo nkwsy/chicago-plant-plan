@@ -28,6 +28,7 @@ const ENUMS = {
   nativeHabitats: ['prairie', 'woodland', 'wetland', 'savanna'],
   wildlifeValue: ['pollinators', 'birds', 'butterflies', 'mammals'],
   effortLevel: ['low', 'medium', 'high'],
+  oudolfRole: ['matrix', 'structure', 'scatter', 'filler'],
 } as const;
 
 const SYSTEM = `You are a horticulturalist specialized in Chicagoland and Upper Midwest native plants. You help curate a database of plants suitable for ecological landscaping in USDA zones 5b–6a (Chicago, IL and surrounds).
@@ -41,7 +42,17 @@ Units:
 Constraints:
 - Arrays should list only truly applicable values. A plant that tolerates only dry sites should not list 'wet'.
 - \`description\`, \`careNotes\`, and \`plantingInstructions\` should each be 1–3 sentences of concrete, useful text — no marketing fluff.
-- Never invent supplier information.`;
+- Never invent supplier information.
+
+Oudolf / design-formula metadata (used by the planner to honor a chosen design style):
+- \`oudolfRole\` — how this plant functions in a naturalistic composition:
+  • "matrix": the repeating base — typically warm-season grasses (Schizachyrium, Sporobolus, Panicum) and durable mid-height perennials that read as a tapestry (e.g. Pycnanthemum).
+  • "structure": taller architectural plants that anchor the eye and punctuate the matrix (Echinacea, Baptisia, Veronicastrum, Eutrochium, Silphium).
+  • "scatter": accent species woven through in small numbers for seasonal highlights (Liatris, Monarda, Asclepias).
+  • "filler": short-lived or ephemeral plants that plug gaps in spring or early in a planting's life (Aquilegia, Rudbeckia hirta, ephemerals).
+  Pick the SINGLE role that best fits how the plant is typically used. Trees/large shrubs can be null if no role applies.
+- \`seedHeadInterest\`: true when the plant's seed heads persist attractively after bloom (Echinacea, Rudbeckia, most grasses, Eryngium). False for plants that go messy or disappear after flowering (most ephemerals, mints).
+- \`winterStructure\`: true when the plant holds architectural form through winter — dried stems, seed heads, or evergreen foliage standing above the snow (grasses, Echinacea, Rudbeckia, Baptisia, evergreen ferns). False for plants that flop or disappear after frost.`;
 
 // Tool schema forces JSON output and the valid enum set. Typed as Anthropic.Tool
 // (not `as const`) because the SDK's Tool.input_schema.required wants a mutable
@@ -72,6 +83,9 @@ const ENRICH_TOOL: Anthropic.Tool = {
       careNotes: { type: ['string', 'null'] },
       plantingInstructions: { type: ['string', 'null'] },
       nonNativeWarning: { type: ['string', 'null'] },
+      oudolfRole: { type: ['string', 'null'], enum: [...ENUMS.oudolfRole, null] },
+      seedHeadInterest: { type: ['boolean', 'null'] },
+      winterStructure: { type: ['boolean', 'null'] },
     },
     required: [],
   },
@@ -165,6 +179,9 @@ function describeMissing(p: Partial<Plant>): string[] {
   if (!p.description) missing.push('description');
   if (!p.careNotes) missing.push('careNotes');
   if (!p.plantingInstructions) missing.push('plantingInstructions');
+  if (!p.oudolfRole) missing.push('oudolfRole');
+  if (typeof p.seedHeadInterest !== 'boolean') missing.push('seedHeadInterest');
+  if (typeof p.winterStructure !== 'boolean') missing.push('winterStructure');
   return missing;
 }
 
@@ -232,6 +249,17 @@ function sanitizePatch(
   if (typeof raw.nonNativeWarning === 'string' && raw.nonNativeWarning.trim()) {
     (patch as Record<string, unknown>).nonNativeWarning = raw.nonNativeWarning.trim();
   }
+
+  // Oudolf metadata. Unlike the scalar fields above these OVERWRITE existing
+  // values if present — the roles are a subjective judgment and re-running
+  // the enrichment should be allowed to correct a bad classification. If a
+  // curator has manually set the role they can flip `lastEnrichedAt` or
+  // unset the field in the admin UI before re-running.
+  if (typeof raw.oudolfRole === 'string' && ENUMS.oudolfRole.includes(raw.oudolfRole as typeof ENUMS.oudolfRole[number])) {
+    patch.oudolfRole = raw.oudolfRole;
+  }
+  if (typeof raw.seedHeadInterest === 'boolean') patch.seedHeadInterest = raw.seedHeadInterest;
+  if (typeof raw.winterStructure === 'boolean') patch.winterStructure = raw.winterStructure;
 
   return patch as Partial<Plant> & { nonNativeWarning?: string | null };
 }

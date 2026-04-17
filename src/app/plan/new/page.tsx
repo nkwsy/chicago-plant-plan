@@ -6,8 +6,21 @@ import MapContainer from '@/components/map/MapContainer';
 import PlantingLegend from '@/components/plan/PlantingLegend';
 import type { SiteProfile } from '@/types/analysis';
 import type { UserPreferences, PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
+import type { DesignFormula } from '@/types/formula';
 
-type Step = 'location' | 'analysis' | 'preferences' | 'plan';
+type Step = 'location' | 'analysis' | 'style' | 'preferences' | 'plan';
+
+/** Species shape returned by /api/formulas/preview. */
+interface PreviewSpecies {
+  slug: string;
+  commonName: string;
+  scientificName: string;
+  plantType: string;
+  oudolfRole: string | null;
+  bloomColor: string;
+  imageUrl: string;
+  isCharacteristic: boolean;
+}
 
 interface LocationData {
   lat: number;
@@ -62,11 +75,61 @@ export default function NewPlanPage() {
   const steps: { key: Step; label: string }[] = [
     { key: 'location', label: 'Location' },
     { key: 'analysis', label: 'Analysis' },
+    { key: 'style', label: 'Style' },
     { key: 'preferences', label: 'Goals' },
     { key: 'plan', label: 'Plan' },
   ];
 
   const currentIdx = steps.findIndex(s => s.key === step);
+
+  // --- Design-formula state ---------------------------------------------------
+  // Formulas are loaded once when the user reaches the 'style' step. Preview
+  // data is fetched per-selection and cached by slug to avoid re-running the
+  // scorer when the user toggles between tiles.
+  const [formulas, setFormulas] = useState<DesignFormula[]>([]);
+  const [formulasLoading, setFormulasLoading] = useState(false);
+  const [previewBySlug, setPreviewBySlug] = useState<Record<string, PreviewSpecies[]>>({});
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  useEffect(() => {
+    if (step !== 'style' || formulas.length > 0 || formulasLoading) return;
+    setFormulasLoading(true);
+    fetch('/api/formulas')
+      .then((r) => r.json())
+      .then((data: DesignFormula[]) => setFormulas(Array.isArray(data) ? data : []))
+      .catch(() => {})
+      .finally(() => setFormulasLoading(false));
+  }, [step, formulas.length, formulasLoading]);
+
+  async function loadPreview(slug: string | undefined) {
+    // "None" (classic selection) uses empty-string cache key.
+    const cacheKey = slug || '__none__';
+    if (previewBySlug[cacheKey]) return;
+    setPreviewLoading(true);
+    try {
+      const res = await fetch('/api/formulas/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          formulaSlug: slug,
+          siteProfile,
+          preferences,
+          targetCount: 15,
+        }),
+      });
+      const data = (await res.json()) as { species?: PreviewSpecies[] };
+      setPreviewBySlug((prev) => ({ ...prev, [cacheKey]: data.species || [] }));
+    } catch {
+      // Silent fail — the UI shows an empty preview
+    } finally {
+      setPreviewLoading(false);
+    }
+  }
+
+  function selectFormula(slug: string | undefined) {
+    setPreferences((p) => ({ ...p, formulaSlug: slug }));
+    loadPreview(slug);
+  }
 
   async function runAnalysis() {
     if (!location.lat || !location.lng) return;
@@ -100,6 +163,21 @@ export default function NewPlanPage() {
         setAllPlantsCache(allPlants);
       }
 
+      // Resolve the selected formula (if any). Fetched on demand rather than
+      // kept in state so a user editing the slug via URL/query never gets a
+      // stale preset.
+      let formula: DesignFormula | undefined;
+      if (preferences.formulaSlug) {
+        try {
+          const res = await fetch(
+            `/api/formulas/${encodeURIComponent(preferences.formulaSlug)}`,
+          );
+          if (res.ok) formula = (await res.json()) as DesignFormula;
+        } catch {
+          // Swallow — generation still works without the formula, just reverts to classic.
+        }
+      }
+
       // Import and run generation client-side (using the JSON data)
       const { generatePlan: gen } = await import('@/lib/planner/generate');
       const areaSqFt = location.areaSqFt || 400; // Default 20x20 ft
@@ -109,6 +187,7 @@ export default function NewPlanPage() {
         allPlants, siteProfile, preferences, areaSqFt,
         location.areaGeoJson, [location.lat, location.lng],
         exclusionZones, existingTrees, sunOverride,
+        formula,
       );
 
       setGeneratedPlan({
@@ -347,6 +426,77 @@ export default function NewPlanPage() {
                 ← Back
               </button>
               <button
+                onClick={() => setStep('style')}
+                className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors"
+              >
+                Choose Style →
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 'style' && (
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Design style</h2>
+            <p className="text-muted mb-6">
+              Pick a design formula to bias plant selection toward a specific aesthetic. You can
+              change this later.
+            </p>
+
+            <div className="grid md:grid-cols-2 gap-4 mb-6">
+              {/* "None" tile — always first, restores classic pre-formula behavior. */}
+              <FormulaTile
+                name="Classic"
+                description="Balanced selection across all available species. No style bias."
+                selected={!preferences.formulaSlug}
+                previewCount={previewBySlug['__none__']?.length}
+                onClick={() => selectFormula(undefined)}
+              />
+              {formulasLoading && !formulas.length && (
+                <div className="text-sm text-muted col-span-full">Loading formulas…</div>
+              )}
+              {formulas.map((f) => (
+                <FormulaTile
+                  key={f.slug}
+                  name={f.name}
+                  description={f.description}
+                  selected={preferences.formulaSlug === f.slug}
+                  previewCount={previewBySlug[f.slug]?.length}
+                  ratios={f.typeRatios}
+                  roleRatios={f.roleRatios}
+                  isBuiltIn={f.isBuiltIn}
+                  onClick={() => selectFormula(f.slug)}
+                />
+              ))}
+            </div>
+
+            {/* Preview panel — shows the top species the formula would pick. */}
+            <div className="bg-surface rounded-lg border border-stone-200 p-4 mb-6">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-medium text-sm">
+                  Preview
+                  {preferences.formulaSlug
+                    ? `: ${formulas.find((f) => f.slug === preferences.formulaSlug)?.name ?? ''}`
+                    : ': Classic selection'}
+                </h3>
+                {previewLoading && (
+                  <span className="text-xs text-muted">Calculating…</span>
+                )}
+              </div>
+              <FormulaPreview
+                species={previewBySlug[preferences.formulaSlug || '__none__']}
+                loading={previewLoading}
+              />
+            </div>
+
+            <div className="flex justify-between">
+              <button
+                onClick={() => setStep('analysis')}
+                className="text-muted hover:text-foreground px-4 py-2 transition-colors"
+              >
+                ← Back
+              </button>
+              <button
                 onClick={() => setStep('preferences')}
                 className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors"
               >
@@ -421,7 +571,11 @@ export default function NewPlanPage() {
 
               {/* Aesthetic preference */}
               <div>
-                <label className="block font-medium mb-3">Garden style</label>
+                <label className="block font-medium mb-1">Layout style</label>
+                <p className="text-xs text-muted mb-3">
+                  Controls how plants are clustered on the ground. Separate from the design
+                  formula, which controls <em>which</em> species get picked.
+                </p>
                 <div className="grid grid-cols-3 gap-3">
                   {[
                     { id: 'wild', label: 'Natural/Wild', desc: 'Meadow-like feel' },
@@ -529,7 +683,7 @@ export default function NewPlanPage() {
             </div>
 
             <div className="flex justify-between">
-              <button onClick={() => setStep('analysis')} className="text-muted hover:text-foreground px-4 py-2 transition-colors">
+              <button onClick={() => setStep('style')} className="text-muted hover:text-foreground px-4 py-2 transition-colors">
                 ← Back
               </button>
               <button
@@ -995,6 +1149,130 @@ function makeDefaultPolygon(lat: number, lng: number): GeoJSON.Polygon {
       [lng - offset, lat - offset],
     ]],
   };
+}
+
+/** Tile in the design-style picker. One per formula plus a "Classic" tile. */
+function FormulaTile({
+  name,
+  description,
+  selected,
+  previewCount,
+  ratios,
+  roleRatios,
+  isBuiltIn,
+  onClick,
+}: {
+  name: string;
+  description: string;
+  selected: boolean;
+  previewCount?: number;
+  ratios?: Record<string, number>;
+  roleRatios?: Record<string, number>;
+  isBuiltIn?: boolean;
+  onClick: () => void;
+}) {
+  const ratioParts: string[] = [];
+  if (ratios) {
+    for (const [k, v] of Object.entries(ratios)) {
+      if (typeof v === 'number' && v > 0) ratioParts.push(`${k} ${Math.round(v * 100)}%`);
+    }
+  }
+  const roleParts: string[] = [];
+  if (roleRatios) {
+    for (const [k, v] of Object.entries(roleRatios)) {
+      if (typeof v === 'number' && v > 0) roleParts.push(`${k} ${Math.round(v * 100)}%`);
+    }
+  }
+
+  return (
+    <button
+      onClick={onClick}
+      className={`text-left p-4 rounded-lg border transition-all ${
+        selected
+          ? 'border-primary bg-primary/5 ring-2 ring-primary/40'
+          : 'border-stone-200 hover:border-stone-300 bg-white'
+      }`}
+    >
+      <div className="flex items-start justify-between gap-2 mb-1">
+        <div className="font-medium">{name}</div>
+        {isBuiltIn && (
+          <span className="text-[10px] uppercase tracking-wide text-stone-500 bg-stone-100 rounded px-1.5 py-0.5">
+            Built-in
+          </span>
+        )}
+      </div>
+      <div className="text-sm text-muted mb-3">{description}</div>
+      {ratioParts.length > 0 && (
+        <div className="text-xs text-stone-600 mb-1">
+          <span className="font-medium">Types:</span> {ratioParts.join(' • ')}
+        </div>
+      )}
+      {roleParts.length > 0 && (
+        <div className="text-xs text-stone-600 mb-1">
+          <span className="font-medium">Roles:</span> {roleParts.join(' • ')}
+        </div>
+      )}
+      {typeof previewCount === 'number' && (
+        <div className="text-xs text-stone-500 mt-1">{previewCount} species in preview</div>
+      )}
+    </button>
+  );
+}
+
+/** Chip list of the species a formula would pick. Characteristic species get a
+ *  pin badge so the formula's signature plants are visible. */
+function FormulaPreview({
+  species,
+  loading,
+}: {
+  species: PreviewSpecies[] | undefined;
+  loading: boolean;
+}) {
+  if (!species) {
+    return (
+      <p className="text-sm text-muted">
+        {loading ? 'Loading preview…' : 'Select a style above to see the species it would pick.'}
+      </p>
+    );
+  }
+  if (species.length === 0) {
+    return (
+      <p className="text-sm text-muted">
+        No species matched the current site + preferences for this formula.
+      </p>
+    );
+  }
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {species.map((s) => (
+        <div
+          key={s.slug}
+          title={`${s.scientificName}${s.oudolfRole ? ` · ${s.oudolfRole}` : ''}`}
+          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs ${
+            s.isCharacteristic
+              ? 'border-amber-400 bg-amber-50 text-amber-900'
+              : 'border-stone-200 bg-white text-stone-700'
+          }`}
+        >
+          <span
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: bloomSwatch(s.bloomColor) }}
+          />
+          <span>{s.commonName}</span>
+          {s.isCharacteristic && <span className="text-[10px]">★</span>}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Small swatch of common bloom colors for the preview chips. */
+function bloomSwatch(color: string): string {
+  const map: Record<string, string> = {
+    purple: '#8b5cf6', blue: '#3b82f6', pink: '#ec4899', red: '#ef4444',
+    orange: '#f97316', yellow: '#eab308', white: '#e5e7eb', green: '#22c55e',
+  };
+  return map[color?.toLowerCase()] || '#9ca3af';
 }
 
 function AnalysisCard({ title, icon, value, detail }: { title: string; icon: React.ReactNode; value: string; detail: string }) {

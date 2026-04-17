@@ -45,6 +45,17 @@ export interface Plant {
   lastEnrichedAt?: string | null;
   /** iNaturalist taxon id, set when a plant was looked up via iNat. */
   inatTaxonId?: number | null;
+
+  // Oudolf / design-formula metadata. All optional; populated by the Claude
+  // enrichment pipeline (see src/lib/plants/enrich.ts). Consumed by
+  // scorePlant() when a DesignFormula is active.
+  /** How this plant functions in a naturalistic composition. */
+  oudolfRole?: 'matrix' | 'structure' | 'scatter' | 'filler';
+  /** True if the plant's seed heads persist attractively after bloom. */
+  seedHeadInterest?: boolean;
+  /** True if the plant holds architectural form through winter (dried stems
+   *  standing above the snow, for example). */
+  winterStructure?: boolean;
 }
 
 export interface SupplierPricing {
