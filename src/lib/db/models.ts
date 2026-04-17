@@ -31,6 +31,12 @@ export interface IPlant extends Document {
     pricing: { format: string; price: number | null; inStock: boolean }[];
     lastPriceUpdate: Date | null;
   }[];
+  imageAttribution?: string;
+  favorability?: number;
+  tags?: string[];
+  notes?: string;
+  lastEnrichedAt?: Date | null;
+  inatTaxonId?: number | null;
 }
 
 const PlantSchema = new Schema<IPlant>({
@@ -67,13 +73,21 @@ const PlantSchema = new Schema<IPlant>({
     }],
     lastPriceUpdate: { type: Date, default: null },
   }],
-});
+  imageAttribution: { type: String, default: '' },
+  // Curation / admin fields
+  favorability: { type: Number, default: 50, min: 0, max: 100 },
+  tags: { type: [String], default: [] },
+  notes: { type: String, default: '' },
+  lastEnrichedAt: { type: Date, default: null },
+  inatTaxonId: { type: Number, default: null },
+}, { timestamps: true });
 
 PlantSchema.index({ sun: 1 });
 PlantSchema.index({ moisture: 1 });
 PlantSchema.index({ effortLevel: 1 });
 PlantSchema.index({ nativeHabitats: 1 });
 PlantSchema.index({ plantType: 1 });
+PlantSchema.index({ favorability: -1 });
 
 // Plan
 export interface IPlan extends Document {

@@ -70,6 +70,12 @@ export function scorePlant(plant: Plant, ctx: ScoringContext): number {
   if (ctx.preferences.specialFeatures.includes('edible') && plant.wildlifeValue.includes('birds')) score += 3;
   if (ctx.preferences.specialFeatures.includes('fragrant')) score += 3;
 
+  // Curator favorability (±20 points). 50 is neutral; 100 gives +20, 0 gives -20.
+  // This lets admins consistently boost iconic / high-value natives (e.g. white
+  // oak, monarch host plants) or push back unreliable ones.
+  const favorability = typeof plant.favorability === 'number' ? plant.favorability : 50;
+  score += (favorability - 50) * 0.4;
+
   // Small random factor to prevent identical plans (0-5 points)
   score += Math.random() * 5;
 

@@ -30,7 +30,21 @@ export interface Plant {
   careNotes: string;
   plantingInstructions: string;
   imageUrl: string;
+  imageAttribution?: string;
   suppliers: PlantSupplier[];
+
+  // Admin / curation fields
+  /** 0-100. 50 is neutral. Values >50 make this plant more likely to be picked
+   *  during plan generation; <50 makes it less likely. Used by scorePlant. */
+  favorability?: number;
+  /** Freeform tags: "keystone", "monarch-host", "rare", "clay-tolerant", etc. */
+  tags?: string[];
+  /** Private notes from curators; not shown to end users. */
+  notes?: string;
+  /** ISO timestamp of the last successful Claude enrichment pass. */
+  lastEnrichedAt?: string | null;
+  /** iNaturalist taxon id, set when a plant was looked up via iNat. */
+  inatTaxonId?: number | null;
 }
 
 export interface SupplierPricing {
