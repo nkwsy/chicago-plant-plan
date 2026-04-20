@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import UserMenu from '@/components/nav/UserMenu';
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -35,6 +36,7 @@ export default function Header() {
           >
             Start Planning
           </Link>
+          <UserMenu />
         </nav>
 
         {/* Mobile menu button */}

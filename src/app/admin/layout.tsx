@@ -12,7 +12,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <div className="max-w-7xl mx-auto px-6 py-3 flex items-center gap-6">
           <span className="font-semibold">Admin</span>
           <Link href="/admin/plants" className="text-sm hover:text-white text-stone-300">Plants</Link>
-          <Link href="/admin/formulas" className="text-sm hover:text-white text-stone-300">Formulas</Link>
+          <Link href="/formulas?tab=all" className="text-sm hover:text-white text-stone-300">Formulas</Link>
           <span className="ml-auto text-xs text-stone-400">Local curation tools</span>
         </div>
       </nav>

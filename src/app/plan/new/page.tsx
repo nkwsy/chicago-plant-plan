@@ -100,6 +100,16 @@ export default function NewPlanPage() {
   const [formulasLoading, setFormulasLoading] = useState(false);
   const [previewBySlug, setPreviewBySlug] = useState<Record<string, PreviewSpecies[]>>({});
   const [previewLoading, setPreviewLoading] = useState(false);
+  // Session + tab state for the Built-in / My formulas picker.
+  const [me, setMe] = useState<{ id: string; role: 'user' | 'admin' } | null>(null);
+  const [formulaTab, setFormulaTab] = useState<'built-in' | 'mine'>('built-in');
+
+  useEffect(() => {
+    fetch('/api/auth/me', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((d: { user: { id: string; role: 'user' | 'admin' } | null }) => setMe(d.user))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (step !== 'design' || formulas.length > 0 || formulasLoading) return;
@@ -516,6 +526,52 @@ export default function NewPlanPage() {
 
             {/* --- Design formula tiles ----------------------------------------- */}
             <h3 className="font-medium mb-3">Style</h3>
+
+            {/* Tabs: Built-in (always), My formulas (auth-gated), and a "Create new" CTA. */}
+            <div className="flex items-center gap-1 border-b border-stone-200 mb-4">
+              <button
+                type="button"
+                onClick={() => setFormulaTab('built-in')}
+                className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                  formulaTab === 'built-in'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted hover:text-foreground'
+                }`}
+              >
+                Built-in
+              </button>
+              <button
+                type="button"
+                onClick={() => me && setFormulaTab('mine')}
+                disabled={!me}
+                title={!me ? 'Sign in to use personal formulas' : undefined}
+                className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+                  formulaTab === 'mine'
+                    ? 'border-primary text-primary'
+                    : !me
+                      ? 'border-transparent text-stone-300 cursor-not-allowed'
+                      : 'border-transparent text-muted hover:text-foreground'
+                }`}
+              >
+                My formulas
+                {me && (
+                  <span className="ml-1.5 text-xs text-stone-500 bg-stone-100 rounded-full px-1.5">
+                    {formulas.filter((f) => f.ownerId === me.id).length}
+                  </span>
+                )}
+              </button>
+              <a
+                href={
+                  me
+                    ? '/formulas/new?next=/plan/new'
+                    : '/login?next=/formulas/new?next=/plan/new'
+                }
+                className="ml-auto px-3 py-2 text-sm text-primary hover:underline"
+              >
+                + Create new formula
+              </a>
+            </div>
+
             <div className="grid md:grid-cols-2 gap-4 mb-6">
               {/* "None" tile — always first, restores classic pre-formula behavior. */}
               <FormulaTile
@@ -528,19 +584,39 @@ export default function NewPlanPage() {
               {formulasLoading && !formulas.length && (
                 <div className="text-sm text-muted col-span-full">Loading formulas…</div>
               )}
-              {formulas.map((f) => (
-                <FormulaTile
-                  key={f.slug}
-                  name={f.name}
-                  description={f.description}
-                  selected={preferences.formulaSlug === f.slug}
-                  previewCount={previewBySlug[f.slug]?.length}
-                  ratios={f.typeRatios}
-                  roleRatios={f.roleRatios}
-                  isBuiltIn={f.isBuiltIn}
-                  onClick={() => selectFormula(f.slug)}
-                />
-              ))}
+              {formulas
+                .filter((f) =>
+                  formulaTab === 'built-in' ? f.isBuiltIn : me && f.ownerId === me.id,
+                )
+                .map((f) => (
+                  <FormulaTile
+                    key={f.slug}
+                    name={f.name}
+                    description={f.description}
+                    selected={preferences.formulaSlug === f.slug}
+                    previewCount={previewBySlug[f.slug]?.length}
+                    ratios={f.typeRatios}
+                    roleRatios={f.roleRatios}
+                    isBuiltIn={f.isBuiltIn}
+                    onClick={() => selectFormula(f.slug)}
+                  />
+                ))}
+              {formulaTab === 'mine' && me && formulas.filter((f) => f.ownerId === me.id).length === 0 && (
+                <div className="col-span-full bg-stone-50 border border-dashed border-stone-300 rounded-lg p-6 text-center text-sm text-muted">
+                  You haven&apos;t created any formulas yet.{' '}
+                  <a href="/formulas/new?next=/plan/new" className="text-primary hover:underline">
+                    Start one →
+                  </a>
+                </div>
+              )}
+              {formulaTab === 'mine' && !me && (
+                <div className="col-span-full bg-stone-50 border border-dashed border-stone-300 rounded-lg p-6 text-center text-sm text-muted">
+                  <a href="/login?next=/plan/new" className="text-primary hover:underline">
+                    Sign in
+                  </a>{' '}
+                  to use your own formulas.
+                </div>
+              )}
             </div>
 
             {/* Preview panel — shows the top species the formula would pick. */}

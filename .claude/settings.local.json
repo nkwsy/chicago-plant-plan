@@ -54,7 +54,10 @@
       "Bash(node -e ' *)",
       "Bash(env)",
       "Bash(git diff *)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(gh pr create --base main --title 'Planner UX polish + supplier-availability automation' --body ' *)",
+      "Bash(command -v gh)",
+      "Read(//opt/homebrew/bin/**)"
     ]
   }
 }

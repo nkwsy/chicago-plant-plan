@@ -93,6 +93,8 @@ export interface PlanData {
   title: string;
   authorName: string;
   authorEmail: string;
+  /** Session user's id, populated at save time when signed in. */
+  ownerId?: string;
   areaGeoJson: GeoJSON.Polygon | GeoJSON.MultiPolygon;
   centerLat: number;
   centerLng: number;

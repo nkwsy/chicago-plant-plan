@@ -48,6 +48,9 @@ export interface DesignFormula {
   longDescription?: string;     // longer admin-only copy
   author?: string;              // 'Piet Oudolf', 'Built-in', user handle
   isBuiltIn: boolean;           // UI prevents deleting built-ins
+  /** User id (stringified Mongo _id) of the creator. Undefined for built-ins
+   *  and for legacy docs that predate auth. */
+  ownerId?: string;
   parentSlug?: string;          // inheritance hint: "cloned from this formula"
 
   /** PlantType quotas. Fractions in [0,1]; omitted types are flexible.
@@ -91,6 +94,7 @@ export interface DesignFormulaSummary {
   description: string;
   author?: string;
   isBuiltIn: boolean;
+  ownerId?: string;
   typeRatios: Partial<Record<PlantType, number>>;
   roleRatios: Partial<Record<OudolfRole, number>>;
   characteristicSpecies: string[];

@@ -107,6 +107,9 @@ export interface IPlan extends Document {
   title: string;
   authorName: string;
   authorEmail: string;
+  /** Owning user's Mongo _id (as string). Populated when the user is signed in
+   *  at save time; unset for anonymous saves. Used for "My plans" filtering. */
+  ownerId?: string | null;
   areaGeoJson: object;
   center: { type: string; coordinates: number[] };
   centerLat: number;
@@ -142,6 +145,7 @@ const PlanSchema = new Schema<IPlan>({
   title: String,
   authorName: { type: String, default: '' },
   authorEmail: { type: String, default: '' },
+  ownerId: { type: String, default: null, index: true },
   areaGeoJson: { type: Schema.Types.Mixed, required: true },
   center: {
     type: { type: String, enum: ['Point'], default: 'Point' },
@@ -272,6 +276,9 @@ export interface IFormula extends Document {
   longDescription?: string;
   author?: string;
   isBuiltIn: boolean;
+  /** User._id (as string) of the creator. Built-ins and legacy docs leave this
+   *  unset; permission checks treat unset as "public built-in". */
+  ownerId?: string | null;
   parentSlug?: string | null;
   typeRatios: Record<string, number>;
   roleRatios: Record<string, number>;
@@ -293,6 +300,7 @@ const FormulaSchema = new Schema<IFormula>({
   longDescription: { type: String, default: '' },
   author: { type: String, default: '' },
   isBuiltIn: { type: Boolean, default: false, index: true },
+  ownerId: { type: String, default: null, index: true },
   parentSlug: { type: String, default: null },
   // Use Mixed for the record-shaped fields so we don't need to enumerate every
   // possible key (PlantType, weight name, tag, etc.) in the schema.
@@ -307,6 +315,9 @@ const FormulaSchema = new Schema<IFormula>({
   bloomEmphasisBonus: { type: Number, default: 0 },
 }, { timestamps: true, minimize: false });
 
+// Fast lookup for "my formulas" queries: filter owner, then load by slug.
+FormulaSchema.index({ ownerId: 1, updatedAt: -1 });
+
 // Model getters (prevent re-compilation in dev)
 export const Plant = mongoose.models.Plant || mongoose.model<IPlant>('Plant', PlantSchema);
 export const Plan = mongoose.models.Plan || mongoose.model<IPlan>('Plan', PlanSchema);
@@ -314,3 +325,7 @@ export const QuoteRequest = mongoose.models.QuoteRequest || mongoose.model<IQuot
 export const ApiCache = mongoose.models.ApiCache || mongoose.model<IApiCache>('ApiCache', ApiCacheSchema);
 export const PriceInquiry = mongoose.models.PriceInquiry || mongoose.model<IPriceInquiry>('PriceInquiry', PriceInquirySchema);
 export const Formula = mongoose.models.Formula || mongoose.model<IFormula>('Formula', FormulaSchema);
+
+// Re-export User so callers that historically import from './models' still work.
+export { User } from './user';
+export type { IUser, UserRole } from './user';
