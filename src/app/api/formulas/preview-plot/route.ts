@@ -34,10 +34,9 @@ import { getSessionUser } from '@/lib/auth/dal';
 import { generatePlan } from '@/lib/planner/generate';
 import {
   buildSyntheticScenario,
-  BED_WIDTH_FT,
-  BED_HEIGHT_FT,
   sunGridToFeet,
   lngLatToFt,
+  type ScenarioVariant,
 } from '@/lib/formulas/synthetic-site';
 import type { Plant } from '@/types/plant';
 import type { SiteProfile } from '@/types/analysis';
@@ -50,6 +49,12 @@ interface PreviewBody {
   formulaSlug?: string;
   formulaDraft?: DesignFormula;
   targetCount?: number;
+  variant?: ScenarioVariant;
+  /** Opaque integer the client bumps to force a recompute. We don't read it
+   *  server-side — its presence just defeats any upstream caching and each
+   *  call re-invokes the non-deterministic layout (Math.random drives the
+   *  drift/jitter). */
+  seed?: number;
 }
 
 function defaultSiteProfile(): SiteProfile {
@@ -119,7 +124,7 @@ export async function POST(request: Request) {
       formula = resolved;
     }
 
-    const scenario = buildSyntheticScenario();
+    const scenario = buildSyntheticScenario(body.variant ?? 'default');
     const preferences: UserPreferences = {
       ...defaultPreferences(),
       targetSpeciesCount: targetCount,
@@ -230,8 +235,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       scenario: {
-        widthFt: BED_WIDTH_FT,
-        heightFt: BED_HEIGHT_FT,
+        variant: scenario.variant,
+        widthFt: scenario.widthFt,
+        heightFt: scenario.heightFt,
         trees,
         buildings,
         paths,
