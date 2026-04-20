@@ -1,11 +1,16 @@
 /**
  * /api/formulas — list + create design formulas.
  *
+ * Visibility model:
+ *  - GET: anonymous sees built-ins (and legacy ownerless docs). Signed-in users
+ *    additionally see their own formulas. Admins see everything.
+ *  - POST: requires auth. Server stamps ownerId from the session and forces
+ *    isBuiltIn=false for non-admins. Admins can set isBuiltIn=true when seeding
+ *    new presets.
+ *
  * Mirrors the plants API pattern in src/app/api/plants/route.ts:
- *  - GET: Mongo-first with JSON fallback, so dev and unconnected environments
- *    still see the 4 built-ins from data/formulas.json.
- *  - POST: create a new (user) formula. Built-ins can only be seeded via the
- *    CLI script; the UI enforces isBuiltIn=false at create time.
+ *  - Mongo-first with JSON fallback, so dev and unconnected environments still
+ *    see the 4 built-ins from data/formulas.json.
  */
 
 import { NextResponse } from 'next/server';
@@ -13,6 +18,7 @@ import { connectDB } from '@/lib/db/connection';
 import { Formula } from '@/lib/db/models';
 import { listFormulas } from '@/lib/formulas/load';
 import { toPlain } from '@/lib/db/to-plain';
+import { getSessionUser } from '@/lib/auth/dal';
 import type { DesignFormulaInput } from '@/types/formula';
 
 export const dynamic = 'force-dynamic';
@@ -26,7 +32,10 @@ function slugify(s: string): string {
 }
 
 export async function GET() {
-  const formulas = await listFormulas();
+  const session = await getSessionUser();
+  const formulas = await listFormulas(
+    session ? { userId: session.userId, role: session.role } : undefined,
+  );
   return NextResponse.json(formulas);
 }
 
@@ -39,9 +48,14 @@ function validateBody(body: FormulaBody): string | null {
   return null;
 }
 
-/** Create a new formula. User-created formulas are always isBuiltIn=false. */
+/** Create a new formula. Auth required; ownerId stamped from session. */
 export async function POST(request: Request) {
   try {
+    const session = await getSessionUser();
+    if (!session) {
+      return NextResponse.json({ error: 'Sign in to create a formula' }, { status: 401 });
+    }
+
     const body = (await request.json()) as FormulaBody;
     const err = validateBody(body);
     if (err) return NextResponse.json({ error: err }, { status: 400 });
@@ -56,6 +70,10 @@ export async function POST(request: Request) {
         { status: 409 },
       );
     }
+
+    // Only admins can seed new built-ins; everyone else is forced to user-owned.
+    const isAdmin = session.role === 'admin';
+    const clientWantsBuiltIn = !!body.isBuiltIn;
 
     const doc = await Formula.create({
       description: '',
@@ -73,9 +91,10 @@ export async function POST(request: Request) {
       bloomEmphasisBonus: 0,
       ...body,
       slug,
-      // Never let a client mark its own formula built-in — that flag guards
-      // delete + is reserved for seeded presets.
-      isBuiltIn: false,
+      isBuiltIn: isAdmin ? clientWantsBuiltIn : false,
+      // Built-ins don't belong to any one user — keep ownerId null so they
+      // stay visible to everyone even if the seeding admin later leaves.
+      ownerId: isAdmin && clientWantsBuiltIn ? null : session.userId,
     });
     return NextResponse.json(toPlain(doc.toObject()), { status: 201 });
   } catch (e) {
