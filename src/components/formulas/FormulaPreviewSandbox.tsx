@@ -20,16 +20,18 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { DesignFormula } from '@/types/formula';
 import { blobSvgPath, tapestryColor, speciesAbbrev } from '@/lib/render/tapestry-blobs';
+import { SCENARIO_VARIANTS, type ScenarioVariant } from '@/lib/formulas/synthetic-site';
 
 const PX_PER_FT = 18;
-// Extra padding in feet so the ouside-property tree at (8, -4) and the
-// building polygon at y=25..35 both fit inside the viewbox.
+// Extra padding in feet so trees placed just outside the bed, tall buildings
+// extending north, etc. all fit inside the viewbox across variants.
 const PAD_LEFT_FT = 2;
-const PAD_RIGHT_FT = 2;
-const PAD_TOP_FT = 12; // room for the building extending north
-const PAD_BOTTOM_FT = 8; // room for the south tree
+const PAD_RIGHT_FT = 10; // east wall of compact_urban extends right
+const PAD_TOP_FT = 12; // room for building extending north
+const PAD_BOTTOM_FT = 8; // room for south tree in default variant
 
 interface Scenario {
+  variant: ScenarioVariant;
   widthFt: number;
   heightFt: number;
   trees: Array<{
@@ -116,17 +118,27 @@ export default function FormulaPreviewSandbox({
   const [data, setData] = useState<PreviewResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [variant, setVariant] = useState<ScenarioVariant>('default');
+  // Bumping this counter (via the Recalculate button) triggers a re-fetch.
+  // The planner's layout uses Math.random() for drift + jitter, so each call
+  // produces a visibly different plant arrangement for the same formula.
+  const [bump, setBump] = useState(0);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchPreview = useCallback(
-    async (formula: Partial<DesignFormula>) => {
+    async (formula: Partial<DesignFormula>, v: ScenarioVariant, seed: number) => {
       setLoading(true);
       setError(null);
       try {
         const res = await fetch('/api/formulas/preview-plot', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ formulaDraft: formula, targetCount: 15 }),
+          body: JSON.stringify({
+            formulaDraft: formula,
+            targetCount: 15,
+            variant: v,
+            seed,
+          }),
           cache: 'no-store',
         });
         const body = (await res.json()) as PreviewResponse;
@@ -144,23 +156,27 @@ export default function FormulaPreviewSandbox({
     [],
   );
 
-  // Initial load
-  useEffect(() => {
-    fetchPreview(initialFormula);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // The effective formula on every render: live draft takes priority, falling
+  // back to whatever the editor loaded with. useMemo isn't worth it — the
+  // object identity change from either side is exactly what should trigger a
+  // debounced refetch below.
+  const effectiveFormula = draft ?? initialFormula;
 
-  // Debounced refetch on draft change
+  // Unified refetch loop — debounced so slider drags don't pound the server,
+  // but runs immediately on variant / Recalculate changes (those feel stale
+  // if they wait 400 ms).
   useEffect(() => {
-    if (!draft) return;
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    // First render: fire immediately so the canvas doesn't sit blank.
+    const delay = data ? 400 : 0;
     debounceRef.current = setTimeout(() => {
-      fetchPreview(draft);
-    }, 400);
+      fetchPreview(effectiveFormula, variant, bump);
+    }, delay);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [draft, fetchPreview]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [effectiveFormula, variant, bump, fetchPreview]);
 
   const vbWidthFt = data
     ? data.scenario.widthFt + PAD_LEFT_FT + PAD_RIGHT_FT
@@ -177,16 +193,45 @@ export default function FormulaPreviewSandbox({
   const fy = (yFt: number) => (vbHeightFt - PAD_BOTTOM_FT - yFt) * PX_PER_FT;
   const fr = (rFt: number) => rFt * PX_PER_FT;
 
+  const activeVariant = SCENARIO_VARIANTS.find((v) => v.id === variant) ?? SCENARIO_VARIANTS[0];
+
   return (
     <div className="bg-white border border-stone-200 rounded-lg overflow-hidden">
-      <div className="flex items-center justify-between px-3 py-2 border-b border-stone-100">
-        <div>
+      <div className="px-3 py-2 border-b border-stone-100 space-y-2">
+        <div className="flex items-center justify-between gap-2">
           <div className="text-sm font-medium">Synthetic preview</div>
-          <div className="text-xs text-stone-500">
-            40 × 25 ft plot · tree shadows + north wall = 4 sun categories
-          </div>
+          {loading && (
+            <span className="text-xs text-stone-400 animate-pulse">Updating…</span>
+          )}
         </div>
-        {loading && <span className="text-xs text-stone-400 animate-pulse">Updating…</span>}
+        <div className="flex items-center gap-2">
+          <label className="text-xs text-stone-500 sr-only" htmlFor="preview-variant">
+            Scenario
+          </label>
+          <select
+            id="preview-variant"
+            value={variant}
+            onChange={(e) => setVariant(e.target.value as ScenarioVariant)}
+            className="text-xs border border-stone-200 rounded px-2 py-1 flex-1 min-w-0 bg-white"
+            disabled={loading}
+          >
+            {SCENARIO_VARIANTS.map((v) => (
+              <option key={v.id} value={v.id}>
+                {v.label}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            onClick={() => setBump((n) => n + 1)}
+            disabled={loading}
+            className="text-xs border border-stone-200 rounded px-2 py-1 hover:bg-stone-50 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+            title="Force a fresh plant layout (new random drift + jitter)"
+          >
+            ↻ Recalculate
+          </button>
+        </div>
+        <div className="text-xs text-stone-500">{activeVariant.blurb}</div>
       </div>
 
       {error && (
