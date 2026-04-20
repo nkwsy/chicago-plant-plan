@@ -10,7 +10,7 @@
  */
 
 import { redirect } from 'next/navigation';
-import FormulaEditor from '@/components/formulas/FormulaEditor';
+import FormulaEditWithPreview from '@/components/formulas/FormulaEditWithPreview';
 import { getFormula } from '@/lib/formulas/load';
 import { getSessionUser } from '@/lib/auth/dal';
 import type { DesignFormula } from '@/types/formula';
@@ -49,12 +49,12 @@ export default async function NewFormulaPage({
   }
 
   return (
-    <FormulaEditor
+    <FormulaEditWithPreview
       mode="create"
       initial={initial}
-      editable
       canEditBuiltIn={session.role === 'admin'}
       cancelHref="/formulas"
+      afterSavePath={(s) => `/formulas/${s}`}
     />
   );
 }
