@@ -31,10 +31,21 @@ export function filterPlantsBySite(plants: Plant[], profile: SiteProfile): Plant
 }
 
 export function filterPlantsByPreferences(plants: Plant[], prefs: UserPreferences): Plant[] {
+  // Default both structural toggles to true when the prefs object was built
+  // before those fields existed (older plan documents, preview defaults).
+  const includeTrees = prefs.includeTrees !== false;
+  const includeShrubs = prefs.includeShrubs !== false;
+
   return plants.filter(plant => {
-    // Effort level filter
+    // Structural toggles — hard filters. Users with a small bed usually don't
+    // want 30ft trees in their plan even if they're site-compatible.
+    if (!includeTrees && plant.plantType === 'tree') return false;
+    if (!includeShrubs && plant.plantType === 'shrub') return false;
+
+    // Effort level filter — 'low' is strict, everything else is permissive.
+    // Legacy 'medium'/'high' values land in the permissive branch; the new
+    // 'normal' does too, so the app-facing UI only has to offer two tiers.
     if (prefs.effortLevel === 'low' && plant.effortLevel === 'high') return false;
-    if (prefs.effortLevel === 'medium' && plant.effortLevel === 'high') return false;
 
     // Height restriction
     if (prefs.maxHeightInches && plant.heightMaxInches > prefs.maxHeightInches) return false;
@@ -42,12 +53,9 @@ export function filterPlantsByPreferences(plants: Plant[], prefs: UserPreference
     // Avoid list
     if (prefs.avoidSlugs.includes(plant.slug)) return false;
 
-    // Habitat goal boost (don't exclude, but filter out plants with NO overlap if user specified goals)
-    if (prefs.habitatGoals.length > 0) {
-      const hasRelevantWildlife = plant.wildlifeValue.some(w => prefs.habitatGoals.includes(w));
-      const hasRelevantHabitat = plant.nativeHabitats.some(h => prefs.habitatGoals.includes(h));
-      // Don't hard-exclude, just prefer matches (handled in scoring)
-    }
+    // habitatGoals is a soft signal handled in scoring (scorePlant); we never
+    // hard-exclude on it because users expect habitat preferences to influence
+    // ranking, not eliminate otherwise-valid species.
 
     return true;
   });

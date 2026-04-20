@@ -21,6 +21,10 @@ export default function PlanViewPage() {
   const [view3D, setView3D] = useState(false);
   const [showSunlight, setShowSunlight] = useState(true);
   const [showSunGrid, setShowSunGrid] = useState(false);
+  // 'numbered' (designer view) or 'tapestry' (Oudolf-style drift render).
+  // Same toggle that exists in the wizard — preserves visual continuity
+  // when the user revisits the saved plan.
+  const [plantRenderMode, setPlantRenderMode] = useState<'numbered' | 'tapestry'>('numbered');
   const [reanalyzing, setReanalyzing] = useState(false);
   const [ownerEmail, setOwnerEmail] = useState('');
   const [emailVerified, setEmailVerified] = useState(false);
@@ -293,6 +297,24 @@ export default function PlanViewPage() {
               </button>
             </div>
 
+            {/* Render mode — numbered designer view vs Oudolf-style tapestry. */}
+            <div className="flex rounded-lg border border-stone-200 overflow-hidden text-sm">
+              <button
+                onClick={() => setPlantRenderMode('numbered')}
+                className={`px-3 py-1.5 transition-colors ${plantRenderMode === 'numbered' ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+                title="Crisp circles with species numbers"
+              >
+                Numbered
+              </button>
+              <button
+                onClick={() => setPlantRenderMode('tapestry')}
+                className={`px-3 py-1.5 border-l border-stone-200 transition-colors ${plantRenderMode === 'tapestry' ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+                title="Soft-edge blobs that blend into a planting drift (Oudolf style)"
+              >
+                Tapestry
+              </button>
+            </div>
+
             <button
               onClick={() => setShowSunlight(s => !s)}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
@@ -342,6 +364,7 @@ export default function PlanViewPage() {
                   spreadInches: p.spreadInches, speciesIndex: p.speciesIndex,
                   plantType: p.plantType,
                 }))}
+              plantRenderMode={plantRenderMode}
               onPlantClick={(slug) => setSelectedPlant(slug === selectedPlant ? null : slug)}
               height="100%"
             />

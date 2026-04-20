@@ -1,6 +1,6 @@
 [
   {
-    "slug": "purple-coneflower",
+    "slug": "echinacea-purpurea",
     "commonName": "Purple Coneflower",
     "scientificName": "Echinacea purpurea",
     "family": "Asteraceae",
@@ -74,10 +74,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Virginia (Ginny) Sanderson, some rights reserved (CC BY-NC-ND)"
+    "imageAttribution": "(c) Virginia (Ginny) Sanderson, some rights reserved (CC BY-NC-ND)",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "black-eyed-susan",
+    "slug": "rudbeckia-hirta",
     "commonName": "Black-eyed Susan",
     "scientificName": "Rudbeckia hirta",
     "family": "Asteraceae",
@@ -151,10 +154,13 @@
         ]
       }
     ],
-    "imageAttribution": "no rights reserved, uploaded by Brady Reed"
+    "imageAttribution": "no rights reserved, uploaded by Brady Reed",
+    "oudolfRole": "filler",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "butterfly-weed",
+    "slug": "asclepias-tuberosa",
     "commonName": "Butterfly Weed",
     "scientificName": "Asclepias tuberosa",
     "family": "Apocynaceae",
@@ -225,10 +231,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Michael J. Papay, some rights reserved (CC BY), uploaded by Michael J. Papay"
+    "imageAttribution": "(c) Michael J. Papay, some rights reserved (CC BY), uploaded by Michael J. Papay",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "wild-bergamot",
+    "slug": "monarda-fistulosa",
     "commonName": "Wild Bergamot",
     "scientificName": "Monarda fistulosa",
     "family": "Lamiaceae",
@@ -301,10 +310,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) ziggymom, some rights reserved (CC BY-NC)"
+    "imageAttribution": "(c) ziggymom, some rights reserved (CC BY-NC)",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "joe-pye-weed",
+    "slug": "eutrochium-purpureum",
     "commonName": "Joe Pye Weed",
     "scientificName": "Eutrochium purpureum",
     "family": "Asteraceae",
@@ -370,10 +382,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Mark Kluge, some rights reserved (CC BY-NC), uploaded by Mark Kluge"
+    "imageAttribution": "(c) Mark Kluge, some rights reserved (CC BY-NC), uploaded by Mark Kluge",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "cardinal-flower",
+    "slug": "lobelia-cardinalis",
     "commonName": "Cardinal Flower",
     "scientificName": "Lobelia cardinalis",
     "family": "Campanulaceae",
@@ -439,10 +454,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Jessie Aguilar, all rights reserved, uploaded by Jessie Aguilar"
+    "imageAttribution": "(c) Jessie Aguilar, all rights reserved, uploaded by Jessie Aguilar",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "common-milkweed",
+    "slug": "asclepias-syriaca",
     "commonName": "Common Milkweed",
     "scientificName": "Asclepias syriaca",
     "family": "Apocynaceae",
@@ -507,10 +525,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) csozanne, some rights reserved (CC BY-NC)"
+    "imageAttribution": "(c) csozanne, some rights reserved (CC BY-NC)",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "swamp-milkweed",
+    "slug": "asclepias-incarnata",
     "commonName": "Swamp Milkweed",
     "scientificName": "Asclepias incarnata",
     "family": "Apocynaceae",
@@ -582,10 +603,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar"
+    "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "new-england-aster",
+    "slug": "symphyotrichum-novae-angliae",
     "commonName": "New England Aster",
     "scientificName": "Symphyotrichum novae-angliae",
     "family": "Asteraceae",
@@ -652,10 +676,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) musicmanz, some rights reserved (CC BY-NC), uploaded by musicmanz"
+    "imageAttribution": "(c) musicmanz, some rights reserved (CC BY-NC), uploaded by musicmanz",
+    "oudolfRole": "structure",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "smooth-aster",
+    "slug": "symphyotrichum-laeve",
     "commonName": "Smooth Blue Aster",
     "scientificName": "Symphyotrichum laeve",
     "family": "Asteraceae",
@@ -717,10 +744,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) leafystars, some rights reserved (CC BY-NC)"
+    "imageAttribution": "(c) leafystars, some rights reserved (CC BY-NC)",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "aromatic-aster",
+    "slug": "symphyotrichum-oblongifolium",
     "commonName": "Aromatic Aster",
     "scientificName": "Symphyotrichum oblongifolium",
     "family": "Asteraceae",
@@ -779,10 +809,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Bart Jones, all rights reserved"
+    "imageAttribution": "(c) Bart Jones, all rights reserved",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "pale-purple-coneflower",
+    "slug": "echinacea-pallida",
     "commonName": "Pale Purple Coneflower",
     "scientificName": "Echinacea pallida",
     "family": "Asteraceae",
@@ -848,10 +881,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Joseph D Kurtz, some rights reserved (CC BY-NC), uploaded by Joseph D Kurtz"
+    "imageAttribution": "(c) Joseph D Kurtz, some rights reserved (CC BY-NC), uploaded by Joseph D Kurtz",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "rattlesnake-master",
+    "slug": "eryngium-yuccifolium",
     "commonName": "Rattlesnake Master",
     "scientificName": "Eryngium yuccifolium",
     "family": "Apiaceae",
@@ -915,10 +951,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Kevin Metcalf, some rights reserved (CC BY-NC), uploaded by Kevin Metcalf"
+    "imageAttribution": "(c) Kevin Metcalf, some rights reserved (CC BY-NC), uploaded by Kevin Metcalf",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "prairie-blazing-star",
+    "slug": "liatris-pycnostachya",
     "commonName": "Prairie Blazing Star",
     "scientificName": "Liatris pycnostachya",
     "family": "Asteraceae",
@@ -983,10 +1022,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Joshua Mayer, some rights reserved (CC BY-SA)"
+    "imageAttribution": "(c) Joshua Mayer, some rights reserved (CC BY-SA)",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "rough-blazing-star",
+    "slug": "liatris-aspera",
     "commonName": "Rough Blazing Star",
     "scientificName": "Liatris aspera",
     "family": "Asteraceae",
@@ -1046,10 +1088,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar"
+    "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "prairie-dock",
+    "slug": "silphium-terebinthinaceum",
     "commonName": "Prairie Dock",
     "scientificName": "Silphium terebinthinaceum",
     "family": "Asteraceae",
@@ -1107,10 +1152,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Frank Mayfield, some rights reserved (CC BY-SA)"
+    "imageAttribution": "(c) Frank Mayfield, some rights reserved (CC BY-SA)",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "compass-plant",
+    "slug": "silphium-laciniatum",
     "commonName": "Compass Plant",
     "scientificName": "Silphium laciniatum",
     "family": "Asteraceae",
@@ -1168,10 +1216,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey"
+    "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "wild-quinine",
+    "slug": "parthenium-integrifolium",
     "commonName": "Wild Quinine",
     "scientificName": "Parthenium integrifolium",
     "family": "Asteraceae",
@@ -1229,10 +1280,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) jtuttle, all rights reserved, uploaded by jtuttle"
+    "imageAttribution": "(c) jtuttle, all rights reserved, uploaded by jtuttle",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "golden-alexanders",
+    "slug": "zizia-aurea",
     "commonName": "Golden Alexanders",
     "scientificName": "Zizia aurea",
     "family": "Apiaceae",
@@ -1300,10 +1354,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Shaun Pogacnik, some rights reserved (CC BY-NC), uploaded by Shaun Pogacnik"
+    "imageAttribution": "(c) Shaun Pogacnik, some rights reserved (CC BY-NC), uploaded by Shaun Pogacnik",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "prairie-phlox",
+    "slug": "phlox-pilosa",
     "commonName": "Prairie Phlox",
     "scientificName": "Phlox pilosa",
     "family": "Polemoniaceae",
@@ -1362,10 +1419,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey"
+    "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "stiff-goldenrod",
+    "slug": "solidago-rigida",
     "commonName": "Stiff Goldenrod",
     "scientificName": "Solidago rigida",
     "family": "Asteraceae",
@@ -1425,10 +1485,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) eknuth, some rights reserved (CC BY-NC), uploaded by eknuth"
+    "imageAttribution": "(c) eknuth, some rights reserved (CC BY-NC), uploaded by eknuth",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "showy-goldenrod",
+    "slug": "solidago-speciosa",
     "commonName": "Showy Goldenrod",
     "scientificName": "Solidago speciosa",
     "family": "Asteraceae",
@@ -1489,10 +1552,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Sequoia Janirella Wrens, some rights reserved (CC BY-NC), uploaded by Sequoia Janirella Wrens"
+    "imageAttribution": "(c) Sequoia Janirella Wrens, some rights reserved (CC BY-NC), uploaded by Sequoia Janirella Wrens",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "ohio-spiderwort",
+    "slug": "tradescantia-ohiensis",
     "commonName": "Ohio Spiderwort",
     "scientificName": "Tradescantia ohiensis",
     "family": "Commelinaceae",
@@ -1552,10 +1618,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Michael J. Papay, some rights reserved (CC BY), uploaded by Michael J. Papay"
+    "imageAttribution": "(c) Michael J. Papay, some rights reserved (CC BY), uploaded by Michael J. Papay",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "shooting-star",
+    "slug": "dodecatheon-meadia",
     "commonName": "Shooting Star",
     "scientificName": "Dodecatheon meadia",
     "family": "Primulaceae",
@@ -1612,10 +1681,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) tsc_wis, some rights reserved (CC BY-NC)"
+    "imageAttribution": "(c) tsc_wis, some rights reserved (CC BY-NC)",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "prairie-smoke",
+    "slug": "geum-triflorum",
     "commonName": "Prairie Smoke",
     "scientificName": "Geum triflorum",
     "family": "Rosaceae",
@@ -1672,10 +1744,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) C. Phillips, some rights reserved (CC BY-NC), uploaded by C. Phillips"
+    "imageAttribution": "(c) C. Phillips, some rights reserved (CC BY-NC), uploaded by C. Phillips",
+    "oudolfRole": "filler",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "big-bluestem",
+    "slug": "andropogon-gerardii",
     "commonName": "Big Bluestem",
     "scientificName": "Andropogon gerardii",
     "family": "Poaceae",
@@ -1747,10 +1822,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Kingsbrae Garden, some rights reserved (CC BY-NC-SA)"
+    "imageAttribution": "(c) Kingsbrae Garden, some rights reserved (CC BY-NC-SA)",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "prairie-dropseed",
+    "slug": "sporobolus-heterolepis",
     "commonName": "Prairie Dropseed",
     "scientificName": "Sporobolus heterolepis",
     "family": "Poaceae",
@@ -1820,10 +1898,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Adam Thada, all rights reserved, uploaded by Adam Thada"
+    "imageAttribution": "(c) Adam Thada, all rights reserved, uploaded by Adam Thada",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "little-bluestem",
+    "slug": "schizachyrium-scoparium",
     "commonName": "Little Bluestem",
     "scientificName": "Schizachyrium scoparium",
     "family": "Poaceae",
@@ -1895,10 +1976,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Scott E Severs, some rights reserved (CC BY-NC), uploaded by Scott E Severs"
+    "imageAttribution": "(c) Scott E Severs, some rights reserved (CC BY-NC), uploaded by Scott E Severs",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "switchgrass",
+    "slug": "panicum-virgatum",
     "commonName": "Switchgrass",
     "scientificName": "Panicum virgatum",
     "family": "Poaceae",
@@ -1966,10 +2050,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar"
+    "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "indian-grass",
+    "slug": "sorghastrum-nutans",
     "commonName": "Indian Grass",
     "scientificName": "Sorghastrum nutans",
     "family": "Poaceae",
@@ -2034,10 +2121,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Erica Fraley, some rights reserved (CC BY-NC), uploaded by Erica Fraley"
+    "imageAttribution": "(c) Erica Fraley, some rights reserved (CC BY-NC), uploaded by Erica Fraley",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "side-oats-grama",
+    "slug": "bouteloua-curtipendula",
     "commonName": "Side-oats Grama",
     "scientificName": "Bouteloua curtipendula",
     "family": "Poaceae",
@@ -2095,10 +2185,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) psweet, some rights reserved (CC BY-SA), uploaded by psweet"
+    "imageAttribution": "(c) psweet, some rights reserved (CC BY-SA), uploaded by psweet",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "june-grass",
+    "slug": "koeleria-macrantha",
     "commonName": "June Grass",
     "scientificName": "Koeleria macrantha",
     "family": "Poaceae",
@@ -2154,10 +2247,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) rfors55, some rights reserved (CC BY-NC)"
+    "imageAttribution": "(c) rfors55, some rights reserved (CC BY-NC)",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "prairie-sedge",
+    "slug": "carex-bicknellii",
     "commonName": "Prairie Sedge",
     "scientificName": "Carex bicknellii",
     "family": "Cyperaceae",
@@ -2210,10 +2306,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar"
+    "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "pennsylvania-sedge",
+    "slug": "carex-pensylvanica",
     "commonName": "Pennsylvania Sedge",
     "scientificName": "Carex pensylvanica",
     "family": "Cyperaceae",
@@ -2279,10 +2378,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Matt Flower, some rights reserved (CC BY-NC), uploaded by Matt Flower"
+    "imageAttribution": "(c) Matt Flower, some rights reserved (CC BY-NC), uploaded by Matt Flower",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "fox-sedge",
+    "slug": "carex-vulpinoidea",
     "commonName": "Fox Sedge",
     "scientificName": "Carex vulpinoidea",
     "family": "Cyperaceae",
@@ -2341,10 +2443,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Nelson DeBarros, some rights reserved (CC BY-NC), uploaded by Nelson DeBarros"
+    "imageAttribution": "(c) Nelson DeBarros, some rights reserved (CC BY-NC), uploaded by Nelson DeBarros",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "palm-sedge",
+    "slug": "carex-muskingumensis",
     "commonName": "Palm Sedge",
     "scientificName": "Carex muskingumensis",
     "family": "Cyperaceae",
@@ -2410,10 +2515,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Simon Tolzmann, all rights reserved, uploaded by Simon Tolzmann"
+    "imageAttribution": "(c) Simon Tolzmann, all rights reserved, uploaded by Simon Tolzmann",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "woodland-sunflower",
+    "slug": "helianthus-divaricatus",
     "commonName": "Woodland Sunflower",
     "scientificName": "Helianthus divaricatus",
     "family": "Asteraceae",
@@ -2473,10 +2581,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Esteban M. Coria, all rights reserved, uploaded by Esteban M. Coria"
+    "imageAttribution": "(c) Esteban M. Coria, all rights reserved, uploaded by Esteban M. Coria",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "wild-geranium",
+    "slug": "geranium-maculatum",
     "commonName": "Wild Geranium",
     "scientificName": "Geranium maculatum",
     "family": "Geraniaceae",
@@ -2540,10 +2651,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Mark Kluge, some rights reserved (CC BY-NC), uploaded by Mark Kluge"
+    "imageAttribution": "(c) Mark Kluge, some rights reserved (CC BY-NC), uploaded by Mark Kluge",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "wild-columbine",
+    "slug": "aquilegia-canadensis",
     "commonName": "Wild Columbine",
     "scientificName": "Aquilegia canadensis",
     "family": "Ranunculaceae",
@@ -2615,10 +2729,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey"
+    "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "jacobs-ladder",
+    "slug": "polemonium-reptans",
     "commonName": "Jacob's Ladder",
     "scientificName": "Polemonium reptans",
     "family": "Polemoniaceae",
@@ -2673,10 +2790,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) billy liar, some rights reserved (CC BY-NC-SA)"
+    "imageAttribution": "(c) billy liar, some rights reserved (CC BY-NC-SA)",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "great-blue-lobelia",
+    "slug": "lobelia-siphilitica",
     "commonName": "Great Blue Lobelia",
     "scientificName": "Lobelia siphilitica",
     "family": "Campanulaceae",
@@ -2735,10 +2855,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Annette Seidenglanz, some rights reserved (CC BY-NC), uploaded by Annette Seidenglanz"
+    "imageAttribution": "(c) Annette Seidenglanz, some rights reserved (CC BY-NC), uploaded by Annette Seidenglanz",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "bloodroot",
+    "slug": "sanguinaria-canadensis",
     "commonName": "Bloodroot",
     "scientificName": "Sanguinaria canadensis",
     "family": "Papaveraceae",
@@ -2786,10 +2909,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Haley Selen, some rights reserved (CC BY-NC), uploaded by Haley Selen"
+    "imageAttribution": "(c) Haley Selen, some rights reserved (CC BY-NC), uploaded by Haley Selen",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "virginia-bluebells",
+    "slug": "mertensia-virginica",
     "commonName": "Virginia Bluebells",
     "scientificName": "Mertensia virginica",
     "family": "Boraginaceae",
@@ -2846,10 +2972,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) tlit46, some rights reserved (CC BY-NC), uploaded by tlit46"
+    "imageAttribution": "(c) tlit46, some rights reserved (CC BY-NC), uploaded by tlit46",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "solomon-seal",
+    "slug": "polygonatum-biflorum",
     "commonName": "Solomon's Seal",
     "scientificName": "Polygonatum biflorum",
     "family": "Asparagaceae",
@@ -2904,10 +3033,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Eric Hunt, all rights reserved"
+    "imageAttribution": "(c) Eric Hunt, all rights reserved",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "white-trillium",
+    "slug": "trillium-grandiflorum",
     "commonName": "White Trillium",
     "scientificName": "Trillium grandiflorum",
     "family": "Melanthiaceae",
@@ -2955,10 +3087,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) sandy richard, some rights reserved (CC BY-NC-SA)"
+    "imageAttribution": "(c) sandy richard, some rights reserved (CC BY-NC-SA)",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "wild-ginger",
+    "slug": "asarum-canadense",
     "commonName": "Wild Ginger",
     "scientificName": "Asarum canadense",
     "family": "Aristolochiaceae",
@@ -3019,10 +3154,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Susan Elliott, some rights reserved (CC BY-NC), uploaded by Susan Elliott"
+    "imageAttribution": "(c) Susan Elliott, some rights reserved (CC BY-NC), uploaded by Susan Elliott",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "bottlebrush-grass",
+    "slug": "elymus-hystrix",
     "commonName": "Bottlebrush Grass",
     "scientificName": "Elymus hystrix",
     "family": "Poaceae",
@@ -3080,10 +3218,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Kevin, some rights reserved (CC BY-NC), uploaded by Kevin"
+    "imageAttribution": "(c) Kevin, some rights reserved (CC BY-NC), uploaded by Kevin",
+    "oudolfRole": "filler",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "blue-flag-iris",
+    "slug": "iris-virginica-var-shrevei",
     "commonName": "Blue Flag Iris",
     "scientificName": "Iris virginica var. shrevei",
     "family": "Iridaceae",
@@ -3146,10 +3287,13 @@
         ]
       }
     ],
-    "imageAttribution": "Photo via iNaturalist"
+    "imageAttribution": "Photo via iNaturalist",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "marsh-marigold",
+    "slug": "caltha-palustris",
     "commonName": "Marsh Marigold",
     "scientificName": "Caltha palustris",
     "family": "Ranunculaceae",
@@ -3199,10 +3343,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) eeyipes, some rights reserved (CC BY)"
+    "imageAttribution": "(c) eeyipes, some rights reserved (CC BY)",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "sweet-flag",
+    "slug": "acorus-calamus",
     "commonName": "Sweet Flag",
     "scientificName": "Acorus calamus",
     "family": "Acoraceae",
@@ -3251,10 +3398,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Eduard Garin, some rights reserved (CC BY-NC), uploaded by Eduard Garin"
+    "imageAttribution": "(c) Eduard Garin, some rights reserved (CC BY-NC), uploaded by Eduard Garin",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "blue-vervain",
+    "slug": "verbena-hastata",
     "commonName": "Blue Vervain",
     "scientificName": "Verbena hastata",
     "family": "Verbenaceae",
@@ -3321,10 +3471,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) jprekop, all rights reserved, uploaded by jprekop"
+    "imageAttribution": "(c) jprekop, all rights reserved, uploaded by jprekop",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "boneset",
+    "slug": "eupatorium-perfoliatum",
     "commonName": "Common Boneset",
     "scientificName": "Eupatorium perfoliatum",
     "family": "Asteraceae",
@@ -3384,10 +3537,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Stacey Patrick, some rights reserved (CC BY-NC), uploaded by Stacey Patrick"
+    "imageAttribution": "(c) Stacey Patrick, some rights reserved (CC BY-NC), uploaded by Stacey Patrick",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "ironweed",
+    "slug": "vernonia-fasciculata",
     "commonName": "Ironweed",
     "scientificName": "Vernonia fasciculata",
     "family": "Asteraceae",
@@ -3446,10 +3602,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Joshua Mayer, some rights reserved (CC BY-SA)"
+    "imageAttribution": "(c) Joshua Mayer, some rights reserved (CC BY-SA)",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "prairie-cordgrass",
+    "slug": "spartina-pectinata",
     "commonName": "Prairie Cordgrass",
     "scientificName": "Spartina pectinata",
     "family": "Poaceae",
@@ -3508,10 +3667,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey"
+    "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "soft-rush",
+    "slug": "juncus-effusus",
     "commonName": "Soft Rush",
     "scientificName": "Juncus effusus",
     "family": "Juncaceae",
@@ -3567,10 +3729,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Nelson DeBarros, some rights reserved (CC BY-NC), uploaded by Nelson DeBarros"
+    "imageAttribution": "(c) Nelson DeBarros, some rights reserved (CC BY-NC), uploaded by Nelson DeBarros",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "ninebark",
+    "slug": "physocarpus-opulifolius",
     "commonName": "Common Ninebark",
     "scientificName": "Physocarpus opulifolius",
     "family": "Rosaceae",
@@ -3637,10 +3802,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) hollyyoung, some rights reserved (CC BY-NC), uploaded by hollyyoung"
+    "imageAttribution": "(c) hollyyoung, some rights reserved (CC BY-NC), uploaded by hollyyoung",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "american-hazelnut",
+    "slug": "corylus-americana",
     "commonName": "American Hazelnut",
     "scientificName": "Corylus americana",
     "family": "Betulaceae",
@@ -3701,10 +3868,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) peggyo, some rights reserved (CC BY-NC), uploaded by peggyo"
+    "imageAttribution": "(c) peggyo, some rights reserved (CC BY-NC), uploaded by peggyo",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "new-jersey-tea",
+    "slug": "ceanothus-americanus",
     "commonName": "New Jersey Tea",
     "scientificName": "Ceanothus americanus",
     "family": "Rhamnaceae",
@@ -3763,10 +3932,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Mark Kluge, some rights reserved (CC BY-NC), uploaded by Mark Kluge"
+    "imageAttribution": "(c) Mark Kluge, some rights reserved (CC BY-NC), uploaded by Mark Kluge",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "red-osier-dogwood",
+    "slug": "cornus-sericea",
     "commonName": "Red-osier Dogwood",
     "scientificName": "Cornus sericea",
     "family": "Cornaceae",
@@ -3832,10 +4004,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) adrianakolev, all rights reserved"
+    "imageAttribution": "(c) adrianakolev, all rights reserved",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "winterberry-holly",
+    "slug": "ilex-verticillata",
     "commonName": "Winterberry Holly",
     "scientificName": "Ilex verticillata",
     "family": "Aquifoliaceae",
@@ -3892,10 +4066,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Paul Donahue, some rights reserved (CC BY-NC), uploaded by Paul Donahue"
+    "imageAttribution": "(c) Paul Donahue, some rights reserved (CC BY-NC), uploaded by Paul Donahue",
+    "oudolfRole": "structure",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "gray-dogwood",
+    "slug": "cornus-racemosa",
     "commonName": "Gray Dogwood",
     "scientificName": "Cornus racemosa",
     "family": "Cornaceae",
@@ -3958,10 +4135,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Dan Mullen, some rights reserved (CC BY-NC-ND)"
+    "imageAttribution": "(c) Dan Mullen, some rights reserved (CC BY-NC-ND)",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "black-chokeberry",
+    "slug": "aronia-melanocarpa",
     "commonName": "Black Chokeberry",
     "scientificName": "Aronia melanocarpa",
     "family": "Rosaceae",
@@ -4028,10 +4207,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Greg Funka, some rights reserved (CC BY-NC), uploaded by Greg Funka"
+    "imageAttribution": "(c) Greg Funka, some rights reserved (CC BY-NC), uploaded by Greg Funka",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "elderberry",
+    "slug": "sambucus-nigra-ssp-canadensis",
     "commonName": "Common Elderberry",
     "scientificName": "Sambucus nigra ssp. canadensis",
     "family": "Adoxaceae",
@@ -4091,10 +4272,12 @@
         ]
       }
     ],
-    "imageAttribution": "Photo via iNaturalist"
+    "imageAttribution": "Photo via iNaturalist",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "leadplant",
+    "slug": "amorpha-canescens",
     "commonName": "Leadplant",
     "scientificName": "Amorpha canescens",
     "family": "Fabaceae",
@@ -4153,10 +4336,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey"
+    "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "bur-oak",
+    "slug": "quercus-macrocarpa",
     "commonName": "Bur Oak",
     "scientificName": "Quercus macrocarpa",
     "family": "Fagaceae",
@@ -4215,10 +4401,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) rayrob, some rights reserved (CC BY-NC), uploaded by rayrob"
+    "imageAttribution": "(c) rayrob, some rights reserved (CC BY-NC), uploaded by rayrob",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "swamp-white-oak",
+    "slug": "quercus-bicolor",
     "commonName": "Swamp White Oak",
     "scientificName": "Quercus bicolor",
     "family": "Fagaceae",
@@ -4277,10 +4465,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Bart Lawrence, some rights reserved (CC BY-NC), uploaded by Bart Lawrence"
+    "imageAttribution": "(c) Bart Lawrence, some rights reserved (CC BY-NC), uploaded by Bart Lawrence",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "red-oak",
+    "slug": "quercus-rubra",
     "commonName": "Northern Red Oak",
     "scientificName": "Quercus rubra",
     "family": "Fagaceae",
@@ -4333,10 +4523,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) regoona, all rights reserved"
+    "imageAttribution": "(c) regoona, all rights reserved",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "serviceberry",
+    "slug": "amelanchier-arborea",
     "commonName": "Downy Serviceberry",
     "scientificName": "Amelanchier arborea",
     "family": "Rosaceae",
@@ -4403,10 +4595,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Bonnie Kinder, some rights reserved (CC BY-NC), uploaded by Bonnie Kinder"
+    "imageAttribution": "(c) Bonnie Kinder, some rights reserved (CC BY-NC), uploaded by Bonnie Kinder",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "redbud",
+    "slug": "cercis-canadensis",
     "commonName": "Eastern Redbud",
     "scientificName": "Cercis canadensis",
     "family": "Fabaceae",
@@ -4462,10 +4656,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) dbarronoss, some rights reserved (CC BY-NC-ND)"
+    "imageAttribution": "(c) dbarronoss, some rights reserved (CC BY-NC-ND)",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "american-basswood",
+    "slug": "tilia-americana",
     "commonName": "American Basswood",
     "scientificName": "Tilia americana",
     "family": "Malvaceae",
@@ -4517,10 +4713,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) botanicum-vitae, all rights reserved"
+    "imageAttribution": "(c) botanicum-vitae, all rights reserved",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "black-gum",
+    "slug": "nyssa-sylvatica",
     "commonName": "Black Gum",
     "scientificName": "Nyssa sylvatica",
     "family": "Nyssaceae",
@@ -4572,10 +4770,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) mountainad82, some rights reserved (CC BY-NC)"
+    "imageAttribution": "(c) mountainad82, some rights reserved (CC BY-NC)",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "virginia-creeper",
+    "slug": "parthenocissus-quinquefolia",
     "commonName": "Virginia Creeper",
     "scientificName": "Parthenocissus quinquefolia",
     "family": "Vitaceae",
@@ -4634,10 +4834,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Suzanne Cadwell, some rights reserved (CC BY-NC)"
+    "imageAttribution": "(c) Suzanne Cadwell, some rights reserved (CC BY-NC)",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "trumpet-honeysuckle",
+    "slug": "lonicera-sempervirens",
     "commonName": "Trumpet Honeysuckle",
     "scientificName": "Lonicera sempervirens",
     "family": "Caprifoliaceae",
@@ -4695,10 +4897,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Laura Kimberly, some rights reserved (CC BY-NC), uploaded by Laura Kimberly"
+    "imageAttribution": "(c) Laura Kimberly, some rights reserved (CC BY-NC), uploaded by Laura Kimberly",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "american-bittersweet",
+    "slug": "celastrus-scandens",
     "commonName": "American Bittersweet",
     "scientificName": "Celastrus scandens",
     "family": "Celastraceae",
@@ -4750,10 +4954,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Rob Curtis, some rights reserved (CC BY-NC-SA), uploaded by Rob Curtis"
+    "imageAttribution": "(c) Rob Curtis, some rights reserved (CC BY-NC-SA), uploaded by Rob Curtis",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "maidenhair-fern",
+    "slug": "adiantum-pedatum",
     "commonName": "Northern Maidenhair Fern",
     "scientificName": "Adiantum pedatum",
     "family": "Pteridaceae",
@@ -4799,10 +5005,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) bgrimmer, all rights reserved, uploaded by bgrimmer"
+    "imageAttribution": "(c) bgrimmer, all rights reserved, uploaded by bgrimmer",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "lady-fern",
+    "slug": "athyrium-filix-femina",
     "commonName": "Lady Fern",
     "scientificName": "Athyrium filix-femina",
     "family": "Athyriaceae",
@@ -4856,10 +5064,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) jacquelinerose, some rights reserved (CC BY-NC), uploaded by jacquelinerose"
+    "imageAttribution": "(c) jacquelinerose, some rights reserved (CC BY-NC), uploaded by jacquelinerose",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "royal-fern",
+    "slug": "osmunda-regalis",
     "commonName": "Royal Fern",
     "scientificName": "Osmunda regalis",
     "family": "Osmundaceae",
@@ -4886,7 +5096,9 @@
       "wetland",
       "woodland"
     ],
-    "wildlifeValue": [],
+    "wildlifeValue": [
+      "birds"
+    ],
     "effortLevel": "medium",
     "deerResistant": true,
     "description": "The largest native fern with distinctive cinnamon-brown fertile frond tips resembling flower clusters. Turns golden in autumn.",
@@ -4907,10 +5119,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) mjcorreia, all rights reserved, uploaded by mjcorreia"
+    "imageAttribution": "(c) mjcorreia, all rights reserved, uploaded by mjcorreia",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "prairie-coreopsis",
+    "slug": "coreopsis-palmata",
     "commonName": "Prairie Coreopsis",
     "scientificName": "Coreopsis palmata",
     "family": "Asteraceae",
@@ -4969,10 +5183,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Peter Gorman, some rights reserved (CC BY-NC-SA)"
+    "imageAttribution": "(c) Peter Gorman, some rights reserved (CC BY-NC-SA)",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "cup-plant",
+    "slug": "silphium-perfoliatum",
     "commonName": "Cup Plant",
     "scientificName": "Silphium perfoliatum",
     "family": "Asteraceae",
@@ -5032,10 +5249,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Chuck Sutherland, all rights reserved, uploaded by Chuck Sutherland"
+    "imageAttribution": "(c) Chuck Sutherland, all rights reserved, uploaded by Chuck Sutherland",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "wild-lupine",
+    "slug": "lupinus-perennis",
     "commonName": "Wild Lupine",
     "scientificName": "Lupinus perennis",
     "family": "Fabaceae",
@@ -5085,10 +5305,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) cassi saari, some rights reserved (CC BY-SA)"
+    "imageAttribution": "(c) cassi saari, some rights reserved (CC BY-SA)",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "purple-prairie-clover",
+    "slug": "dalea-purpurea",
     "commonName": "Purple Prairie Clover",
     "scientificName": "Dalea purpurea",
     "family": "Fabaceae",
@@ -5153,10 +5376,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Paul Tavares, some rights reserved (CC BY-NC), uploaded by Paul Tavares"
+    "imageAttribution": "(c) Paul Tavares, some rights reserved (CC BY-NC), uploaded by Paul Tavares",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "white-wild-indigo",
+    "slug": "baptisia-alba",
     "commonName": "White Wild Indigo",
     "scientificName": "Baptisia alba",
     "family": "Fabaceae",
@@ -5217,10 +5443,13 @@
         ]
       }
     ],
-    "imageAttribution": "no rights reserved, uploaded by John Kees"
+    "imageAttribution": "no rights reserved, uploaded by John Kees",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "cream-wild-indigo",
+    "slug": "baptisia-bracteata",
     "commonName": "Cream Wild Indigo",
     "scientificName": "Baptisia bracteata",
     "family": "Fabaceae",
@@ -5278,10 +5507,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Joshua, some rights reserved (CC BY-NC-SA)"
+    "imageAttribution": "(c) Joshua, some rights reserved (CC BY-NC-SA)",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "obedient-plant",
+    "slug": "physostegia-virginiana",
     "commonName": "Obedient Plant",
     "scientificName": "Physostegia virginiana",
     "family": "Lamiaceae",
@@ -5340,10 +5572,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) benwadejones, some rights reserved (CC BY-NC), uploaded by benwadejones"
+    "imageAttribution": "(c) benwadejones, some rights reserved (CC BY-NC), uploaded by benwadejones",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "foxglove-beardtongue",
+    "slug": "penstemon-digitalis",
     "commonName": "Foxglove Beardtongue",
     "scientificName": "Penstemon digitalis",
     "family": "Plantaginaceae",
@@ -5409,10 +5644,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Joe, some rights reserved (CC BY-NC), uploaded by Joe"
+    "imageAttribution": "(c) Joe, some rights reserved (CC BY-NC), uploaded by Joe",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "culvers-root",
+    "slug": "veronicastrum-virginicum",
     "commonName": "Culver's Root",
     "scientificName": "Veronicastrum virginicum",
     "family": "Plantaginaceae",
@@ -5477,10 +5715,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Amy Beth Workman, some rights reserved (CC BY-NC), uploaded by Amy Beth Workman"
+    "imageAttribution": "(c) Amy Beth Workman, some rights reserved (CC BY-NC), uploaded by Amy Beth Workman",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "wild-strawberry",
+    "slug": "fragaria-virginiana",
     "commonName": "Wild Strawberry",
     "scientificName": "Fragaria virginiana",
     "family": "Rosaceae",
@@ -5542,10 +5783,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Abby Hyde, some rights reserved (CC BY), uploaded by Abby Hyde"
+    "imageAttribution": "(c) Abby Hyde, some rights reserved (CC BY), uploaded by Abby Hyde",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "nodding-wild-onion",
+    "slug": "allium-cernuum",
     "commonName": "Nodding Wild Onion",
     "scientificName": "Allium cernuum",
     "family": "Amaryllidaceae",
@@ -5605,10 +5849,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Grace Chovil, all rights reserved, uploaded by Grace Chovil"
+    "imageAttribution": "(c) Grace Chovil, all rights reserved, uploaded by Grace Chovil",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "prairie-alumroot",
+    "slug": "heuchera-richardsonii",
     "commonName": "Prairie Alumroot",
     "scientificName": "Heuchera richardsonii",
     "family": "Saxifragaceae",
@@ -5666,10 +5913,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) smeyer41, all rights reserved"
+    "imageAttribution": "(c) smeyer41, all rights reserved",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "royal-catchfly",
+    "slug": "silene-regia",
     "commonName": "Royal Catchfly",
     "scientificName": "Silene regia",
     "family": "Caryophyllaceae",
@@ -5722,10 +5972,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) pfautsch, all rights reserved"
+    "imageAttribution": "(c) pfautsch, all rights reserved",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "marsh-blazing-star",
+    "slug": "liatris-spicata",
     "commonName": "Marsh Blazing Star",
     "scientificName": "Liatris spicata",
     "family": "Asteraceae",
@@ -5790,10 +6043,13 @@
         ]
       }
     ],
-    "imageAttribution": "no rights reserved, uploaded by Dale Knox"
+    "imageAttribution": "no rights reserved, uploaded by Dale Knox",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "common-spicebush",
+    "slug": "lindera-benzoin",
     "commonName": "Common Spicebush",
     "scientificName": "Lindera benzoin",
     "family": "Lauraceae",
@@ -5853,10 +6109,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Sandy Wolkenberg, some rights reserved (CC BY), uploaded by Sandy Wolkenberg"
+    "imageAttribution": "(c) Sandy Wolkenberg, some rights reserved (CC BY), uploaded by Sandy Wolkenberg",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "turtlehead",
+    "slug": "chelone-glabra",
     "commonName": "White Turtlehead",
     "scientificName": "Chelone glabra",
     "family": "Plantaginaceae",
@@ -5915,10 +6173,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Ken-ichi Ueda, some rights reserved (CC BY), uploaded by Ken-ichi Ueda"
+    "imageAttribution": "(c) Ken-ichi Ueda, some rights reserved (CC BY), uploaded by Ken-ichi Ueda",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "blue-joint-grass",
+    "slug": "calamagrostis-canadensis",
     "commonName": "Blue Joint Grass",
     "scientificName": "Calamagrostis canadensis",
     "family": "Poaceae",
@@ -5978,10 +6239,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) James, all rights reserved, uploaded by James"
+    "imageAttribution": "(c) James, all rights reserved, uploaded by James",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "downy-wood-mint",
+    "slug": "blephilia-ciliata",
     "commonName": "Downy Wood Mint",
     "scientificName": "Blephilia ciliata",
     "family": "Lamiaceae",
@@ -6038,10 +6302,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) cotinis, some rights reserved (CC BY-NC-SA)"
+    "imageAttribution": "(c) cotinis, some rights reserved (CC BY-NC-SA)",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "witch-hazel",
+    "slug": "hamamelis-virginiana",
     "commonName": "Common Witch-hazel",
     "scientificName": "Hamamelis virginiana",
     "family": "Hamamelidaceae",
@@ -6090,10 +6357,12 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Paul Marcum, some rights reserved (CC BY-NC), uploaded by Paul Marcum"
+    "imageAttribution": "(c) Paul Marcum, some rights reserved (CC BY-NC), uploaded by Paul Marcum",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "northern-sea-oats",
+    "slug": "chasmanthium-latifolium",
     "commonName": "Northern Sea Oats",
     "scientificName": "Chasmanthium latifolium",
     "family": "Poaceae",
@@ -6151,10 +6420,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Susan Elliott, some rights reserved (CC BY-NC), uploaded by Susan Elliott"
+    "imageAttribution": "(c) Susan Elliott, some rights reserved (CC BY-NC), uploaded by Susan Elliott",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "sweet-black-eyed-susan",
+    "slug": "rudbeckia-subtomentosa",
     "commonName": "Sweet Black-eyed Susan",
     "scientificName": "Rudbeckia subtomentosa",
     "family": "Asteraceae",
@@ -6213,10 +6485,13 @@
         ]
       }
     ],
-    "imageAttribution": "(c) Eric Hunt, all rights reserved, uploaded by Eric Hunt"
+    "imageAttribution": "(c) Eric Hunt, all rights reserved, uploaded by Eric Hunt",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "white-snakeroot",
+    "slug": "ageratina-altissima",
     "commonName": "White Snakeroot",
     "scientificName": "Ageratina altissima",
     "family": "Asteraceae",
@@ -6266,10 +6541,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "zigzag-goldenrod",
+    "slug": "solidago-flexicaulis",
     "commonName": "Zigzag Goldenrod",
     "scientificName": "Solidago flexicaulis",
     "family": "Asteraceae",
@@ -6319,10 +6597,13 @@
           "plug"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "blue-cohosh",
+    "slug": "caulophyllum-thalictroides",
     "commonName": "Blue Cohosh",
     "scientificName": "Caulophyllum thalictroides",
     "family": "Berberidaceae",
@@ -6369,10 +6650,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "woodland-phlox",
+    "slug": "phlox-divaricata",
     "commonName": "Woodland Phlox",
     "scientificName": "Phlox divaricata",
     "family": "Polemoniaceae",
@@ -6428,10 +6712,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "foam-flower",
+    "slug": "tiarella-cordifolia",
     "commonName": "Foam Flower",
     "scientificName": "Tiarella cordifolia",
     "family": "Saxifragaceae",
@@ -6478,10 +6765,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "mayapple",
+    "slug": "podophyllum-peltatum",
     "commonName": "Mayapple",
     "scientificName": "Podophyllum peltatum",
     "family": "Berberidaceae",
@@ -6529,10 +6819,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "jack-in-the-pulpit",
+    "slug": "arisaema-triphyllum",
     "commonName": "Jack-in-the-Pulpit",
     "scientificName": "Arisaema triphyllum",
     "family": "Araceae",
@@ -6581,10 +6874,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "dutchmans-breeches",
+    "slug": "dicentra-cucullaria",
     "commonName": "Dutchman's Breeches",
     "scientificName": "Dicentra cucullaria",
     "family": "Papaveraceae",
@@ -6625,10 +6921,13 @@
           "bare_root"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "tall-bellflower",
+    "slug": "campanula-americana",
     "commonName": "Tall Bellflower",
     "scientificName": "Campanula americana",
     "family": "Campanulaceae",
@@ -6679,10 +6978,13 @@
           "plug"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "white-wood-aster",
+    "slug": "eurybia-divaricata",
     "commonName": "White Wood Aster",
     "scientificName": "Eurybia divaricata",
     "family": "Asteraceae",
@@ -6733,10 +7035,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "hepatica",
+    "slug": "hepatica-acutiloba",
     "commonName": "Sharp-lobed Hepatica",
     "scientificName": "Hepatica acutiloba",
     "family": "Ranunculaceae",
@@ -6783,10 +7088,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "sweet-cicely",
+    "slug": "osmorhiza-claytonii",
     "commonName": "Sweet Cicely",
     "scientificName": "Osmorhiza claytonii",
     "family": "Apiaceae",
@@ -6827,10 +7135,13 @@
           "seed"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "golden-groundsel",
+    "slug": "packera-aurea",
     "commonName": "Golden Groundsel",
     "scientificName": "Packera aurea",
     "family": "Asteraceae",
@@ -6889,10 +7200,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "green-and-gold",
+    "slug": "chrysogonum-virginianum",
     "commonName": "Green and Gold",
     "scientificName": "Chrysogonum virginianum",
     "family": "Asteraceae",
@@ -6939,10 +7253,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "barren-strawberry",
+    "slug": "geum-fragarioides",
     "commonName": "Barren Strawberry",
     "scientificName": "Geum fragarioides",
     "family": "Rosaceae",
@@ -6990,10 +7307,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "spreading-sedge",
+    "slug": "carex-laxiculmis",
     "commonName": "Spreading Sedge",
     "scientificName": "Carex laxiculmis",
     "family": "Cyperaceae",
@@ -7041,10 +7361,13 @@
           "plug"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "james-sedge",
+    "slug": "carex-jamesii",
     "commonName": "James' Sedge",
     "scientificName": "Carex jamesii",
     "family": "Cyperaceae",
@@ -7094,10 +7417,13 @@
           "plug"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "pagoda-dogwood",
+    "slug": "cornus-alternifolia",
     "commonName": "Pagoda Dogwood",
     "scientificName": "Cornus alternifolia",
     "family": "Cornaceae",
@@ -7147,10 +7473,12 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "maple-leaf-viburnum",
+    "slug": "viburnum-acerifolium",
     "commonName": "Maple-leaf Viburnum",
     "scientificName": "Viburnum acerifolium",
     "family": "Adoxaceae",
@@ -7201,10 +7529,12 @@
           "bare_root"
         ]
       }
-    ]
+    ],
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "bladdernut",
+    "slug": "staphylea-trifolia",
     "commonName": "Bladdernut",
     "scientificName": "Staphylea trifolia",
     "family": "Staphyleaceae",
@@ -7247,10 +7577,12 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "american-wahoo",
+    "slug": "euonymus-atropurpureus",
     "commonName": "American Wahoo",
     "scientificName": "Euonymus atropurpureus",
     "family": "Celastraceae",
@@ -7300,10 +7632,12 @@
           "bare_root"
         ]
       }
-    ]
+    ],
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "common-blue-violet",
+    "slug": "viola-sororia",
     "commonName": "Common Blue Violet",
     "scientificName": "Viola sororia",
     "family": "Violaceae",
@@ -7357,10 +7691,13 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "tall-coreopsis",
+    "slug": "coreopsis-tripteris",
     "commonName": "Tall Coreopsis",
     "scientificName": "Coreopsis tripteris",
     "family": "Asteraceae",
@@ -7419,10 +7756,13 @@
           "seed"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "partridge-pea",
+    "slug": "chamaecrista-fasciculata",
     "commonName": "Partridge Pea",
     "scientificName": "Chamaecrista fasciculata",
     "family": "Fabaceae",
@@ -7478,10 +7818,13 @@
           "seed"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "christmas-fern",
+    "slug": "polystichum-acrostichoides",
     "commonName": "Christmas Fern",
     "scientificName": "Polystichum acrostichoides",
     "family": "Dryopteridaceae",
@@ -7500,8 +7843,8 @@
     "soilTypes": [
       "loam"
     ],
-    "bloomStartMonth": 0,
-    "bloomEndMonth": 0,
+    "bloomStartMonth": 1,
+    "bloomEndMonth": 1,
     "bloomColor": "green",
     "nativeHabitats": [
       "woodland"
@@ -7528,10 +7871,12 @@
           "potted"
         ]
       }
-    ]
+    ],
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "ostrich-fern",
+    "slug": "matteuccia-struthiopteris",
     "commonName": "Ostrich Fern",
     "scientificName": "Matteuccia struthiopteris",
     "family": "Onocleaceae",
@@ -7551,8 +7896,8 @@
     "soilTypes": [
       "loam"
     ],
-    "bloomStartMonth": 0,
-    "bloomEndMonth": 0,
+    "bloomStartMonth": 1,
+    "bloomEndMonth": 1,
     "bloomColor": "green",
     "nativeHabitats": [
       "woodland",
@@ -7580,10 +7925,13 @@
           "bare_root"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "sensitive-fern",
+    "slug": "onoclea-sensibilis",
     "commonName": "Sensitive Fern",
     "scientificName": "Onoclea sensibilis",
     "family": "Onocleaceae",
@@ -7605,8 +7953,8 @@
       "loam",
       "clay"
     ],
-    "bloomStartMonth": 0,
-    "bloomEndMonth": 0,
+    "bloomStartMonth": 1,
+    "bloomEndMonth": 1,
     "bloomColor": "green",
     "nativeHabitats": [
       "woodland",
@@ -7634,10 +7982,13 @@
           "bare_root"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "filler",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "virginia-wild-rye",
+    "slug": "elymus-virginicus",
     "commonName": "Virginia Wild Rye",
     "scientificName": "Elymus virginicus",
     "family": "Poaceae",
@@ -7694,10 +8045,13 @@
           "seed"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "canada-wild-rye",
+    "slug": "elymus-canadensis",
     "commonName": "Canada Wild Rye",
     "scientificName": "Elymus canadensis",
     "family": "Poaceae",
@@ -7753,10 +8107,13 @@
           "seed"
         ]
       }
-    ]
+    ],
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "white-oak",
+    "slug": "quercus-alba",
     "commonName": "White Oak",
     "scientificName": "Quercus alba",
     "family": "Fagaceae",
@@ -7817,10 +8174,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "sugar-maple",
+    "slug": "acer-saccharum",
     "commonName": "Sugar Maple",
     "scientificName": "Acer saccharum",
     "family": "Sapindaceae",
@@ -7872,10 +8231,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "hackberry",
+    "slug": "celtis-occidentalis",
     "commonName": "Common Hackberry",
     "scientificName": "Celtis occidentalis",
     "family": "Cannabaceae",
@@ -7930,10 +8291,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "shagbark-hickory",
+    "slug": "carya-ovata",
     "commonName": "Shagbark Hickory",
     "scientificName": "Carya ovata",
     "family": "Juglandaceae",
@@ -7980,10 +8343,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "american-hornbeam",
+    "slug": "carpinus-caroliniana",
     "commonName": "American Hornbeam",
     "scientificName": "Carpinus caroliniana",
     "family": "Betulaceae",
@@ -8037,10 +8402,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "eastern-hop-hornbeam",
+    "slug": "ostrya-virginiana",
     "commonName": "Eastern Hop Hornbeam",
     "scientificName": "Ostrya virginiana",
     "family": "Betulaceae",
@@ -8088,10 +8455,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "american-sycamore",
+    "slug": "platanus-occidentalis",
     "commonName": "American Sycamore",
     "scientificName": "Platanus occidentalis",
     "family": "Platanaceae",
@@ -8143,10 +8512,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "black-cherry",
+    "slug": "prunus-serotina",
     "commonName": "Black Cherry",
     "scientificName": "Prunus serotina",
     "family": "Rosaceae",
@@ -8202,10 +8573,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "kentucky-coffeetree",
+    "slug": "gymnocladus-dioicus",
     "commonName": "Kentucky Coffeetree",
     "scientificName": "Gymnocladus dioicus",
     "family": "Fabaceae",
@@ -8254,10 +8627,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "river-birch",
+    "slug": "betula-nigra",
     "commonName": "River Birch",
     "scientificName": "Betula nigra",
     "family": "Betulaceae",
@@ -8311,10 +8686,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "buttonbush",
+    "slug": "cephalanthus-occidentalis",
     "commonName": "Buttonbush",
     "scientificName": "Cephalanthus occidentalis",
     "family": "Rubiaceae",
@@ -8380,10 +8757,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "structure",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "nannyberry",
+    "slug": "viburnum-lentago",
     "commonName": "Nannyberry",
     "scientificName": "Viburnum lentago",
     "family": "Adoxaceae",
@@ -8444,10 +8824,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "blackhaw",
+    "slug": "viburnum-prunifolium",
     "commonName": "Blackhaw Viburnum",
     "scientificName": "Viburnum prunifolium",
     "family": "Adoxaceae",
@@ -8508,10 +8890,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "arrowwood-viburnum",
+    "slug": "viburnum-dentatum",
     "commonName": "Arrowwood Viburnum",
     "scientificName": "Viburnum dentatum",
     "family": "Adoxaceae",
@@ -8570,10 +8954,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "chokecherry",
+    "slug": "prunus-virginiana",
     "commonName": "Chokecherry",
     "scientificName": "Prunus virginiana",
     "family": "Rosaceae",
@@ -8630,10 +9016,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "meadowsweet",
+    "slug": "spiraea-alba",
     "commonName": "Meadowsweet",
     "scientificName": "Spiraea alba",
     "family": "Rosaceae",
@@ -8693,10 +9081,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "structure",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "pasture-rose",
+    "slug": "rosa-carolina",
     "commonName": "Pasture Rose",
     "scientificName": "Rosa carolina",
     "family": "Rosaceae",
@@ -8751,10 +9142,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "filler",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "false-indigo-bush",
+    "slug": "amorpha-fruticosa",
     "commonName": "False Indigo Bush",
     "scientificName": "Amorpha fruticosa",
     "family": "Fabaceae",
@@ -8810,10 +9204,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "northern-bush-honeysuckle",
+    "slug": "diervilla-lonicera",
     "commonName": "Northern Bush Honeysuckle",
     "scientificName": "Diervilla lonicera",
     "family": "Diervillaceae",
@@ -8864,10 +9260,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "trumpet-creeper",
+    "slug": "campsis-radicans",
     "commonName": "Trumpet Creeper",
     "scientificName": "Campsis radicans",
     "family": "Bignoniaceae",
@@ -8920,10 +9318,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "riverbank-grape",
+    "slug": "vitis-riparia",
     "commonName": "Riverbank Grape",
     "scientificName": "Vitis riparia",
     "family": "Vitaceae",
@@ -8978,10 +9378,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "virgins-bower",
+    "slug": "clematis-virginiana",
     "commonName": "Virgin's Bower",
     "scientificName": "Clematis virginiana",
     "family": "Ranunculaceae",
@@ -9033,10 +9435,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "cinnamon-fern",
+    "slug": "osmundastrum-cinnamomeum",
     "commonName": "Cinnamon Fern",
     "scientificName": "Osmundastrum cinnamomeum",
     "family": "Osmundaceae",
@@ -9065,7 +9469,9 @@
       "wetland",
       "woodland"
     ],
-    "wildlifeValue": [],
+    "wildlifeValue": [
+      "birds"
+    ],
     "effortLevel": "low",
     "deerResistant": true,
     "description": "A bold architectural fern with tall vase-shaped fronds surrounding conspicuous cinnamon-brown fertile fronds in spring. Forms long-lived clumps.",
@@ -9086,10 +9492,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "interrupted-fern",
+    "slug": "osmunda-claytoniana",
     "commonName": "Interrupted Fern",
     "scientificName": "Osmunda claytoniana",
     "family": "Osmundaceae",
@@ -9115,7 +9523,9 @@
     "nativeHabitats": [
       "woodland"
     ],
-    "wildlifeValue": [],
+    "wildlifeValue": [
+      "birds"
+    ],
     "effortLevel": "low",
     "deerResistant": true,
     "description": "A distinctive fern with pinnae that appear \"interrupted\" by clusters of dark fertile pinnae mid-frond. Among the oldest fern lineages — essentially unchanged since the Triassic.",
@@ -9136,10 +9546,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "marsh-fern",
+    "slug": "thelypteris-palustris",
     "commonName": "Marsh Fern",
     "scientificName": "Thelypteris palustris",
     "family": "Thelypteridaceae",
@@ -9186,10 +9598,12 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "blue-grama",
+    "slug": "bouteloua-gracilis",
     "commonName": "Blue Grama",
     "scientificName": "Bouteloua gracilis",
     "family": "Poaceae",
@@ -9245,10 +9659,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "tussock-sedge",
+    "slug": "carex-stricta",
     "commonName": "Tussock Sedge",
     "scientificName": "Carex stricta",
     "family": "Cyperaceae",
@@ -9304,10 +9721,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": true
   },
   {
-    "slug": "bottle-gentian",
+    "slug": "gentiana-andrewsii",
     "commonName": "Bottle Gentian",
     "scientificName": "Gentiana andrewsii",
     "family": "Gentianaceae",
@@ -9366,10 +9786,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "common-sneezeweed",
+    "slug": "helenium-autumnale",
     "commonName": "Common Sneezeweed",
     "scientificName": "Helenium autumnale",
     "family": "Asteraceae",
@@ -9434,10 +9857,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "heath-aster",
+    "slug": "symphyotrichum-ericoides",
     "commonName": "Heath Aster",
     "scientificName": "Symphyotrichum ericoides",
     "family": "Asteraceae",
@@ -9496,10 +9922,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "calico-aster",
+    "slug": "symphyotrichum-lateriflorum",
     "commonName": "Calico Aster",
     "scientificName": "Symphyotrichum lateriflorum",
     "family": "Asteraceae",
@@ -9552,10 +9981,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "old-field-goldenrod",
+    "slug": "solidago-nemoralis",
     "commonName": "Old-field Goldenrod",
     "scientificName": "Solidago nemoralis",
     "family": "Asteraceae",
@@ -9606,10 +10038,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "spring-beauty",
+    "slug": "claytonia-virginica",
     "commonName": "Spring Beauty",
     "scientificName": "Claytonia virginica",
     "family": "Montiaceae",
@@ -9659,10 +10094,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "white-trout-lily",
+    "slug": "erythronium-albidum",
     "commonName": "White Trout Lily",
     "scientificName": "Erythronium albidum",
     "family": "Liliaceae",
@@ -9710,10 +10148,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "cutleaf-toothwort",
+    "slug": "cardamine-concatenata",
     "commonName": "Cut-leaved Toothwort",
     "scientificName": "Cardamine concatenata",
     "family": "Brassicaceae",
@@ -9762,10 +10203,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "wild-hyacinth",
+    "slug": "camassia-scilloides",
     "commonName": "Wild Hyacinth",
     "scientificName": "Camassia scilloides",
     "family": "Asparagaceae",
@@ -9820,10 +10264,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "common-mountain-mint",
+    "slug": "pycnanthemum-virginianum",
     "commonName": "Common Mountain Mint",
     "scientificName": "Pycnanthemum virginianum",
     "family": "Lamiaceae",
@@ -9888,10 +10335,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "gray-headed-coneflower",
+    "slug": "ratibida-pinnata",
     "commonName": "Gray-headed Coneflower",
     "scientificName": "Ratibida pinnata",
     "family": "Asteraceae",
@@ -9958,10 +10408,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "whorled-milkweed",
+    "slug": "asclepias-verticillata",
     "commonName": "Whorled Milkweed",
     "scientificName": "Asclepias verticillata",
     "family": "Apocynaceae",
@@ -10011,10 +10464,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": false
   },
   {
-    "slug": "prairie-milkweed",
+    "slug": "asclepias-sullivantii",
     "commonName": "Sullivant's Milkweed",
     "scientificName": "Asclepias sullivantii",
     "family": "Apocynaceae",
@@ -10070,10 +10526,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "canada-anemone",
+    "slug": "anemone-canadensis",
     "commonName": "Canada Anemone",
     "scientificName": "Anemone canadensis",
     "family": "Ranunculaceae",
@@ -10133,10 +10592,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "filler",
+    "seedHeadInterest": false,
+    "winterStructure": false
   },
   {
-    "slug": "thimbleweed",
+    "slug": "anemone-virginiana",
     "commonName": "Tall Thimbleweed",
     "scientificName": "Anemone virginiana",
     "family": "Ranunculaceae",
@@ -10188,10 +10650,13 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "scatter",
+    "seedHeadInterest": true,
+    "winterStructure": true
   },
   {
-    "slug": "bottlebrush-grass-addition",
+    "slug": "glyceria-striata",
     "commonName": "Fowl Manna Grass",
     "scientificName": "Glyceria striata",
     "family": "Poaceae",
@@ -10243,6 +10708,9 @@
         ]
       }
     ],
-    "imageAttribution": ""
+    "imageAttribution": "",
+    "oudolfRole": "matrix",
+    "seedHeadInterest": false,
+    "winterStructure": false
   }
 ]

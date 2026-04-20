@@ -1,0 +1,2660 @@
+{
+  "generatedAt": "2026-04-19T00:57:47.979Z",
+  "write": true,
+  "totalPlants": 170,
+  "processed": 170,
+  "enriched": 170,
+  "skipped": 0,
+  "errors": 0,
+  "distribution": {
+    "oudolfRole": {
+      "structure": 19,
+      "filler": 42,
+      "scatter": 36,
+      "matrix": 25,
+      "(none)": 48
+    },
+    "seedHeadInterestYes": 67,
+    "winterStructureYes": 70
+  },
+  "tokenUsage": {
+    "input": 83446,
+    "output": 36596,
+    "cacheRead": 244104
+  },
+  "outcomes": [
+    {
+      "slug": "echinacea-purpurea",
+      "commonName": "Purple Coneflower",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "rudbeckia-hirta",
+      "commonName": "Black-eyed Susan",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "asclepias-tuberosa",
+      "commonName": "Butterfly Weed",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "monarda-fistulosa",
+      "commonName": "Wild Bergamot",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "eutrochium-purpureum",
+      "commonName": "Joe Pye Weed",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "lobelia-cardinalis",
+      "commonName": "Cardinal Flower",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "asclepias-syriaca",
+      "commonName": "Common Milkweed",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "asclepias-incarnata",
+      "commonName": "Swamp Milkweed",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "symphyotrichum-novae-angliae",
+      "commonName": "New England Aster",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "symphyotrichum-laeve",
+      "commonName": "Smooth Blue Aster",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "symphyotrichum-oblongifolium",
+      "commonName": "Aromatic Aster",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "echinacea-pallida",
+      "commonName": "Pale Purple Coneflower",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "eryngium-yuccifolium",
+      "commonName": "Rattlesnake Master",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "liatris-pycnostachya",
+      "commonName": "Prairie Blazing Star",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "liatris-aspera",
+      "commonName": "Rough Blazing Star",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "silphium-terebinthinaceum",
+      "commonName": "Prairie Dock",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "silphium-laciniatum",
+      "commonName": "Compass Plant",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "parthenium-integrifolium",
+      "commonName": "Wild Quinine",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "zizia-aurea",
+      "commonName": "Golden Alexanders",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "phlox-pilosa",
+      "commonName": "Prairie Phlox",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "solidago-rigida",
+      "commonName": "Stiff Goldenrod",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "solidago-speciosa",
+      "commonName": "Showy Goldenrod",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "tradescantia-ohiensis",
+      "commonName": "Ohio Spiderwort",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "dodecatheon-meadia",
+      "commonName": "Shooting Star",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "geum-triflorum",
+      "commonName": "Prairie Smoke",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "andropogon-gerardii",
+      "commonName": "Big Bluestem",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "sporobolus-heterolepis",
+      "commonName": "Prairie Dropseed",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "schizachyrium-scoparium",
+      "commonName": "Little Bluestem",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "panicum-virgatum",
+      "commonName": "Switchgrass",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "sorghastrum-nutans",
+      "commonName": "Indian Grass",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "bouteloua-curtipendula",
+      "commonName": "Side-oats Grama",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "koeleria-macrantha",
+      "commonName": "June Grass",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "carex-bicknellii",
+      "commonName": "Prairie Sedge",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "carex-pensylvanica",
+      "commonName": "Pennsylvania Sedge",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "carex-vulpinoidea",
+      "commonName": "Fox Sedge",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "carex-muskingumensis",
+      "commonName": "Palm Sedge",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "helianthus-divaricatus",
+      "commonName": "Woodland Sunflower",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "geranium-maculatum",
+      "commonName": "Wild Geranium",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "aquilegia-canadensis",
+      "commonName": "Wild Columbine",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "polemonium-reptans",
+      "commonName": "Jacob's Ladder",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "lobelia-siphilitica",
+      "commonName": "Great Blue Lobelia",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "sanguinaria-canadensis",
+      "commonName": "Bloodroot",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "mertensia-virginica",
+      "commonName": "Virginia Bluebells",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "polygonatum-biflorum",
+      "commonName": "Solomon's Seal",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "trillium-grandiflorum",
+      "commonName": "White Trillium",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "asarum-canadense",
+      "commonName": "Wild Ginger",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "elymus-hystrix",
+      "commonName": "Bottlebrush Grass",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "iris-virginica-var-shrevei",
+      "commonName": "Blue Flag Iris",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "caltha-palustris",
+      "commonName": "Marsh Marigold",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "acorus-calamus",
+      "commonName": "Sweet Flag",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "verbena-hastata",
+      "commonName": "Blue Vervain",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "eupatorium-perfoliatum",
+      "commonName": "Common Boneset",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "vernonia-fasciculata",
+      "commonName": "Ironweed",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "spartina-pectinata",
+      "commonName": "Prairie Cordgrass",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "juncus-effusus",
+      "commonName": "Soft Rush",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "physocarpus-opulifolius",
+      "commonName": "Common Ninebark",
+      "before": {},
+      "after": {
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "corylus-americana",
+      "commonName": "American Hazelnut",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "ceanothus-americanus",
+      "commonName": "New Jersey Tea",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "cornus-sericea",
+      "commonName": "Red-osier Dogwood",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "ilex-verticillata",
+      "commonName": "Winterberry Holly",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "cornus-racemosa",
+      "commonName": "Gray Dogwood",
+      "before": {},
+      "after": {
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "aronia-melanocarpa",
+      "commonName": "Black Chokeberry",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "sambucus-nigra-ssp-canadensis",
+      "commonName": "Common Elderberry",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "amorpha-canescens",
+      "commonName": "Leadplant",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "quercus-macrocarpa",
+      "commonName": "Bur Oak",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "quercus-bicolor",
+      "commonName": "Swamp White Oak",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "quercus-rubra",
+      "commonName": "Northern Red Oak",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "amelanchier-arborea",
+      "commonName": "Downy Serviceberry",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "cercis-canadensis",
+      "commonName": "Eastern Redbud",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "tilia-americana",
+      "commonName": "American Basswood",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "nyssa-sylvatica",
+      "commonName": "Black Gum",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "parthenocissus-quinquefolia",
+      "commonName": "Virginia Creeper",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "lonicera-sempervirens",
+      "commonName": "Trumpet Honeysuckle",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "celastrus-scandens",
+      "commonName": "American Bittersweet",
+      "before": {},
+      "after": {
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "adiantum-pedatum",
+      "commonName": "Northern Maidenhair Fern",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "athyrium-filix-femina",
+      "commonName": "Lady Fern",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "osmunda-regalis",
+      "commonName": "Royal Fern",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "wildlifeValue",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "coreopsis-palmata",
+      "commonName": "Prairie Coreopsis",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "silphium-perfoliatum",
+      "commonName": "Cup Plant",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "lupinus-perennis",
+      "commonName": "Wild Lupine",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "dalea-purpurea",
+      "commonName": "Purple Prairie Clover",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "baptisia-alba",
+      "commonName": "White Wild Indigo",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "baptisia-bracteata",
+      "commonName": "Cream Wild Indigo",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "physostegia-virginiana",
+      "commonName": "Obedient Plant",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "penstemon-digitalis",
+      "commonName": "Foxglove Beardtongue",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "veronicastrum-virginicum",
+      "commonName": "Culver's Root",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "fragaria-virginiana",
+      "commonName": "Wild Strawberry",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "allium-cernuum",
+      "commonName": "Nodding Wild Onion",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "heuchera-richardsonii",
+      "commonName": "Prairie Alumroot",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "silene-regia",
+      "commonName": "Royal Catchfly",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "liatris-spicata",
+      "commonName": "Marsh Blazing Star",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "lindera-benzoin",
+      "commonName": "Common Spicebush",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "chelone-glabra",
+      "commonName": "White Turtlehead",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "calamagrostis-canadensis",
+      "commonName": "Blue Joint Grass",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "blephilia-ciliata",
+      "commonName": "Downy Wood Mint",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "hamamelis-virginiana",
+      "commonName": "Common Witch-hazel",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "chasmanthium-latifolium",
+      "commonName": "Northern Sea Oats",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "rudbeckia-subtomentosa",
+      "commonName": "Sweet Black-eyed Susan",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "ageratina-altissima",
+      "commonName": "White Snakeroot",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "solidago-flexicaulis",
+      "commonName": "Zigzag Goldenrod",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "caulophyllum-thalictroides",
+      "commonName": "Blue Cohosh",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "phlox-divaricata",
+      "commonName": "Woodland Phlox",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "tiarella-cordifolia",
+      "commonName": "Foam Flower",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "podophyllum-peltatum",
+      "commonName": "Mayapple",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "arisaema-triphyllum",
+      "commonName": "Jack-in-the-Pulpit",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "dicentra-cucullaria",
+      "commonName": "Dutchman's Breeches",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "campanula-americana",
+      "commonName": "Tall Bellflower",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "eurybia-divaricata",
+      "commonName": "White Wood Aster",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "hepatica-acutiloba",
+      "commonName": "Sharp-lobed Hepatica",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "osmorhiza-claytonii",
+      "commonName": "Sweet Cicely",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "packera-aurea",
+      "commonName": "Golden Groundsel",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "chrysogonum-virginianum",
+      "commonName": "Green and Gold",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "geum-fragarioides",
+      "commonName": "Barren Strawberry",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "carex-laxiculmis",
+      "commonName": "Spreading Sedge",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "carex-jamesii",
+      "commonName": "James' Sedge",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "cornus-alternifolia",
+      "commonName": "Pagoda Dogwood",
+      "before": {},
+      "after": {
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "viburnum-acerifolium",
+      "commonName": "Maple-leaf Viburnum",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "staphylea-trifolia",
+      "commonName": "Bladdernut",
+      "before": {},
+      "after": {
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "euonymus-atropurpureus",
+      "commonName": "American Wahoo",
+      "before": {},
+      "after": {
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "viola-sororia",
+      "commonName": "Common Blue Violet",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "coreopsis-tripteris",
+      "commonName": "Tall Coreopsis",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "chamaecrista-fasciculata",
+      "commonName": "Partridge Pea",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "polystichum-acrostichoides",
+      "commonName": "Christmas Fern",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "bloomStartMonth",
+        "bloomEndMonth",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "matteuccia-struthiopteris",
+      "commonName": "Ostrich Fern",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "bloomStartMonth",
+        "bloomEndMonth",
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "onoclea-sensibilis",
+      "commonName": "Sensitive Fern",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "bloomStartMonth",
+        "bloomEndMonth",
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "elymus-virginicus",
+      "commonName": "Virginia Wild Rye",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "elymus-canadensis",
+      "commonName": "Canada Wild Rye",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "quercus-alba",
+      "commonName": "White Oak",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "acer-saccharum",
+      "commonName": "Sugar Maple",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "celtis-occidentalis",
+      "commonName": "Common Hackberry",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "carya-ovata",
+      "commonName": "Shagbark Hickory",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "carpinus-caroliniana",
+      "commonName": "American Hornbeam",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "ostrya-virginiana",
+      "commonName": "Eastern Hop Hornbeam",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "platanus-occidentalis",
+      "commonName": "American Sycamore",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "prunus-serotina",
+      "commonName": "Black Cherry",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "gymnocladus-dioicus",
+      "commonName": "Kentucky Coffeetree",
+      "before": {},
+      "after": {
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "betula-nigra",
+      "commonName": "River Birch",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "cephalanthus-occidentalis",
+      "commonName": "Buttonbush",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "viburnum-lentago",
+      "commonName": "Nannyberry",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "viburnum-prunifolium",
+      "commonName": "Blackhaw Viburnum",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "viburnum-dentatum",
+      "commonName": "Arrowwood Viburnum",
+      "before": {},
+      "after": {
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "prunus-virginiana",
+      "commonName": "Chokecherry",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "spiraea-alba",
+      "commonName": "Meadowsweet",
+      "before": {},
+      "after": {
+        "oudolfRole": "structure",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "rosa-carolina",
+      "commonName": "Pasture Rose",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "amorpha-fruticosa",
+      "commonName": "False Indigo Bush",
+      "before": {},
+      "after": {
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "diervilla-lonicera",
+      "commonName": "Northern Bush Honeysuckle",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "campsis-radicans",
+      "commonName": "Trumpet Creeper",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "vitis-riparia",
+      "commonName": "Riverbank Grape",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "clematis-virginiana",
+      "commonName": "Virgin's Bower",
+      "before": {},
+      "after": {
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "osmundastrum-cinnamomeum",
+      "commonName": "Cinnamon Fern",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "wildlifeValue",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "osmunda-claytoniana",
+      "commonName": "Interrupted Fern",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "wildlifeValue",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "thelypteris-palustris",
+      "commonName": "Marsh Fern",
+      "before": {},
+      "after": {
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "bouteloua-gracilis",
+      "commonName": "Blue Grama",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "carex-stricta",
+      "commonName": "Tussock Sedge",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "gentiana-andrewsii",
+      "commonName": "Bottle Gentian",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "helenium-autumnale",
+      "commonName": "Common Sneezeweed",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "symphyotrichum-ericoides",
+      "commonName": "Heath Aster",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "symphyotrichum-lateriflorum",
+      "commonName": "Calico Aster",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "solidago-nemoralis",
+      "commonName": "Old-field Goldenrod",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "claytonia-virginica",
+      "commonName": "Spring Beauty",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "erythronium-albidum",
+      "commonName": "White Trout Lily",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "cardamine-concatenata",
+      "commonName": "Cut-leaved Toothwort",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "camassia-scilloides",
+      "commonName": "Wild Hyacinth",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "pycnanthemum-virginianum",
+      "commonName": "Common Mountain Mint",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "ratibida-pinnata",
+      "commonName": "Gray-headed Coneflower",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "asclepias-verticillata",
+      "commonName": "Whorled Milkweed",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "asclepias-sullivantii",
+      "commonName": "Sullivant's Milkweed",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "anemone-canadensis",
+      "commonName": "Canada Anemone",
+      "before": {},
+      "after": {
+        "oudolfRole": "filler",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "anemone-virginiana",
+      "commonName": "Tall Thimbleweed",
+      "before": {},
+      "after": {
+        "oudolfRole": "scatter",
+        "seedHeadInterest": true,
+        "winterStructure": true
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    },
+    {
+      "slug": "glyceria-striata",
+      "commonName": "Fowl Manna Grass",
+      "before": {},
+      "after": {
+        "oudolfRole": "matrix",
+        "seedHeadInterest": false,
+        "winterStructure": false
+      },
+      "status": "enriched",
+      "patchedFields": [
+        "oudolfRole",
+        "seedHeadInterest",
+        "winterStructure"
+      ]
+    }
+  ]
+}

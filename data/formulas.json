@@ -6,15 +6,23 @@
     "longDescription": "Modeled on Piet Oudolf's naturalistic New Perennial style: a repeating matrix of warm-season grasses (~35%) interwoven with long-blooming structural perennials (Echinacea, Rudbeckia, Baptisia, Monarda) and scatter accents (Liatris, Veronicastrum). Emphasizes form over flower, rewards plants whose seed heads persist through winter, and tilts bloom coverage toward late summer and fall.",
     "author": "Built-in",
     "isBuiltIn": true,
-    "typeRatios": { "grass": 0.35, "forb": 0.60, "shrub": 0.05 },
-    "roleRatios": { "matrix": 0.65, "structure": 0.20, "scatter": 0.15 },
+    "typeRatios": {
+      "grass": 0.35,
+      "forb": 0.6,
+      "shrub": 0.05
+    },
+    "roleRatios": {
+      "matrix": 0.65,
+      "structure": 0.2,
+      "scatter": 0.15
+    },
     "weights": {
-      "winterInterest": 2.0,
-      "seedHead": 2.0,
+      "winterInterest": 2,
+      "seedHead": 2,
       "bloomCoverage": 0.7,
       "colorDiversity": 0.5,
       "familyDiversity": 1.2,
-      "favorability": 1.0
+      "favorability": 1
     },
     "tagBonuses": {
       "warm-season-grass": 10,
@@ -27,22 +35,26 @@
       "short-lived": -5
     },
     "characteristicSpecies": [
-      "purple-coneflower",
-      "black-eyed-susan",
-      "wild-bergamot",
-      "joe-pye-weed",
-      "culvers-root",
-      "rough-blazing-star",
-      "new-england-aster",
-      "showy-goldenrod",
-      "white-wild-indigo",
-      "rattlesnake-master",
-      "little-bluestem",
-      "prairie-dropseed",
-      "switchgrass"
+      "echinacea-purpurea",
+      "rudbeckia-hirta",
+      "monarda-fistulosa",
+      "eutrochium-purpureum",
+      "veronicastrum-virginicum",
+      "liatris-aspera",
+      "symphyotrichum-novae-angliae",
+      "solidago-speciosa",
+      "baptisia-alba",
+      "eryngium-yuccifolium",
+      "schizachyrium-scoparium",
+      "sporobolus-heterolepis",
+      "panicum-virgatum"
     ],
     "pinBonus": 30,
-    "bloomEmphasisMonths": [8, 9, 10],
+    "bloomEmphasisMonths": [
+      8,
+      9,
+      10
+    ],
     "bloomEmphasisBonus": 10
   },
   {
@@ -52,13 +64,21 @@
     "longDescription": "Prioritizes nectar- and pollen-rich forbs with special weight on monarch-host milkweeds, specialist-bee forage, and keystone species. Bloom emphasis covers the full growing season so something is feeding pollinators every week.",
     "author": "Built-in",
     "isBuiltIn": true,
-    "typeRatios": { "forb": 0.70, "grass": 0.15, "shrub": 0.15 },
-    "roleRatios": { "matrix": 0.30, "structure": 0.30, "scatter": 0.40 },
+    "typeRatios": {
+      "forb": 0.7,
+      "grass": 0.15,
+      "shrub": 0.15
+    },
+    "roleRatios": {
+      "matrix": 0.3,
+      "structure": 0.3,
+      "scatter": 0.4
+    },
     "weights": {
       "wildlife": 2.5,
       "bloomCoverage": 1.8,
       "colorDiversity": 1.2,
-      "favorability": 1.0
+      "favorability": 1
     },
     "tagBonuses": {
       "monarch-host": 15,
@@ -70,20 +90,28 @@
       "aggressive-spreader": -6
     },
     "characteristicSpecies": [
-      "common-milkweed",
-      "swamp-milkweed",
-      "prairie-milkweed",
-      "whorled-milkweed",
-      "wild-bergamot",
-      "common-mountain-mint",
-      "rough-blazing-star",
-      "new-england-aster",
-      "showy-goldenrod",
-      "purple-coneflower",
-      "buttonbush"
+      "asclepias-syriaca",
+      "asclepias-incarnata",
+      "asclepias-sullivantii",
+      "asclepias-verticillata",
+      "monarda-fistulosa",
+      "pycnanthemum-virginianum",
+      "liatris-aspera",
+      "symphyotrichum-novae-angliae",
+      "solidago-speciosa",
+      "echinacea-purpurea",
+      "cephalanthus-occidentalis"
     ],
     "pinBonus": 25,
-    "bloomEmphasisMonths": [4, 5, 6, 7, 8, 9, 10],
+    "bloomEmphasisMonths": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
     "bloomEmphasisBonus": 5
   },
   {
@@ -93,13 +121,22 @@
     "longDescription": "Designed for dappled shade and deep shade plots. Heavy on ephemerals that bloom before the canopy leafs out, ground-covering sedges, and ferns for year-round texture. Pairs naturally with Oudolf-style open beds as woodland edge treatments.",
     "author": "Built-in",
     "isBuiltIn": true,
-    "typeRatios": { "forb": 0.55, "sedge": 0.25, "fern": 0.15, "shrub": 0.05 },
-    "roleRatios": { "matrix": 0.50, "filler": 0.30, "scatter": 0.20 },
+    "typeRatios": {
+      "forb": 0.55,
+      "sedge": 0.25,
+      "fern": 0.15,
+      "shrub": 0.05
+    },
+    "roleRatios": {
+      "matrix": 0.5,
+      "filler": 0.3,
+      "scatter": 0.2
+    },
     "weights": {
       "familyDiversity": 1.5,
       "effort": 1.2,
       "bloomCoverage": 1.1,
-      "favorability": 1.0
+      "favorability": 1
     },
     "tagBonuses": {
       "spring-ephemeral": 10,
@@ -108,23 +145,27 @@
     },
     "tagPenalties": {},
     "characteristicSpecies": [
-      "wild-ginger",
-      "virginia-bluebells",
-      "white-trillium",
-      "bloodroot",
-      "wild-geranium",
-      "wild-columbine",
-      "jacobs-ladder",
-      "mayapple",
-      "white-trout-lily",
-      "pennsylvania-sedge",
-      "christmas-fern",
-      "ostrich-fern",
-      "white-wood-aster",
-      "zigzag-goldenrod"
+      "asarum-canadense",
+      "mertensia-virginica",
+      "trillium-grandiflorum",
+      "sanguinaria-canadensis",
+      "geranium-maculatum",
+      "aquilegia-canadensis",
+      "polemonium-reptans",
+      "podophyllum-peltatum",
+      "erythronium-albidum",
+      "carex-pensylvanica",
+      "polystichum-acrostichoides",
+      "matteuccia-struthiopteris",
+      "eurybia-divaricata",
+      "solidago-flexicaulis"
     ],
     "pinBonus": 30,
-    "bloomEmphasisMonths": [3, 4, 5],
+    "bloomEmphasisMonths": [
+      3,
+      4,
+      5
+    ],
     "bloomEmphasisBonus": 8
   },
   {
@@ -134,12 +175,21 @@
     "longDescription": "Targets plots that hold water or receive stormwater runoff. Heavy on sedges and rushes that tolerate inundation, with showy forbs (Lobelia, Iris, Chelone) for visual interest. Good wildlife value as a secondary goal — rain gardens are great for amphibians and birds.",
     "author": "Built-in",
     "isBuiltIn": true,
-    "typeRatios": { "forb": 0.50, "grass": 0.25, "sedge": 0.20, "shrub": 0.05 },
-    "roleRatios": { "matrix": 0.50, "structure": 0.25, "scatter": 0.25 },
+    "typeRatios": {
+      "forb": 0.5,
+      "grass": 0.25,
+      "sedge": 0.2,
+      "shrub": 0.05
+    },
+    "roleRatios": {
+      "matrix": 0.5,
+      "structure": 0.25,
+      "scatter": 0.25
+    },
     "weights": {
       "wildlife": 1.3,
       "bloomCoverage": 1.2,
-      "favorability": 1.0
+      "favorability": 1
     },
     "tagBonuses": {
       "flood-tolerant": 12,
@@ -150,16 +200,21 @@
       "drought-required": -10
     },
     "characteristicSpecies": [
-      "swamp-milkweed",
-      "blue-flag-iris",
-      "tussock-sedge",
-      "turtlehead",
-      "joe-pye-weed",
-      "cardinal-flower",
-      "buttonbush"
+      "asclepias-incarnata",
+      "iris-virginica-var-shrevei",
+      "carex-stricta",
+      "chelone-glabra",
+      "eutrochium-purpureum",
+      "lobelia-cardinalis",
+      "cephalanthus-occidentalis"
     ],
     "pinBonus": 30,
-    "bloomEmphasisMonths": [6, 7, 8, 9],
+    "bloomEmphasisMonths": [
+      6,
+      7,
+      8,
+      9
+    ],
     "bloomEmphasisBonus": 6
   }
 ]
