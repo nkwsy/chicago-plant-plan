@@ -223,7 +223,12 @@ function computeCellSunHours(
       const along = dx * sdx + dy * sdy;
       if (along < 0 || along > shadowLenM) continue;
       const across = Math.abs(dx * perpX + dy * perpY);
-      if (across < canopyRadiusM * 1.5) {
+      // Use the actual canopy radius, not a 1.5× fuzz factor. The visual
+      // shadow capsule in MapboxMap.tsx draws at exactly canopyRadius wide,
+      // so agreeing on 1.0× keeps numeric and rendered shadows consistent —
+      // cells that look sunlit in the animation aren't silently counted as
+      // shaded by the sun-hours calc.
+      if (across < canopyRadiusM) {
         inShadow = true; break;
       }
     }

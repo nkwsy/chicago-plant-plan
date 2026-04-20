@@ -34,12 +34,26 @@ interface MapboxMapProps {
   editMode?: 'none' | 'exclusion' | 'tree';
   onExclusionZoneCreated?: (zone: ExclusionZone) => void;
   onExistingTreePlaced?: (tree: ExistingTree) => void;
+  /** Fires once per areaOutline change with any buildings the map finds near
+   *  the drawn area. The parent decides whether to append them to
+   *  exclusionZones (typically yes — auto-detection is what makes the
+   *  sun-grid match the animated 3D shadows). */
+  onBuildingsDetected?: (zones: ExclusionZone[]) => void;
   height?: string;
   style?: 'satellite' | 'streets' | 'satellite-streets';
   sunGrid?: SunGrid | null;
   showSunGrid?: boolean;
   detectBuildingsRef?: React.MutableRefObject<(() => ExclusionZone[]) | null>;
   computeSunGridRef?: React.MutableRefObject<(() => Promise<SunGrid | null>) | null>;
+  /**
+   * How to draw plant placements:
+   *  - 'numbered': crisp circles with a species number inside — designer/build
+   *    view, legible at close zoom (the default).
+   *  - 'tapestry': blurred, soft-edged color blobs with no labels — evokes a
+   *    Piet Oudolf planting render, so the user can judge the overall
+   *    color/texture flow before committing. No stroke, higher blur.
+   */
+  plantRenderMode?: 'numbered' | 'tapestry';
 }
 
 const STYLE_URLS: Record<string, string> = {
@@ -89,6 +103,90 @@ function buildTreeGeoJSON(trees: ExistingTree[]): GeoJSON.FeatureCollection {
   };
 }
 
+// --- Tapestry (Oudolf-style) rendering -------------------------------------
+// Replaces the numbered-circle view with irregular organic blob polygons
+// drawn in a saturated planting-plan palette with a 2-3 letter species
+// abbreviation label. The look targets Piet Oudolf's hand-drawn plans:
+// neighbouring drifts just overlap, colors are bold, labels are small.
+
+function hashString(s: string): number {
+  // FNV-1a — cheap deterministic integer hash so the same plant always gets
+  // the same shape and color between renders (no shape flicker on regen).
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = (h * 16777619) >>> 0;
+  }
+  return h;
+}
+
+function speciesAbbrev(slug: string | undefined, name: string): string {
+  // Prefer the first slug segment (usually a genus in slug form), falling
+  // back to the common-name initials. Oudolf plans use 3-letter genus
+  // abbrevs like ECH, MOL, AST.
+  const first = (slug || '').split('-')[0];
+  if (first && first.length >= 3) return first.slice(0, 3).toUpperCase();
+  const words = name.trim().split(/\s+/);
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return name.slice(0, 3).toUpperCase();
+}
+
+// Saturated planting-plan palette chosen to read like an Oudolf watercolor:
+// lime, mustard, coral, magenta, purple, teal, terracotta, sage. Avoid
+// muddy browns — tapestry needs visual pop.
+const OUDOLF_PALETTE = [
+  '#c9d13a', '#f6c845', '#ea5e52', '#9b4a92', '#74b340',
+  '#ee7a70', '#d6934c', '#c16a9a', '#e7a2bd', '#7f6ba2',
+  '#cfd56f', '#f8a94c', '#6bbeb8', '#b56363', '#d8d080',
+  '#83a66e', '#e5ca4a', '#d27c48', '#89b995', '#bc8ab8',
+];
+
+function tapestryColor(speciesIdx: number, slug: string): string {
+  // Bias the palette pick with a slug hash so neighbouring legend indices
+  // don't always land on adjacent palette entries.
+  const idx = (speciesIdx + hashString(slug || '')) % OUDOLF_PALETTE.length;
+  return OUDOLF_PALETTE[idx];
+}
+
+function buildTapestryGeoJSON(placements: PlantPlacement[]): GeoJSON.FeatureCollection {
+  return {
+    type: 'FeatureCollection',
+    features: placements.map((p, i) => {
+      // Oversize the blob relative to actual spread so neighbours just overlap
+      // into a drift — discrete dots would read as "numbered" again.
+      const baseR = (p.spreadInches ? inchesToMeters(p.spreadInches) : 0.3) * 1.35;
+      const seed = hashString(p.slug || `p${i}`);
+      const nV = 14;
+      const coords: [number, number][] = [];
+      for (let j = 0; j < nV; j++) {
+        const ang = (j / nV) * Math.PI * 2;
+        // Two-octave sine "noise" keyed off the seed — cheap, no dependency,
+        // gives a believable irregular outline.
+        const n1 = Math.sin(seed * 0.013 + j * 0.9) * 0.28;
+        const n2 = Math.sin(seed * 0.029 + j * 2.1) * 0.14;
+        const r = baseR * (1 + n1 + n2);
+        coords.push([
+          p.lng + (Math.cos(ang) * r) / M_PER_DEG_LNG,
+          p.lat + (Math.sin(ang) * r) / M_PER_DEG_LAT,
+        ]);
+      }
+      coords.push(coords[0]);
+      return {
+        type: 'Feature' as const,
+        geometry: { type: 'Polygon' as const, coordinates: [coords] },
+        properties: {
+          slug: p.slug,
+          name: p.name,
+          color: tapestryColor(p.speciesIndex || 0, p.slug),
+          abbrev: speciesAbbrev(p.slug, p.name),
+          speciesIndex: p.speciesIndex || 0,
+          plantType: p.plantType || 'forb',
+        },
+      };
+    }),
+  };
+}
+
 const M_PER_DEG_LAT = 111320;
 const M_PER_DEG_LNG = 111320 * Math.cos(41.88 * Math.PI / 180);
 const FT_TO_M = 0.3048;
@@ -122,7 +220,10 @@ function computeTreeShadowGeoJSON(
     features: trees.map(tree => {
       const hM = (tree.heightFt || tree.canopyDiameterFt * 1.5) * FT_TO_M;
       const rM = (tree.canopyDiameterFt / 2) * FT_TO_M;
-      const shadowDist = Math.min(hM / Math.tan(altRad), 80);
+      // 200m cap matches computeCellSunHours() in src/lib/analysis/sun-grid.ts
+      // so the animated silhouette and the numeric sun-hours agree on how far
+      // a tall tree's shadow reaches at low sun angles.
+      const shadowDist = Math.min(hM / Math.tan(altRad), 200);
 
       // Capsule shape: semicircle at tree (sun-side) + semicircle at shadow tip
       const coords: [number, number][] = [];
@@ -251,14 +352,20 @@ function buildSunGridGeoJSON(grid: SunGrid): GeoJSON.FeatureCollection {
 // z17=1.11, z18=0.556, z19=0.278, z20=0.139, z21=0.0694
 function addMapLayers(
   map: mapboxgl.Map,
-  plantData: GeoJSON.FeatureCollection,
+  plants: PlantPlacement[],
   exclusionData: GeoJSON.FeatureCollection,
   treeData: GeoJSON.FeatureCollection,
   areaOutline: GeoJSON.Polygon | null | undefined,
   show3D: boolean,
   sunGridData?: GeoJSON.FeatureCollection | null,
   showSunGrid?: boolean,
+  plantRenderMode: 'numbered' | 'tapestry' = 'numbered',
 ) {
+  // Build both representations up front — tapestry mode flips visibility
+  // at runtime rather than tearing layers down, so both sources always live.
+  const plantData = buildPlantGeoJSON(plants);
+  const tapestryData = buildTapestryGeoJSON(plants);
+  const tapestryOn = plantRenderMode === 'tapestry';
   // 3D buildings with shadow support
   if (show3D) {
     const layers = map.getStyle().layers;
@@ -389,6 +496,7 @@ function addMapLayers(
   map.addSource('plants', { type: 'geojson', data: plantData });
   map.addLayer({
     id: 'plant-circles', type: 'circle', source: 'plants',
+    layout: { 'visibility': tapestryOn ? 'none' : 'visible' },
     paint: {
       'circle-radius': [
         'interpolate', ['exponential', 2], ['zoom'],
@@ -413,6 +521,7 @@ function addMapLayers(
       'text-size': 11,
       'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
       'text-allow-overlap': true,
+      'visibility': tapestryOn ? 'none' : 'visible',
     },
     paint: {
       'text-color': '#ffffff',
@@ -421,15 +530,53 @@ function addMapLayers(
     },
   });
 
-  // Click interaction
-  map.on('click', 'plant-circles', (e) => {
-    if (!e.features?.length) return;
-    const props = e.features[0].properties;
-    new mapboxgl.Popup({ offset: 10, closeButton: false })
-      .setLngLat(e.lngLat)
-      .setHTML(`<div style="padding:6px 10px;font-size:13px;"><strong>${props?.name}</strong></div>`)
-      .addTo(map);
+  // --- Tapestry layers (Oudolf-style) --------------------------------------
+  // Organic blob fill + thin dark stroke + short genus abbreviation. Lives
+  // alongside plant-circles; render-mode effect toggles visibility.
+  map.addSource('plant-blobs', { type: 'geojson', data: tapestryData });
+  map.addLayer({
+    id: 'plant-blob-fill', type: 'fill', source: 'plant-blobs',
+    layout: { 'visibility': tapestryOn ? 'visible' : 'none' },
+    paint: {
+      'fill-color': ['get', 'color'],
+      'fill-opacity': 0.82,
+      'fill-antialias': true,
+    },
   });
+  map.addLayer({
+    id: 'plant-blob-stroke', type: 'line', source: 'plant-blobs',
+    layout: { 'visibility': tapestryOn ? 'visible' : 'none' },
+    paint: {
+      'line-color': 'rgba(40,35,30,0.45)',
+      'line-width': 0.7,
+    },
+  });
+  map.addLayer({
+    id: 'plant-blob-labels', type: 'symbol', source: 'plant-blobs',
+    layout: {
+      'text-field': ['get', 'abbrev'],
+      'text-size': [
+        'interpolate', ['linear'], ['zoom'],
+        17, 8, 19, 10, 21, 13,
+      ],
+      'text-font': ['DIN Pro Bold', 'Arial Unicode MS Bold'],
+      'text-allow-overlap': false,
+      'text-ignore-placement': false,
+      'symbol-placement': 'point',
+      'visibility': tapestryOn ? 'visible' : 'none',
+    },
+    paint: {
+      'text-color': '#1f1915',
+      'text-halo-color': 'rgba(255,255,252,0.78)',
+      'text-halo-width': 1.1,
+      'text-halo-blur': 0.3,
+    },
+  });
+
+  // Click interaction — parent supplies the popup via onPlantClick, so the
+  // rendered card can show full plant details rather than the plain-name
+  // tooltip Mapbox provides. Still flip the cursor so the plants feel
+  // interactive.
   map.on('mouseenter', 'plant-circles', () => { map.getCanvas().style.cursor = 'pointer'; });
   map.on('mouseleave', 'plant-circles', () => { map.getCanvas().style.cursor = ''; });
 }
@@ -444,9 +591,11 @@ export default function MapboxMap({
   onPlantClick, onPlanMarkerClick,
   areaOutline, exclusionZones = [], existingTrees = [],
   editMode = 'none', onExclusionZoneCreated, onExistingTreePlaced,
+  onBuildingsDetected,
   height = '100%', style = 'satellite-streets',
   sunGrid, showSunGrid = false,
   detectBuildingsRef, computeSunGridRef,
+  plantRenderMode = 'numbered',
 }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -461,6 +610,10 @@ export default function MapboxMap({
   const [sunHour, setSunHour] = useState(12);
   const [showSunPanel, setShowSunPanel] = useState(false);
   const [animatingSun, setAnimatingSun] = useState(false);
+  // Polygon drawn by the user in this session — tracked internally so the
+  // location-step map (which doesn't pass areaOutline back as a prop) can
+  // still feed the auto-detect-buildings effect.
+  const [drawnArea, setDrawnArea] = useState<GeoJSON.Polygon | null>(null);
   const animationRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const editModeRef = useRef(editMode);
   editModeRef.current = editMode;
@@ -474,6 +627,11 @@ export default function MapboxMap({
   existingTreesRef.current = existingTrees;
   const sunGridRef = useRef(sunGrid);
   sunGridRef.current = sunGrid;
+  // Keep a live ref to the render mode so the one-shot load / style.load
+  // callbacks pick up the current value (their closures deliberately capture
+  // [] so they don't re-fire on every prop change).
+  const plantRenderModeRef = useRef(plantRenderMode);
+  plantRenderModeRef.current = plantRenderMode;
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -506,23 +664,31 @@ export default function MapboxMap({
 
       addMapLayers(
         map,
-        buildPlantGeoJSON(plantPlacementsRef.current),
+        plantPlacementsRef.current,
         buildExclusionGeoJSON(exclusionZonesRef.current),
         buildTreeGeoJSON(existingTreesRef.current),
         areaOutline,
         show3D,
         sgGeoJSON,
         showSunGrid,
+        plantRenderModeRef.current,
       );
 
       // Sun lighting
       if (showSunlight) updateSunPosition(map, center[0], center[1], sunHour);
 
-      // Plant click handler
+      // Plant click handlers — both renders delegate to the same callback,
+      // so the floating plant card in the parent works regardless of mode.
       map.on('click', 'plant-circles', (e) => {
         const slug = e.features?.[0]?.properties?.slug;
         if (slug && onPlantClick) onPlantClick(slug);
       });
+      map.on('click', 'plant-blob-fill', (e) => {
+        const slug = e.features?.[0]?.properties?.slug;
+        if (slug && onPlantClick) onPlantClick(slug);
+      });
+      map.on('mouseenter', 'plant-blob-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
+      map.on('mouseleave', 'plant-blob-fill', () => { map.getCanvas().style.cursor = ''; });
 
       // Tree placement click
       map.on('click', (e) => {
@@ -542,13 +708,14 @@ export default function MapboxMap({
       try {
         addMapLayers(
           map,
-          buildPlantGeoJSON(plantPlacementsRef.current),
+          plantPlacementsRef.current,
           buildExclusionGeoJSON(exclusionZonesRef.current),
           buildTreeGeoJSON(existingTreesRef.current),
           areaOutline,
           show3D,
           sunGridRef.current ? buildSunGridGeoJSON(sunGridRef.current) : null,
           showSunGrid,
+          plantRenderModeRef.current,
         );
       } catch (e) { /* sources may already exist */ }
     });
@@ -607,6 +774,9 @@ export default function MapboxMap({
         area = Math.abs(area) / 2;
         const areaSqFt = Math.round(area * 111320 * 111320 * Math.cos(cLat * Math.PI / 180) * 10.7639);
         onAreaSelected?.(polygon, [cLat, cLng], areaSqFt);
+        // Surface the drawn polygon internally too so the auto-detect effect
+        // can fire on the location step (where areaOutline isn't passed back).
+        setDrawnArea(polygon);
       }
 
       map.on('draw.create', handleDrawUpdate);
@@ -617,7 +787,9 @@ export default function MapboxMap({
     return () => { map.remove(); mapRef.current = null; layersAddedRef.current = false; };
   }, []);
 
-  // Update plant data when it changes
+  // Update plant data when it changes — both the numbered-circle source and
+  // the tapestry blob source need to stay in lockstep so a mode toggle never
+  // shows stale data.
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
@@ -625,6 +797,8 @@ export default function MapboxMap({
       try {
         const src = map.getSource('plants') as mapboxgl.GeoJSONSource;
         if (src) src.setData(buildPlantGeoJSON(plantPlacements));
+        const tsrc = map.getSource('plant-blobs') as mapboxgl.GeoJSONSource;
+        if (tsrc) tsrc.setData(buildTapestryGeoJSON(plantPlacements));
       } catch {}
     };
     if (map.isStyleLoaded() && layersAddedRef.current) update();
@@ -771,6 +945,30 @@ export default function MapboxMap({
     };
   }, [animatingSun]);
 
+  // Swap between numbered circles (with species #s) and the Oudolf-style
+  // tapestry blobs by flipping layer visibility. Both sources are populated
+  // continuously in the plantPlacements effect so toggling is instant.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    const apply = () => {
+      try {
+        const tapestry = plantRenderMode === 'tapestry';
+        const vis = (id: string, show: boolean) => {
+          if (map.getLayer(id))
+            map.setLayoutProperty(id, 'visibility', show ? 'visible' : 'none');
+        };
+        vis('plant-circles', !tapestry);
+        vis('plant-labels', !tapestry);
+        vis('plant-blob-fill', tapestry);
+        vis('plant-blob-stroke', tapestry);
+        vis('plant-blob-labels', tapestry);
+      } catch { /* layers may not exist yet */ }
+    };
+    if (map.isStyleLoaded() && layersAddedRef.current) apply();
+    else map.once('idle', apply);
+  }, [plantRenderMode]);
+
   // Update sun grid data source when sunGrid prop changes
   useEffect(() => {
     const map = mapRef.current;
@@ -824,6 +1022,82 @@ export default function MapboxMap({
       return zones;
     };
   }, [areaOutline, detectBuildingsRef]);
+
+  // Auto-detect nearby buildings the first time the user draws an area.
+  // Previously this was a manual "Detect Buildings" button, which meant the
+  // sun-hours numeric calc silently ignored every building visible on the
+  // map (only visual 3D extrusions cast shadows). Auto-detecting the moment
+  // the area is drawn is what makes the sun grid and the animated building
+  // shadows agree — see bug 3 in the ticket. We only run this once per
+  // area change, and we filter to buildings within ~100m of the garden
+  // centroid so distant downtown buildings don't pollute the zone list.
+  const autoDetectedForOutlineRef = useRef<GeoJSON.Polygon | null>(null);
+  useEffect(() => {
+    // Prefer the parent-provided outline; fall back to whatever the user
+    // just drew on the map. Both cases want the same behavior — the first
+    // time a real polygon becomes available, detect buildings once.
+    const activeArea = areaOutline ?? drawnArea;
+    if (!activeArea || !onBuildingsDetected) return;
+    if (autoDetectedForOutlineRef.current === activeArea) return;
+    const map = mapRef.current;
+    if (!map) return;
+
+    const run = () => {
+      if (autoDetectedForOutlineRef.current === activeArea) return;
+      autoDetectedForOutlineRef.current = activeArea;
+
+      const coords = activeArea.coordinates[0];
+      const latsArr = coords.map((c) => c[1]);
+      const lngsArr = coords.map((c) => c[0]);
+      const centerLat = (Math.min(...latsArr) + Math.max(...latsArr)) / 2;
+      const centerLng = (Math.min(...lngsArr) + Math.max(...lngsArr)) / 2;
+
+      const buildingLayers = map.getStyle().layers
+        ?.filter((l) => (l as any)['source-layer'] === 'building')
+        .map((l) => l.id) || [];
+      if (!buildingLayers.length) return;
+      const features = (map as any).queryRenderedFeatures({ layers: buildingLayers }) || [];
+
+      const MAX_DIST_M = 100;
+      const zones: ExclusionZone[] = [];
+      const seen = new Set<string>();
+      for (const f of features) {
+        if (f.geometry?.type !== 'Polygon') continue;
+        const id = f.id?.toString() || JSON.stringify(f.geometry).substring(0, 50);
+        if (seen.has(id)) continue;
+        seen.add(id);
+
+        // Distance from garden centroid to nearest building vertex, in meters.
+        const bCoords = (f.geometry as GeoJSON.Polygon).coordinates[0] || [];
+        let minM = Infinity;
+        for (const [blng, blat] of bCoords) {
+          const dx = (blng - centerLng) * M_PER_DEG_LNG;
+          const dy = (blat - centerLat) * M_PER_DEG_LAT;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < minM) minM = d;
+        }
+        if (minM > MAX_DIST_M) continue;
+
+        const height = f.properties?.height
+          || (f.properties?.['building:levels'] ? f.properties['building:levels'] * 3.5 : null);
+        zones.push({
+          id: `bldg-auto-${Date.now()}-${zones.length}`,
+          geoJson: f.geometry as GeoJSON.Polygon,
+          label: 'Building',
+          type: 'building',
+          heightMeters: height || 8,
+        });
+      }
+
+      if (zones.length) onBuildingsDetected(zones);
+    };
+
+    // The building layer only has queryable features once tiles have loaded.
+    // `idle` fires after any style/tile activity settles, which is the safest
+    // single signal — polling is brittle at drawing-time zooms.
+    if (layersAddedRef.current) map.once('idle', run);
+    else map.once('load', () => map.once('idle', run));
+  }, [areaOutline, drawnArea, onBuildingsDetected]);
 
   // Compute sun grid using building polygons from Mapbox tiles + SunCalc ray-casting (free, no API key)
   useEffect(() => {

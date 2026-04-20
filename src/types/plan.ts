@@ -2,7 +2,12 @@ import type { SiteProfile } from './analysis';
 import type { PlantType, SunRequirement } from './plant';
 
 export interface UserPreferences {
-  effortLevel: 'low' | 'medium' | 'high';
+  /** Effort tier collapsed from the old three-way into two:
+   *   - 'low'    = hard filter excluding high-effort species
+   *   - 'normal' = no effort filter (accepts everything the site supports)
+   *  Legacy plan documents may carry 'medium' | 'high'; both are read as
+   *  'normal' at filter time. */
+  effortLevel: 'low' | 'normal' | 'medium' | 'high';
   habitatGoals: string[];
   aestheticPref: 'wild' | 'structured' | 'mixed';
   bloomPreference: 'spring' | 'summer' | 'fall' | 'continuous';
@@ -11,6 +16,12 @@ export interface UserPreferences {
   specialFeatures: string[];
   targetSpeciesCount: number;
   densityMultiplier: number; // 0.5 = sparse, 1.0 = standard (1 plant/sqft), 2.0 = dense
+  /** Include trees in candidate pool. Default true for legacy compatibility
+   *  — explicit false excludes plantType === 'tree'. */
+  includeTrees?: boolean;
+  /** Include shrubs in candidate pool. Default true — explicit false excludes
+   *  plantType === 'shrub'. */
+  includeShrubs?: boolean;
   /** Slug of the chosen DesignFormula (see src/types/formula.ts). Undefined /
    *  empty string = classic selection with no formula bias. Orthogonal to
    *  `aestheticPref`, which only affects layout clustering. */

@@ -102,9 +102,17 @@ export interface EnrichmentSkipped {
 }
 
 function getClient(): Anthropic | null {
+  // Support both authentication modes the SDK accepts:
+  //   - `apiKey`   → `x-api-key` header. Standard developer API key.
+  //   - `authToken` → `Authorization: Bearer …`. Used by OAuth tokens
+  //     (`sk-ant-o…` prefix), including Claude Code's own credentials —
+  //     lets this pipeline run under `npx tsx` inside a Claude Code
+  //     session without plumbing a separate API key.
   const key = process.env.ANTHROPIC_API_KEY;
-  if (!key) return null;
-  return new Anthropic({ apiKey: key });
+  if (key) return new Anthropic({ apiKey: key });
+  const authToken = process.env.ANTHROPIC_AUTH_TOKEN || process.env.CLAUDE_CODE_OAUTH_TOKEN;
+  if (authToken) return new Anthropic({ authToken });
+  return null;
 }
 
 /**

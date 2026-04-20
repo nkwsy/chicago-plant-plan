@@ -8,7 +8,7 @@ import type { SiteProfile } from '@/types/analysis';
 import type { UserPreferences, PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
 import type { DesignFormula } from '@/types/formula';
 
-type Step = 'location' | 'analysis' | 'style' | 'preferences' | 'plan';
+type Step = 'location' | 'analysis' | 'design' | 'plan';
 
 /** Species shape returned by /api/formulas/preview. */
 interface PreviewSpecies {
@@ -38,16 +38,23 @@ export default function NewPlanPage() {
   });
   const [siteProfile, setSiteProfile] = useState<SiteProfile | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
+  // Preferences are a mix of UI-exposed fields (effort, species count, tree /
+  // shrub toggles) and defaulted-to-sensible fields (habitatGoals,
+  // bloomPreference, specialFeatures) that the scorer still reads but the
+  // simplified wizard no longer asks about. The formula handles those axes
+  // with much richer controls.
   const [preferences, setPreferences] = useState<UserPreferences>({
-    effortLevel: 'medium',
+    effortLevel: 'normal',
     habitatGoals: ['pollinators'],
     aestheticPref: 'mixed',
     bloomPreference: 'continuous',
     maxHeightInches: null,
     avoidSlugs: [],
     specialFeatures: [],
-    targetSpeciesCount: 5,
+    targetSpeciesCount: 15,
     densityMultiplier: 1.0,
+    includeTrees: true,
+    includeShrubs: true,
   });
   const [allPlantsCache, setAllPlantsCache] = useState<any[]>([]);
   const [exclusionZones, setExclusionZones] = useState<ExclusionZone[]>([]);
@@ -59,6 +66,10 @@ export default function NewPlanPage() {
   const [view3D, setView3D] = useState(false);
   const [showSunlight, setShowSunlight] = useState(true);
   const [showSunGrid, setShowSunGrid] = useState(false);
+  // Plant rendering: 'numbered' (default, designer view) vs 'tapestry' (soft
+  // Oudolf-style render of the planting drift). Users toggle from the plan
+  // step toolbar.
+  const [plantRenderMode, setPlantRenderMode] = useState<'numbered' | 'tapestry'>('numbered');
   const [generatedPlan, setGeneratedPlan] = useState<{
     plants: PlanPlant[];
     gridCols: number;
@@ -75,15 +86,14 @@ export default function NewPlanPage() {
   const steps: { key: Step; label: string }[] = [
     { key: 'location', label: 'Location' },
     { key: 'analysis', label: 'Analysis' },
-    { key: 'style', label: 'Style' },
-    { key: 'preferences', label: 'Goals' },
+    { key: 'design', label: 'Design' },
     { key: 'plan', label: 'Plan' },
   ];
 
   const currentIdx = steps.findIndex(s => s.key === step);
 
   // --- Design-formula state ---------------------------------------------------
-  // Formulas are loaded once when the user reaches the 'style' step. Preview
+  // Formulas are loaded once when the user reaches the 'design' step. Preview
   // data is fetched per-selection and cached by slug to avoid re-running the
   // scorer when the user toggles between tiles.
   const [formulas, setFormulas] = useState<DesignFormula[]>([]);
@@ -92,7 +102,7 @@ export default function NewPlanPage() {
   const [previewLoading, setPreviewLoading] = useState(false);
 
   useEffect(() => {
-    if (step !== 'style' || formulas.length > 0 || formulasLoading) return;
+    if (step !== 'design' || formulas.length > 0 || formulasLoading) return;
     setFormulasLoading(true);
     fetch('/api/formulas')
       .then((r) => r.json())
@@ -129,6 +139,35 @@ export default function NewPlanPage() {
   function selectFormula(slug: string | undefined) {
     setPreferences((p) => ({ ...p, formulaSlug: slug }));
     loadPreview(slug);
+  }
+
+  /**
+   * Append auto-detected buildings to exclusionZones, skipping any that
+   * already overlap a user-drawn or previously-auto-detected zone. Dedup
+   * is by first-vertex proximity (~1m in lat/lng at Chicago). Cheaper than
+   * a full polygon overlap check and good enough — Mapbox returns the
+   * same building feature with the same vertex order across tiles.
+   */
+  function mergeDetectedBuildings(zones: ExclusionZone[]) {
+    if (!zones.length) return;
+    setExclusionZones((prev) => {
+      const existingFirstVerts = prev
+        .filter((z) => z.type === 'building')
+        .map((z) => z.geoJson.coordinates[0]?.[0])
+        .filter(Boolean) as [number, number][];
+      const TOL = 0.00001; // ≈1m
+      const novel = zones.filter((z) => {
+        const v = z.geoJson.coordinates[0]?.[0];
+        if (!v) return false;
+        return !existingFirstVerts.some(
+          ([elng, elat]) =>
+            Math.abs((v[0] as number) - elng) < TOL &&
+            Math.abs((v[1] as number) - elat) < TOL,
+        );
+      });
+      if (!novel.length) return prev;
+      return [...prev, ...novel];
+    });
   }
 
   async function runAnalysis() {
@@ -236,19 +275,49 @@ export default function NewPlanPage() {
     }
   }
 
-  // Auto-regenerate sun grid when trees or exclusions change (debounced)
+  // Auto-regenerate the plan when trees or exclusions change (debounced).
+  // `generatePlan()` already recomputes the sun grid as a side-effect via
+  // `gen()` → `buildSunGrid`, so a full regen is strictly more complete than
+  // refreshing the sun grid alone. We only fire on the plan step — you don't
+  // have a plan to regenerate earlier in the wizard. Debounce 1500ms so
+  // rapid tree-detail edits (canopy size, label) coalesce into one run.
   const autoRegenTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const regenInFlightRef = useRef(false);
+  // Track the state that was present when the plan last regenerated, so the
+  // effect only re-runs on real user changes — not on the initial transition
+  // into the plan step (where the exclusion/tree arrays are identical to
+  // what the plan was just generated against).
+  const lastRegenSnapshotRef = useRef<{ excl: ExclusionZone[]; trees: ExistingTree[] } | null>(null);
   useEffect(() => {
-    if (!generatedPlan || !location.areaGeoJson) return;
-    // Debounce 800ms so rapid changes don't spam recalculations
+    if (step !== 'plan' || !generatedPlan || !location.areaGeoJson) return;
+
+    // First arrival on the plan step: snapshot the inputs the plan was
+    // generated against, but don't regen.
+    if (!lastRegenSnapshotRef.current) {
+      lastRegenSnapshotRef.current = { excl: exclusionZones, trees: existingTrees };
+      return;
+    }
+    // If nothing actually changed (e.g. a regen itself just set state), skip.
+    if (
+      lastRegenSnapshotRef.current.excl === exclusionZones &&
+      lastRegenSnapshotRef.current.trees === existingTrees
+    ) {
+      return;
+    }
+
     if (autoRegenTimerRef.current) clearTimeout(autoRegenTimerRef.current);
     autoRegenTimerRef.current = setTimeout(() => {
-      regenerateSunGrid();
-    }, 800);
+      if (regenInFlightRef.current || generating) return;
+      regenInFlightRef.current = true;
+      lastRegenSnapshotRef.current = { excl: exclusionZones, trees: existingTrees };
+      generatePlan().finally(() => {
+        regenInFlightRef.current = false;
+      });
+    }, 1500);
     return () => {
       if (autoRegenTimerRef.current) clearTimeout(autoRegenTimerRef.current);
     };
-  }, [exclusionZones, existingTrees]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [exclusionZones, existingTrees, step]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function removePlantFromPlan(plantSlug: string, gridX: number, gridY: number) {
     if (!generatedPlan) return;
@@ -352,6 +421,7 @@ export default function NewPlanPage() {
                     areaSqFt,
                   }));
                 }}
+                onBuildingsDetected={mergeDetectedBuildings}
               />
             </div>
 
@@ -426,23 +496,26 @@ export default function NewPlanPage() {
                 ← Back
               </button>
               <button
-                onClick={() => setStep('style')}
+                onClick={() => setStep('design')}
                 className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors"
               >
-                Choose Style →
+                Design →
               </button>
             </div>
           </div>
         )}
 
-        {step === 'style' && (
+        {step === 'design' && (
           <div>
-            <h2 className="text-2xl font-bold mb-2">Design style</h2>
+            <h2 className="text-2xl font-bold mb-2">Design your garden</h2>
             <p className="text-muted mb-6">
-              Pick a design formula to bias plant selection toward a specific aesthetic. You can
-              change this later.
+              Pick a design formula to bias plant selection, then set a few basic goals.
+              Most of the style — bloom season, wildlife, aesthetic — is handled by the formula
+              itself, so the questions below stay short.
             </p>
 
+            {/* --- Design formula tiles ----------------------------------------- */}
+            <h3 className="font-medium mb-3">Style</h3>
             <div className="grid md:grid-cols-2 gap-4 mb-6">
               {/* "None" tile — always first, restores classic pre-formula behavior. */}
               <FormulaTile
@@ -471,7 +544,7 @@ export default function NewPlanPage() {
             </div>
 
             {/* Preview panel — shows the top species the formula would pick. */}
-            <div className="bg-surface rounded-lg border border-stone-200 p-4 mb-6">
+            <div className="bg-surface rounded-lg border border-stone-200 p-4 mb-8">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="font-medium text-sm">
                   Preview
@@ -489,137 +562,83 @@ export default function NewPlanPage() {
               />
             </div>
 
-            <div className="flex justify-between">
-              <button
-                onClick={() => setStep('analysis')}
-                className="text-muted hover:text-foreground px-4 py-2 transition-colors"
-              >
-                ← Back
-              </button>
-              <button
-                onClick={() => setStep('preferences')}
-                className="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors"
-              >
-                Set Goals →
-              </button>
-            </div>
-          </div>
-        )}
-
-        {step === 'preferences' && (
-          <div>
-            <h2 className="text-2xl font-bold mb-2">Your goals</h2>
-            <p className="text-muted mb-6">Tell us what you&apos;re looking for and we&apos;ll customize your plan.</p>
-
+            {/* --- Simplified goals ---------------------------------------------
+             *  Everything else in the old preferences step (bloom season,
+             *  wildlife goals, aesthetic preference, special features) is driven
+             *  by the chosen formula or safely defaulted. We only expose the
+             *  four controls that have no good formula proxy: maintenance
+             *  effort, whether to include large structural plants, and
+             *  species count.
+             */}
+            <h3 className="font-medium mb-3">Goals</h3>
             <div className="space-y-6 mb-8">
-              {/* Effort level */}
+              {/* Effort level — two tiers only */}
               <div>
-                <label className="block font-medium mb-3">How much effort do you want to invest?</label>
-                <div className="grid grid-cols-3 gap-3">
-                  {(['low', 'medium', 'high'] as const).map(level => (
+                <label className="block font-medium mb-3">Maintenance effort</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {([
+                    { id: 'low', title: 'Low', desc: 'Plant & forget' },
+                    { id: 'normal', title: 'Normal', desc: 'Some seasonal care' },
+                  ] as const).map(level => (
                     <button
-                      key={level}
-                      onClick={() => setPreferences(p => ({ ...p, effortLevel: level }))}
+                      key={level.id}
+                      onClick={() => setPreferences(p => ({ ...p, effortLevel: level.id }))}
                       className={`p-3 rounded-lg border text-center transition-all ${
-                        preferences.effortLevel === level
+                        preferences.effortLevel === level.id
                           ? 'border-primary bg-primary/5 text-primary font-medium'
                           : 'border-stone-200 hover:border-stone-300'
                       }`}
                     >
-                      <div className="font-medium capitalize">{level}</div>
-                      <div className="text-xs text-muted mt-1">
-                        {level === 'low' && 'Plant & forget'}
-                        {level === 'medium' && 'Some care needed'}
-                        {level === 'high' && 'Active gardening'}
-                      </div>
+                      <div className="font-medium">{level.title}</div>
+                      <div className="text-xs text-muted mt-1">{level.desc}</div>
                     </button>
                   ))}
                 </div>
               </div>
 
-              {/* Wildlife goals */}
-              <div>
-                <label className="block font-medium mb-3">What wildlife do you want to support?</label>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: 'pollinators', label: 'Pollinators', emoji: '🐝' },
-                    { id: 'butterflies', label: 'Butterflies', emoji: '🦋' },
-                    { id: 'birds', label: 'Birds', emoji: '🐦' },
-                    { id: 'mammals', label: 'Small mammals', emoji: '🐿' },
-                  ].map(goal => (
-                    <button
-                      key={goal.id}
-                      onClick={() => {
-                        setPreferences(p => ({
-                          ...p,
-                          habitatGoals: p.habitatGoals.includes(goal.id)
-                            ? p.habitatGoals.filter(g => g !== goal.id)
-                            : [...p.habitatGoals, goal.id],
-                        }));
-                      }}
-                      className={`px-4 py-2 rounded-full border text-sm transition-all ${
-                        preferences.habitatGoals.includes(goal.id)
-                          ? 'border-primary bg-primary/5 text-primary font-medium'
-                          : 'border-stone-200 hover:border-stone-300'
-                      }`}
-                    >
-                      {goal.emoji} {goal.label}
-                    </button>
-                  ))}
+              {/* Structural plants: trees and shrubs */}
+              <div className="grid sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="block font-medium mb-3">Include trees?</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {([
+                      { id: true, label: 'Yes' },
+                      { id: false, label: 'No' },
+                    ] as const).map(opt => (
+                      <button
+                        key={String(opt.id)}
+                        onClick={() => setPreferences(p => ({ ...p, includeTrees: opt.id }))}
+                        className={`p-3 rounded-lg border text-center transition-all ${
+                          (preferences.includeTrees !== false) === opt.id
+                            ? 'border-primary bg-primary/5 text-primary font-medium'
+                            : 'border-stone-200 hover:border-stone-300'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-
-              {/* Aesthetic preference */}
-              <div>
-                <label className="block font-medium mb-1">Layout style</label>
-                <p className="text-xs text-muted mb-3">
-                  Controls how plants are clustered on the ground. Separate from the design
-                  formula, which controls <em>which</em> species get picked.
-                </p>
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { id: 'wild', label: 'Natural/Wild', desc: 'Meadow-like feel' },
-                    { id: 'mixed', label: 'Mixed', desc: 'Best of both' },
-                    { id: 'structured', label: 'Structured', desc: 'Neat and orderly' },
-                  ].map(style => (
-                    <button
-                      key={style.id}
-                      onClick={() => setPreferences(p => ({ ...p, aestheticPref: style.id as any }))}
-                      className={`p-3 rounded-lg border text-center transition-all ${
-                        preferences.aestheticPref === style.id
-                          ? 'border-primary bg-primary/5 text-primary font-medium'
-                          : 'border-stone-200 hover:border-stone-300'
-                      }`}
-                    >
-                      <div className="font-medium">{style.label}</div>
-                      <div className="text-xs text-muted mt-1">{style.desc}</div>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Bloom preference */}
-              <div>
-                <label className="block font-medium mb-3">When do you want the most blooms?</label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  {[
-                    { id: 'spring', label: 'Spring' },
-                    { id: 'summer', label: 'Summer' },
-                    { id: 'fall', label: 'Fall' },
-                    { id: 'continuous', label: 'All season' },
-                  ].map(b => (
-                    <button
-                      key={b.id}
-                      onClick={() => setPreferences(p => ({ ...p, bloomPreference: b.id as any }))}
-                      className={`p-3 rounded-lg border text-center transition-all ${
-                        preferences.bloomPreference === b.id
-                          ? 'border-primary bg-primary/5 text-primary font-medium'
-                          : 'border-stone-200 hover:border-stone-300'
-                      }`}
-                    >
-                      {b.label}
-                    </button>
-                  ))}
+                <div>
+                  <label className="block font-medium mb-3">Include shrubs?</label>
+                  <div className="grid grid-cols-2 gap-3">
+                    {([
+                      { id: true, label: 'Yes' },
+                      { id: false, label: 'No' },
+                    ] as const).map(opt => (
+                      <button
+                        key={String(opt.id)}
+                        onClick={() => setPreferences(p => ({ ...p, includeShrubs: opt.id }))}
+                        className={`p-3 rounded-lg border text-center transition-all ${
+                          (preferences.includeShrubs !== false) === opt.id
+                            ? 'border-primary bg-primary/5 text-primary font-medium'
+                            : 'border-stone-200 hover:border-stone-300'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -647,43 +666,13 @@ export default function NewPlanPage() {
                   <span>Diverse</span>
                 </div>
               </div>
-
-              {/* Special features */}
-              <div>
-                <label className="block font-medium mb-3">Any special features? (optional)</label>
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { id: 'fall_color', label: 'Fall color' },
-                    { id: 'winter_interest', label: 'Winter interest' },
-                    { id: 'fragrant', label: 'Fragrant' },
-                    { id: 'edible', label: 'Edible/medicinal' },
-                    { id: 'rain_garden', label: 'Rain garden' },
-                  ].map(feat => (
-                    <button
-                      key={feat.id}
-                      onClick={() => {
-                        setPreferences(p => ({
-                          ...p,
-                          specialFeatures: p.specialFeatures.includes(feat.id)
-                            ? p.specialFeatures.filter(f => f !== feat.id)
-                            : [...p.specialFeatures, feat.id],
-                        }));
-                      }}
-                      className={`px-3 py-1.5 rounded-full border text-sm transition-all ${
-                        preferences.specialFeatures.includes(feat.id)
-                          ? 'border-primary bg-primary/5 text-primary font-medium'
-                          : 'border-stone-200 hover:border-stone-300'
-                      }`}
-                    >
-                      {feat.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
 
             <div className="flex justify-between">
-              <button onClick={() => setStep('style')} className="text-muted hover:text-foreground px-4 py-2 transition-colors">
+              <button
+                onClick={() => setStep('analysis')}
+                className="text-muted hover:text-foreground px-4 py-2 transition-colors"
+              >
                 ← Back
               </button>
               <button
@@ -782,6 +771,24 @@ export default function NewPlanPage() {
                   className={`px-3 py-1.5 border-l border-stone-200 transition-colors ${view3D ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
                 >
                   3D View
+                </button>
+              </div>
+
+              {/* Render mode — numbered designer view vs Oudolf-style tapestry. */}
+              <div className="flex rounded-lg border border-stone-200 overflow-hidden text-sm">
+                <button
+                  onClick={() => setPlantRenderMode('numbered')}
+                  className={`px-3 py-1.5 transition-colors ${plantRenderMode === 'numbered' ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+                  title="Crisp circles with species numbers"
+                >
+                  Numbered
+                </button>
+                <button
+                  onClick={() => setPlantRenderMode('tapestry')}
+                  className={`px-3 py-1.5 border-l border-stone-200 transition-colors ${plantRenderMode === 'tapestry' ? 'bg-primary text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+                  title="Soft-edge blobs that blend into a planting drift (Oudolf style)"
+                >
+                  Tapestry
                 </button>
               </div>
 
@@ -993,7 +1000,7 @@ export default function NewPlanPage() {
             </div>
 
             {/* Map view */}
-            <div className="rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-2" style={{ height: '500px' }}>
+            <div className="relative rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-2" style={{ height: '500px' }}>
               <MapContainer
                 center={[location.lat, location.lng]}
                 zoom={20}
@@ -1018,6 +1025,8 @@ export default function NewPlanPage() {
                 }}
                 detectBuildingsRef={detectBuildingsRef}
                 computeSunGridRef={computeSunGridRef}
+                onBuildingsDetected={mergeDetectedBuildings}
+                plantRenderMode={plantRenderMode}
                 plantPlacements={generatedPlan.plants
                   .filter((p: PlanPlant) => p.lat && p.lng)
                   .map((p: PlanPlant) => ({
@@ -1030,6 +1039,63 @@ export default function NewPlanPage() {
                 onPlantClick={(slug) => setSelectedPlantSlug(slug === selectedPlantSlug ? null : slug)}
                 height="100%"
               />
+              {/* Unobtrusive plant info card — bottom-left, dismissible. Shows
+               *  image, names, bloom window, and height without crowding the
+               *  map. Falls back gracefully when the plant isn't in cache
+               *  (e.g. immediately after a regen, before /api/plants refreshes). */}
+              {selectedPlantSlug && (() => {
+                const planEntry = generatedPlan.plants.find(p => p.plantSlug === selectedPlantSlug);
+                const cached = allPlantsCache.find((p: any) => p.slug === selectedPlantSlug);
+                const plant = { ...(cached || {}), ...(planEntry || {}) };
+                if (!plant?.plantSlug && !cached) return null;
+                const bloomMonths = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                const bloomLabel = plant.bloomStartMonth && plant.bloomEndMonth
+                  ? `${bloomMonths[plant.bloomStartMonth - 1]}–${bloomMonths[plant.bloomEndMonth - 1]}`
+                  : null;
+                const heightLabel = plant.heightMaxInches
+                  ? `${Math.round(plant.heightMaxInches)}″`
+                  : null;
+                return (
+                  <div className="absolute bottom-3 left-3 z-10 bg-white/95 backdrop-blur-sm rounded-lg shadow-lg border border-stone-200 max-w-xs overflow-hidden pointer-events-auto">
+                    <div className="flex items-start gap-3 p-3">
+                      {plant.imageUrl && (
+                        <img
+                          src={plant.imageUrl}
+                          alt={plant.commonName || ''}
+                          className="w-16 h-16 object-cover rounded-md flex-shrink-0 bg-stone-100"
+                        />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <div className="font-medium text-sm truncate">{plant.commonName}</div>
+                            <div className="text-xs italic text-muted truncate">{plant.scientificName}</div>
+                          </div>
+                          <button
+                            onClick={() => setSelectedPlantSlug(null)}
+                            className="text-stone-400 hover:text-stone-700 -mr-1 -mt-1 p-1 leading-none"
+                            aria-label="Close"
+                          >×</button>
+                        </div>
+                        <div className="flex flex-wrap gap-1.5 mt-1.5 text-[11px] text-stone-600">
+                          {bloomLabel && (
+                            <span className="inline-flex items-center gap-1 bg-stone-100 rounded px-1.5 py-0.5">
+                              <span className="w-1.5 h-1.5 rounded-full" style={{ background: getPlantColor(plant.bloomColor || '') }} />
+                              {bloomLabel}
+                            </span>
+                          )}
+                          {heightLabel && (
+                            <span className="bg-stone-100 rounded px-1.5 py-0.5">↕ {heightLabel}</span>
+                          )}
+                          {plant.plantType && (
+                            <span className="bg-stone-100 rounded px-1.5 py-0.5 capitalize">{plant.plantType}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
             <p className="text-xs text-muted mb-4 mt-2 text-center">
               {view3D
@@ -1108,8 +1174,8 @@ export default function NewPlanPage() {
             </div>
 
             <div className="flex flex-wrap gap-3 justify-between">
-              <button onClick={() => setStep('preferences')} className="text-muted hover:text-foreground px-4 py-2 transition-colors">
-                ← Adjust goals
+              <button onClick={() => setStep('design')} className="text-muted hover:text-foreground px-4 py-2 transition-colors">
+                ← Adjust design
               </button>
               <button
                 onClick={savePlan}

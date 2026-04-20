@@ -74,6 +74,18 @@ export const SUPPLIERS: Supplier[] = [
     email: 'info@livinghabitats.com',
   },
   {
+    slug: 'midwest-groundcovers',
+    name: 'Midwest Groundcovers',
+    url: 'https://www.midwestgroundcovers.com',
+    location: 'St. Charles, IL',
+    description: 'Large wholesale nursery specializing in groundcovers, perennials, shrubs, grasses, and native prairie, wetland, and woodland species. Wholesale only — account required for pricing.',
+    shipping: true,
+    pickup: true,
+    specialties: ['plug', 'potted'],
+    phone: '(847) 742-1790',
+    email: 'mginfo@midwestgroundcovers.com',
+  },
+  {
     slug: 'red-stem',
     name: 'Red Stem Native Landscapes',
     url: 'https://www.redstemnativelandscapes.com',
