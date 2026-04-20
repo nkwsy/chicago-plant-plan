@@ -8,7 +8,7 @@
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import FormulaEditor from '@/components/formulas/FormulaEditor';
+import FormulaEditWithPreview from '@/components/formulas/FormulaEditWithPreview';
 import { getFormula } from '@/lib/formulas/load';
 import { getSessionUser } from '@/lib/auth/dal';
 
@@ -43,7 +43,7 @@ export default async function FormulaDetailPage({
           </Link>
         </div>
       )}
-      <FormulaEditor
+      <FormulaEditWithPreview
         mode="edit"
         initial={formula}
         editable={false}

@@ -105,9 +105,13 @@ export default function FormulaPreviewSandbox({
   initialFormula,
   draft,
 }: {
-  initialFormula: DesignFormula;
+  /** The starting formula. Accepts partials so the `/formulas/new` flow works
+   *  before the user has filled in slug/name/weights — the server falls back
+   *  to "no formula bias" when the draft is empty, which is still a useful
+   *  visual baseline. */
+  initialFormula: Partial<DesignFormula>;
   /** Optional live draft from the editor; takes priority over initialFormula. */
-  draft?: DesignFormula;
+  draft?: Partial<DesignFormula>;
 }) {
   const [data, setData] = useState<PreviewResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -115,7 +119,7 @@ export default function FormulaPreviewSandbox({
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fetchPreview = useCallback(
-    async (formula: DesignFormula) => {
+    async (formula: Partial<DesignFormula>) => {
       setLoading(true);
       setError(null);
       try {

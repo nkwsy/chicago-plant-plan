@@ -41,6 +41,7 @@ export default async function EditFormulaPage({
 
   return (
     <FormulaEditWithPreview
+      mode="edit"
       initial={formula}
       canEditBuiltIn={isAdmin}
       cancelHref={`/formulas/${slug}`}
