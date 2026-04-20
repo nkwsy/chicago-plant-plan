@@ -54,7 +54,6 @@ export default async function NewFormulaPage({
       initial={initial}
       canEditBuiltIn={session.role === 'admin'}
       cancelHref="/formulas"
-      afterSavePath={(s) => `/formulas/${s}`}
     />
   );
 }

@@ -29,17 +29,20 @@ export default function FormulaEditWithPreview({
   editable = true,
   canEditBuiltIn,
   cancelHref,
-  afterSavePath,
 }: {
   initial: Partial<DesignFormula>;
   mode: 'create' | 'edit';
   editable?: boolean;
   canEditBuiltIn: boolean;
   cancelHref: string;
-  afterSavePath?: (slug: string) => string;
 }) {
   const [draft, setDraft] = useState<Partial<DesignFormula>>(initial);
 
+  // Note: we intentionally don't forward an afterSavePath callback. The server
+  // components that render this wrapper (/formulas/new, /formulas/[slug]/edit)
+  // can't pass functions across the RSC boundary — React Server Components
+  // disallow non-serializable props. FormulaEditor's internal default,
+  // `/formulas/${saved.slug}`, matches what both callers want anyway.
   return (
     <FormulaEditor
       mode={mode}
@@ -47,7 +50,6 @@ export default function FormulaEditWithPreview({
       editable={editable}
       canEditBuiltIn={canEditBuiltIn}
       cancelHref={cancelHref}
-      afterSavePath={afterSavePath}
       onChange={(d: DesignFormulaInput) => setDraft({ ...initial, ...d })}
       sidePanel={<FormulaPreviewSandbox initialFormula={initial} draft={draft} />}
     />

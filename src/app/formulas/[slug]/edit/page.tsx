@@ -45,7 +45,6 @@ export default async function EditFormulaPage({
       initial={formula}
       canEditBuiltIn={isAdmin}
       cancelHref={`/formulas/${slug}`}
-      afterSavePath={(s) => `/formulas/${s}`}
     />
   );
 }
