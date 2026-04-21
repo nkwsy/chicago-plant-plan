@@ -19,7 +19,7 @@
  *     the detail page).
  */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type {
@@ -107,9 +107,19 @@ export default function FormulaEditor({
   const builtInLocked = initial.isBuiltIn === true && !canEditBuiltIn;
   const disabled = !editable || builtInLocked;
 
+  // Keep the latest onChange in a ref so the "notify parent of formula
+  // changes" effect below only refires when `formula` itself changes — not
+  // every time the parent passes a fresh inline arrow. Without this, a caller
+  // who forgets to memoize onChange creates an infinite render loop: parent
+  // render → new onChange identity → effect refires → setState in parent →
+  // parent render → ... (See FormulaEditWithPreview for the primary caller.)
+  const onChangeRef = useRef(onChange);
   useEffect(() => {
-    onChange?.(formula);
-  }, [formula, onChange]);
+    onChangeRef.current = onChange;
+  }, [onChange]);
+  useEffect(() => {
+    onChangeRef.current?.(formula);
+  }, [formula]);
 
   const update = <K extends keyof DesignFormulaInput>(key: K, value: DesignFormulaInput[K]) =>
     setFormula((prev) => ({ ...prev, [key]: value }));

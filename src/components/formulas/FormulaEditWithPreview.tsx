@@ -18,7 +18,7 @@
  * formula bias" path server-side, which is a useful baseline visual.
  */
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import FormulaEditor from './FormulaEditor';
 import FormulaPreviewSandbox from './FormulaPreviewSandbox';
 import type { DesignFormula, DesignFormulaInput } from '@/types/formula';
@@ -38,6 +38,16 @@ export default function FormulaEditWithPreview({
 }) {
   const [draft, setDraft] = useState<Partial<DesignFormula>>(initial);
 
+  // CRITICAL: stabilize the onChange identity. FormulaEditor runs an effect
+  // keyed on `[formula, onChange]` — if we pass a fresh arrow each render,
+  // that effect fires on every parent render, calling setDraft and triggering
+  // another parent render → infinite loop. That loop also thrashes the
+  // sandbox's debounced fetch effect (its deps include the derived draft),
+  // which in production surfaces as "Preview error: Failed to fetch".
+  const onChange = useCallback((d: DesignFormulaInput) => {
+    setDraft((prev) => ({ ...prev, ...d }));
+  }, []);
+
   // Note: we intentionally don't forward an afterSavePath callback. The server
   // components that render this wrapper (/formulas/new, /formulas/[slug]/edit)
   // can't pass functions across the RSC boundary — React Server Components
@@ -50,7 +60,7 @@ export default function FormulaEditWithPreview({
       editable={editable}
       canEditBuiltIn={canEditBuiltIn}
       cancelHref={cancelHref}
-      onChange={(d: DesignFormulaInput) => setDraft({ ...initial, ...d })}
+      onChange={onChange}
       sidePanel={<FormulaPreviewSandbox initialFormula={initial} draft={draft} />}
     />
   );

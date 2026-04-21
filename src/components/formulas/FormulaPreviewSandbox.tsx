@@ -124,9 +124,16 @@ export default function FormulaPreviewSandbox({
   // produces a visibly different plant arrangement for the same formula.
   const [bump, setBump] = useState(0);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // In-flight fetch controller so a new request cancels the previous one
+  // cleanly. Without this, a fast series of edits could surface a racy
+  // "Failed to fetch" if the browser aborted a stale request under load.
+  const abortRef = useRef<AbortController | null>(null);
 
   const fetchPreview = useCallback(
     async (formula: Partial<DesignFormula>, v: ScenarioVariant, seed: number) => {
+      if (abortRef.current) abortRef.current.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
       setLoading(true);
       setError(null);
       try {
@@ -140,6 +147,7 @@ export default function FormulaPreviewSandbox({
             seed,
           }),
           cache: 'no-store',
+          signal: controller.signal,
         });
         const body = (await res.json()) as PreviewResponse;
         if (!res.ok) {
@@ -148,9 +156,12 @@ export default function FormulaPreviewSandbox({
         }
         setData(body);
       } catch (e) {
+        // A newer request cancelled this one — not a real error.
+        if ((e as Error).name === 'AbortError') return;
         setError((e as Error).message);
       } finally {
-        setLoading(false);
+        // Only clear loading if this call is still the latest.
+        if (abortRef.current === controller) setLoading(false);
       }
     },
     [],
