@@ -82,6 +82,7 @@ export default function NewPlanPage() {
   const [saving, setSaving] = useState(false);
   const [planTitle, setPlanTitle] = useState('My Native Garden');
   const [authorEmail, setAuthorEmail] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
 
   const steps: { key: Step; label: string }[] = [
     { key: 'location', label: 'Location' },
@@ -364,6 +365,7 @@ export default function NewPlanPage() {
           existingTrees,
           sunGrid: generatedPlan.sunGrid,
           layoutVersion: 3,
+          isPublic,
         }),
       });
       const data = await res.json();
@@ -1247,6 +1249,43 @@ export default function NewPlanPage() {
                 placeholder="you@example.com"
                 className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
               />
+            </div>
+
+            {/* Visibility */}
+            <div className="mb-4 p-4 bg-stone-50 rounded-lg border border-stone-200">
+              <div className="text-sm font-medium mb-2">Visibility</div>
+              <div className="flex flex-col gap-2">
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    checked={isPublic}
+                    onChange={() => setIsPublic(true)}
+                    className="mt-0.5 text-primary focus:ring-primary"
+                  />
+                  <span>
+                    <span className="text-sm font-medium">Public</span>
+                    <span className="block text-xs text-muted">
+                      Show this plan on the community map so others can see what&apos;s being planted nearby.
+                    </span>
+                  </span>
+                </label>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    checked={!isPublic}
+                    onChange={() => setIsPublic(false)}
+                    className="mt-0.5 text-primary focus:ring-primary"
+                  />
+                  <span>
+                    <span className="text-sm font-medium">Private</span>
+                    <span className="block text-xs text-muted">
+                      Only you can see this plan. It won&apos;t appear on the public map.
+                    </span>
+                  </span>
+                </label>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-3 justify-between">
