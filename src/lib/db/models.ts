@@ -318,6 +318,55 @@ const FormulaSchema = new Schema<IFormula>({
 // Fast lookup for "my formulas" queries: filter owner, then load by slug.
 FormulaSchema.index({ ownerId: 1, updatedAt: -1 });
 
+// Feedback — anonymous or signed-in user feedback collected from the floating
+// widget. `page` is the route the user was on when they submitted.
+export type FeedbackCategory = 'bug' | 'idea' | 'praise' | 'question' | 'other';
+export type FeedbackStatus = 'new' | 'in_progress' | 'resolved' | 'wontfix';
+
+export interface IFeedback extends Document {
+  feedbackId: string;
+  page: string;
+  category: FeedbackCategory;
+  comment: string;
+  email: string;
+  requestFollowup: boolean;
+  status: FeedbackStatus;
+  userId: string | null;
+  userEmail: string | null;
+  userName: string | null;
+  userAgent: string | null;
+  adminNotes: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const FeedbackSchema = new Schema<IFeedback>({
+  feedbackId: { type: String, required: true, unique: true, index: true },
+  page: { type: String, required: true, index: true },
+  category: {
+    type: String,
+    required: true,
+    enum: ['bug', 'idea', 'praise', 'question', 'other'],
+    index: true,
+  },
+  comment: { type: String, required: true },
+  email: { type: String, default: '' },
+  requestFollowup: { type: Boolean, default: false },
+  status: {
+    type: String,
+    default: 'new',
+    enum: ['new', 'in_progress', 'resolved', 'wontfix'],
+    index: true,
+  },
+  userId: { type: String, default: null, index: true },
+  userEmail: { type: String, default: null },
+  userName: { type: String, default: null },
+  userAgent: { type: String, default: null },
+  adminNotes: { type: String, default: '' },
+}, { timestamps: true });
+
+FeedbackSchema.index({ createdAt: -1 });
+
 // Model getters (prevent re-compilation in dev)
 export const Plant = mongoose.models.Plant || mongoose.model<IPlant>('Plant', PlantSchema);
 export const Plan = mongoose.models.Plan || mongoose.model<IPlan>('Plan', PlanSchema);
@@ -325,6 +374,7 @@ export const QuoteRequest = mongoose.models.QuoteRequest || mongoose.model<IQuot
 export const ApiCache = mongoose.models.ApiCache || mongoose.model<IApiCache>('ApiCache', ApiCacheSchema);
 export const PriceInquiry = mongoose.models.PriceInquiry || mongoose.model<IPriceInquiry>('PriceInquiry', PriceInquirySchema);
 export const Formula = mongoose.models.Formula || mongoose.model<IFormula>('Formula', FormulaSchema);
+export const Feedback = mongoose.models.Feedback || mongoose.model<IFeedback>('Feedback', FeedbackSchema);
 
 // Re-export User so callers that historically import from './models' still work.
 export { User } from './user';
