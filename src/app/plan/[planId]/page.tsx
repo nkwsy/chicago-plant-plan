@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import MapContainer from '@/components/map/MapContainer';
 import PlantingLegend from '@/components/plan/PlantingLegend';
+import PlanFilterPanel, { EMPTY_FILTERS, applyPlanFilters, type PlanFilters } from '@/components/plan/PlanFilterPanel';
 import type { PlanData, PlanPlant } from '@/types/plan';
 import { SUPPLIERS } from '@/lib/suppliers';
 
@@ -25,6 +26,17 @@ export default function PlanViewPage() {
   // Same toggle that exists in the wizard — preserves visual continuity
   // when the user revisits the saved plan.
   const [plantRenderMode, setPlantRenderMode] = useState<'numbered' | 'tapestry'>('numbered');
+  const [showSymbols, setShowSymbols] = useState(true);
+  const [filters, setFilters] = useState<PlanFilters>(EMPTY_FILTERS);
+  const [symbolSets, setSymbolSets] = useState<import('@/types/symbol-set').SymbolSet[]>([]);
+  const symbolSetSlug = plan?.symbolSetSlug || 'oudolf-classic';
+  const activeSymbolSet = symbolSets.find((s) => s.slug === symbolSetSlug) || null;
+  useEffect(() => {
+    fetch('/api/symbol-sets')
+      .then((r) => r.json())
+      .then((d) => Array.isArray(d) ? setSymbolSets(d) : null)
+      .catch(() => {});
+  }, []);
   const [reanalyzing, setReanalyzing] = useState(false);
   const [ownerEmail, setOwnerEmail] = useState('');
   const [emailVerified, setEmailVerified] = useState(false);
@@ -315,6 +327,38 @@ export default function PlanViewPage() {
               </button>
             </div>
 
+            {/* Oudolf-style symbol overlay. */}
+            <button
+              onClick={() => setShowSymbols(s => !s)}
+              className={`px-3 py-1.5 text-sm rounded-lg border transition-colors ${
+                showSymbols ? 'bg-amber-700 text-white border-amber-700' : 'border-stone-300 hover:border-stone-400 bg-white'
+              }`}
+              title="Toggle planting-plan symbols (asterisks for composites, hatched lines for grasses, …)"
+            >
+              Symbols
+            </button>
+
+            {/* Type / tier / season visibility filters. */}
+            <PlanFilterPanel
+              filters={filters}
+              onChange={setFilters}
+              totalCount={plan.plants.length}
+              visibleCount={applyPlanFilters(
+                plan.plants.map(p => {
+                  const cat = allPlants.find((c: { slug: string }) => c.slug === p.plantSlug);
+                  return {
+                    plantType: p.plantType,
+                    tier: p.tier ?? cat?.tier,
+                    bloomStartMonth: cat?.bloomStartMonth,
+                    bloomEndMonth: cat?.bloomEndMonth,
+                    seedHeadInterest: cat?.seedHeadInterest,
+                    winterStructure: cat?.winterStructure,
+                  };
+                }),
+                filters,
+              ).length}
+            />
+
             <button
               onClick={() => setShowSunlight(s => !s)}
               className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
@@ -355,15 +399,34 @@ export default function PlanViewPage() {
               areaOutline={(plan as any).areaGeoJson}
               exclusionZones={(plan as any).exclusionZones || []}
               existingTrees={(plan as any).existingTrees || []}
-              plantPlacements={plan.plants
-                .filter(p => p.lat && p.lng)
-                .map(p => ({
-                  lat: p.lat!, lng: p.lng!,
-                  color: p.bloomColor, name: p.commonName,
-                  slug: p.plantSlug, imageUrl: p.imageUrl,
-                  spreadInches: p.spreadInches, speciesIndex: p.speciesIndex,
-                  plantType: p.plantType,
-                }))}
+              symbolSet={activeSymbolSet}
+              planSymbolOverrides={plan.symbolOverrides}
+              showSymbols={showSymbols}
+              plantPlacements={applyPlanFilters(
+                plan.plants
+                  .filter(p => p.lat && p.lng)
+                  .map(p => {
+                    const cat = allPlants.find((c: { slug: string }) => c.slug === p.plantSlug);
+                    // Enrich with the catalog data the filter needs (bloom
+                    // months, seedhead/winter flags) so applyPlanFilters can
+                    // do its season match without a second lookup.
+                    return {
+                      lat: p.lat!, lng: p.lng!,
+                      color: p.bloomColor, name: p.commonName,
+                      slug: p.plantSlug, imageUrl: p.imageUrl,
+                      spreadInches: p.spreadInches, speciesIndex: p.speciesIndex,
+                      plantType: p.plantType,
+                      cellGeoJson: p.cellGeoJson,
+                      family: cat?.family,
+                      tier: p.tier ?? cat?.tier,
+                      bloomStartMonth: cat?.bloomStartMonth,
+                      bloomEndMonth: cat?.bloomEndMonth,
+                      seedHeadInterest: cat?.seedHeadInterest,
+                      winterStructure: cat?.winterStructure,
+                    };
+                  }),
+                filters,
+              )}
               plantRenderMode={plantRenderMode}
               onPlantClick={(slug) => setSelectedPlant(slug === selectedPlant ? null : slug)}
               height="100%"

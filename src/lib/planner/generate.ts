@@ -6,6 +6,8 @@ import type { NearbyBuilding } from '@/lib/analysis/sun';
 import { filterPlantsBySite, filterPlantsByPreferences } from './filter';
 import { scorePlant, calculateDiversityScore } from './score';
 import { calculateGridSize, layoutPlants, polygonToBounds } from './layout';
+import { generateVoronoiLayout } from './voronoi-layout';
+import { generateGridLayout } from './grid-layout';
 import { buildSunGrid } from '@/lib/analysis/sun-grid';
 
 interface GeneratedPlan {
@@ -153,14 +155,40 @@ function generateFromCandidates(
     if (chosenRole) roleCounts[chosenRole] = (roleCounts[chosenRole] || 0) + 1;
   }
 
-  // Layout with spacing, exclusion zones, tree shade, and per-plot sun
-  const planPlants = layoutPlants(
-    selected, gridConfig, polygon, center,
-    exclusionZones, existingTrees,
-    preferences.aestheticPref || 'mixed',
-    preferences.densityMultiplier || 1.0,
-    sunGrid,
-  );
+  // Layout: dispatch on layoutMode. Voronoi and grid both need a polygon
+  // to tile; if either is requested without one we fall back to the legacy
+  // 3-phase numbered placement so plan generation still completes.
+  const havePoly = !!(polygon && center);
+  let planPlants: PlanPlant[];
+  if (preferences.layoutMode === 'tapestry' && havePoly) {
+    planPlants = generateVoronoiLayout(
+      selected, polygon!, center as [number, number],
+      {
+        exclusionZones,
+        existingTrees,
+        densityMultiplier: preferences.densityMultiplier || 1.0,
+        sunGrid,
+      },
+    ).plants;
+  } else if (preferences.layoutMode === 'grid' && havePoly) {
+    planPlants = generateGridLayout(
+      selected, polygon!, center as [number, number],
+      {
+        exclusionZones,
+        existingTrees,
+        gridSpacingInches: preferences.gridSpacingInches ?? 18,
+        sunGrid,
+      },
+    ).plants;
+  } else {
+    planPlants = layoutPlants(
+      selected, gridConfig, polygon, center,
+      exclusionZones, existingTrees,
+      preferences.aestheticPref || 'mixed',
+      preferences.densityMultiplier || 1.0,
+      sunGrid,
+    );
+  }
   const diversityScore = calculateDiversityScore(selected);
 
   return {

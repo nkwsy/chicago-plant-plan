@@ -36,7 +36,9 @@ export default function AdminPlantsPage() {
   const [plants, setPlants] = useState<Plant[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
-  const [sortKey, setSortKey] = useState<'name' | 'favorability' | 'completeness'>('name');
+  const [sortKey, setSortKey] = useState<'name' | 'favorability' | 'completeness' | 'tier'>(
+    'name',
+  );
   const [batchSummary, setBatchSummary] = useState<BatchSummary | null>(null);
   const [batchRunning, setBatchRunning] = useState(false);
   const [batchOutcomes, setBatchOutcomes] = useState<BatchOutcome[]>([]);
@@ -76,6 +78,15 @@ export default function AdminPlantsPage() {
       list.sort((a, b) => (b.favorability ?? 50) - (a.favorability ?? 50));
     else if (sortKey === 'completeness')
       list.sort((a, b) => computeCompleteness(a).score - computeCompleteness(b).score);
+    else if (sortKey === 'tier')
+      // High tier (emergents) first, then by name within a tier. Plants
+      // missing a tier sink to the bottom so they're easy to find and curate.
+      list.sort((a, b) => {
+        const ta = a.tier ?? -1;
+        const tb = b.tier ?? -1;
+        if (ta !== tb) return tb - ta;
+        return a.commonName.localeCompare(b.commonName);
+      });
 
     return list;
   }, [plants, search, sortKey]);
@@ -209,6 +220,7 @@ export default function AdminPlantsPage() {
           <option value="name">Sort: Name</option>
           <option value="favorability">Sort: Favorability (high→low)</option>
           <option value="completeness">Sort: Completeness (low→high)</option>
+          <option value="tier">Sort: Tier (emergent→filler)</option>
         </select>
       </div>
 
@@ -221,6 +233,12 @@ export default function AdminPlantsPage() {
               <tr className="text-left">
                 <th className="p-2 font-medium">Plant</th>
                 <th className="p-2 font-medium">Type</th>
+                <th className="p-2 font-medium" title="Hierarchy tier (5=emergent → 1=filler)">
+                  Tier
+                </th>
+                <th className="p-2 font-medium" title="Sociability (1=solo → 5=colony)">
+                  Soc
+                </th>
                 <th className="p-2 font-medium">Favorability</th>
                 <th className="p-2 font-medium">Completeness</th>
                 <th className="p-2 font-medium"></th>
@@ -242,6 +260,37 @@ export default function AdminPlantsPage() {
                       <div className="text-xs text-stone-500 italic">{p.scientificName}</div>
                     </td>
                     <td className="p-2 text-stone-700">{p.plantType}</td>
+                    <td className="p-2 w-12 text-center">
+                      {p.tier ? (
+                        <span
+                          className={`inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-mono ${
+                            p.tier === 5
+                              ? 'bg-emerald-800 text-white'
+                              : p.tier === 4
+                                ? 'bg-emerald-600 text-white'
+                                : p.tier === 3
+                                  ? 'bg-emerald-400 text-emerald-900'
+                                  : p.tier === 2
+                                    ? 'bg-emerald-200 text-emerald-900'
+                                    : 'bg-stone-200 text-stone-700'
+                          }`}
+                          title={`Tier ${p.tier}`}
+                        >
+                          {p.tier}
+                        </span>
+                      ) : (
+                        <span className="text-stone-300">—</span>
+                      )}
+                    </td>
+                    <td className="p-2 w-12 text-center">
+                      {p.sociability ? (
+                        <span className="font-mono text-xs" title={`Sociability ${p.sociability}`}>
+                          S{p.sociability}
+                        </span>
+                      ) : (
+                        <span className="text-stone-300">—</span>
+                      )}
+                    </td>
                     <td className="p-2 w-56">
                       <div className="flex items-center gap-2">
                         <input
@@ -302,7 +351,7 @@ export default function AdminPlantsPage() {
               })}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center text-stone-500">
+                  <td colSpan={7} className="p-8 text-center text-stone-500">
                     No plants match.
                   </td>
                 </tr>

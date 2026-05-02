@@ -57,19 +57,38 @@ export async function encryptSession(
     .sign(getSecret());
 }
 
-/** Verify a session JWT. Returns null on missing/invalid/expired tokens. */
+/** Verify a session JWT. Returns null on missing/invalid/expired tokens.
+ *
+ * Dev-mode auth bypass: when NODE_ENV is not 'production' AND
+ * DEV_AUTH_BYPASS=1, a synthetic admin session is returned in place of null
+ * so localhost development can reach /admin pages without an OAuth round-
+ * trip. A real, valid token still wins (so you can also test as a real
+ * user). The bypass is impossible to enable in a Vercel production build —
+ * NODE_ENV is hard-coded to 'production' there.
+ */
 export async function decryptSession(token: string | undefined): Promise<SessionPayload | null> {
-  if (!token) return null;
-  try {
-    const { payload } = await jwtVerify(token, getSecret(), { algorithms: [ALG] });
-    // Narrow to SessionPayload. jwtVerify already validated exp, so the only
-    // reason we'd fail here is if the shape is wrong (rotated secret + an old
-    // token that slipped through).
-    if (typeof payload.userId !== 'string' || typeof payload.email !== 'string') return null;
-    return payload as SessionPayload;
-  } catch {
-    return null;
+  if (token) {
+    try {
+      const { payload } = await jwtVerify(token, getSecret(), { algorithms: [ALG] });
+      // Narrow to SessionPayload. jwtVerify already validated exp, so the only
+      // reason we'd fail here is if the shape is wrong (rotated secret + an old
+      // token that slipped through).
+      if (typeof payload.userId === 'string' && typeof payload.email === 'string') {
+        return payload as SessionPayload;
+      }
+    } catch {
+      // fall through to dev-bypass check
+    }
   }
+  if (process.env.NODE_ENV !== 'production' && process.env.DEV_AUTH_BYPASS === '1') {
+    return {
+      userId: 'dev-admin',
+      email: 'dev@localhost',
+      role: 'admin',
+      name: 'Dev Admin',
+    };
+  }
+  return null;
 }
 
 /** Shape used by cookie setters (Next `cookies().set(...)`). */

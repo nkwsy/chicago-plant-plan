@@ -56,6 +56,30 @@ export interface Plant {
   /** True if the plant holds architectural form through winter (dried stems
    *  standing above the snow, for example). */
   winterStructure?: boolean;
+
+  // ---- Layout-geometry metadata (phase 1 of the planting-layout overhaul) --
+  // These two fields drive the Voronoi-based tapestry algorithm and the
+  // installation-grid mode. Initial values are inferred from oudolfRole +
+  // plantType + size by inferSociabilityAndTier(); curators can hand-tune.
+  /** Aster-style sociability scale.
+   *  1 = solitary specimen (single tree, large emergent forb)
+   *  2 = small group of 3–5 (primary structural forbs)
+   *  3 = drift of 6–12 (companion forbs)
+   *  4 = sweep of 15–30 (matrix grasses, mass-planted forbs)
+   *  5 = colony / continuous carpet (sedges, low groundcovers)
+   */
+  sociability?: 1 | 2 | 3 | 4 | 5;
+  /** Visual hierarchy tier in the planting (Oudolf 5-layer model).
+   *  1 = scatter / filler (low gap-fillers, single accents)
+   *  2 = matrix (groundcover grasses & sedges — the green backdrop)
+   *  3 = secondary companion (drift-forming forbs of medium height)
+   *  4 = primary structural (silhouette forbs / mid-canopy shrubs)
+   *  5 = emergent (tall accents — trees, large shrubs, very tall forbs/grasses)
+   */
+  tier?: 1 | 2 | 3 | 4 | 5;
+  /** Optional override into the active symbol set. When unset, the renderer
+   *  falls back to the symbol set's per-family / per-tier default. */
+  defaultSymbolKey?: string;
 }
 
 export interface SupplierPricing {

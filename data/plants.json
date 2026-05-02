@@ -77,7 +77,9 @@
     "imageAttribution": "(c) Virginia (Ginny) Sanderson, some rights reserved (CC BY-NC-ND)",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 4
   },
   {
     "slug": "rudbeckia-hirta",
@@ -157,7 +159,9 @@
     "imageAttribution": "no rights reserved, uploaded by Brady Reed",
     "oudolfRole": "filler",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "asclepias-tuberosa",
@@ -234,7 +238,9 @@
     "imageAttribution": "(c) Michael J. Papay, some rights reserved (CC BY), uploaded by Michael J. Papay",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "monarda-fistulosa",
@@ -313,7 +319,9 @@
     "imageAttribution": "(c) ziggymom, some rights reserved (CC BY-NC)",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "eutrochium-purpureum",
@@ -385,7 +393,9 @@
     "imageAttribution": "(c) Mark Kluge, some rights reserved (CC BY-NC), uploaded by Mark Kluge",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "lobelia-cardinalis",
@@ -457,7 +467,9 @@
     "imageAttribution": "(c) Jessie Aguilar, all rights reserved, uploaded by Jessie Aguilar",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "asclepias-syriaca",
@@ -528,7 +540,9 @@
     "imageAttribution": "(c) csozanne, some rights reserved (CC BY-NC)",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "asclepias-incarnata",
@@ -606,7 +620,9 @@
     "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "symphyotrichum-novae-angliae",
@@ -679,7 +695,9 @@
     "imageAttribution": "(c) musicmanz, some rights reserved (CC BY-NC), uploaded by musicmanz",
     "oudolfRole": "structure",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 2,
+    "tier": 5
   },
   {
     "slug": "symphyotrichum-laeve",
@@ -747,7 +765,9 @@
     "imageAttribution": "(c) leafystars, some rights reserved (CC BY-NC)",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "symphyotrichum-oblongifolium",
@@ -812,7 +832,9 @@
     "imageAttribution": "(c) Bart Jones, all rights reserved",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "echinacea-pallida",
@@ -884,7 +906,9 @@
     "imageAttribution": "(c) Joseph D Kurtz, some rights reserved (CC BY-NC), uploaded by Joseph D Kurtz",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 4
   },
   {
     "slug": "eryngium-yuccifolium",
@@ -954,7 +978,9 @@
     "imageAttribution": "(c) Kevin Metcalf, some rights reserved (CC BY-NC), uploaded by Kevin Metcalf",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 5
   },
   {
     "slug": "liatris-pycnostachya",
@@ -1025,7 +1051,9 @@
     "imageAttribution": "(c) Joshua Mayer, some rights reserved (CC BY-SA)",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "liatris-aspera",
@@ -1091,7 +1119,9 @@
     "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "silphium-terebinthinaceum",
@@ -1155,7 +1185,9 @@
     "imageAttribution": "(c) Frank Mayfield, some rights reserved (CC BY-SA)",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "silphium-laciniatum",
@@ -1219,7 +1251,9 @@
     "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "parthenium-integrifolium",
@@ -1283,7 +1317,9 @@
     "imageAttribution": "(c) jtuttle, all rights reserved, uploaded by jtuttle",
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "zizia-aurea",
@@ -1357,7 +1393,9 @@
     "imageAttribution": "(c) Shaun Pogacnik, some rights reserved (CC BY-NC), uploaded by Shaun Pogacnik",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "phlox-pilosa",
@@ -1422,7 +1460,9 @@
     "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "solidago-rigida",
@@ -1488,7 +1528,9 @@
     "imageAttribution": "(c) eknuth, some rights reserved (CC BY-NC), uploaded by eknuth",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 4
   },
   {
     "slug": "solidago-speciosa",
@@ -1555,7 +1597,9 @@
     "imageAttribution": "(c) Sequoia Janirella Wrens, some rights reserved (CC BY-NC), uploaded by Sequoia Janirella Wrens",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "tradescantia-ohiensis",
@@ -1621,7 +1665,9 @@
     "imageAttribution": "(c) Michael J. Papay, some rights reserved (CC BY), uploaded by Michael J. Papay",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "dodecatheon-meadia",
@@ -1684,7 +1730,9 @@
     "imageAttribution": "(c) tsc_wis, some rights reserved (CC BY-NC)",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "geum-triflorum",
@@ -1747,7 +1795,9 @@
     "imageAttribution": "(c) C. Phillips, some rights reserved (CC BY-NC), uploaded by C. Phillips",
     "oudolfRole": "filler",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "andropogon-gerardii",
@@ -1825,7 +1875,9 @@
     "imageAttribution": "(c) Kingsbrae Garden, some rights reserved (CC BY-NC-SA)",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "sporobolus-heterolepis",
@@ -1901,7 +1953,9 @@
     "imageAttribution": "(c) Adam Thada, all rights reserved, uploaded by Adam Thada",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "schizachyrium-scoparium",
@@ -1979,7 +2033,9 @@
     "imageAttribution": "(c) Scott E Severs, some rights reserved (CC BY-NC), uploaded by Scott E Severs",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "panicum-virgatum",
@@ -2053,7 +2109,9 @@
     "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "sorghastrum-nutans",
@@ -2124,7 +2182,9 @@
     "imageAttribution": "(c) Erica Fraley, some rights reserved (CC BY-NC), uploaded by Erica Fraley",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "bouteloua-curtipendula",
@@ -2188,7 +2248,9 @@
     "imageAttribution": "(c) psweet, some rights reserved (CC BY-SA), uploaded by psweet",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "koeleria-macrantha",
@@ -2250,7 +2312,9 @@
     "imageAttribution": "(c) rfors55, some rights reserved (CC BY-NC)",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "carex-bicknellii",
@@ -2309,7 +2373,9 @@
     "imageAttribution": "(c) aarongunnar, some rights reserved (CC BY), uploaded by aarongunnar",
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 5,
+    "tier": 2
   },
   {
     "slug": "carex-pensylvanica",
@@ -2381,7 +2447,9 @@
     "imageAttribution": "(c) Matt Flower, some rights reserved (CC BY-NC), uploaded by Matt Flower",
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 5,
+    "tier": 2
   },
   {
     "slug": "carex-vulpinoidea",
@@ -2446,7 +2514,9 @@
     "imageAttribution": "(c) Nelson DeBarros, some rights reserved (CC BY-NC), uploaded by Nelson DeBarros",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 5,
+    "tier": 2
   },
   {
     "slug": "carex-muskingumensis",
@@ -2518,7 +2588,9 @@
     "imageAttribution": "(c) Simon Tolzmann, all rights reserved, uploaded by Simon Tolzmann",
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 5,
+    "tier": 2
   },
   {
     "slug": "helianthus-divaricatus",
@@ -2584,7 +2656,9 @@
     "imageAttribution": "(c) Esteban M. Coria, all rights reserved, uploaded by Esteban M. Coria",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "geranium-maculatum",
@@ -2654,7 +2728,9 @@
     "imageAttribution": "(c) Mark Kluge, some rights reserved (CC BY-NC), uploaded by Mark Kluge",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "aquilegia-canadensis",
@@ -2732,7 +2808,9 @@
     "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 1
   },
   {
     "slug": "polemonium-reptans",
@@ -2793,7 +2871,9 @@
     "imageAttribution": "(c) billy liar, some rights reserved (CC BY-NC-SA)",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "lobelia-siphilitica",
@@ -2858,7 +2938,9 @@
     "imageAttribution": "(c) Annette Seidenglanz, some rights reserved (CC BY-NC), uploaded by Annette Seidenglanz",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "sanguinaria-canadensis",
@@ -2912,7 +2994,9 @@
     "imageAttribution": "(c) Haley Selen, some rights reserved (CC BY-NC), uploaded by Haley Selen",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "mertensia-virginica",
@@ -2975,7 +3059,9 @@
     "imageAttribution": "(c) tlit46, some rights reserved (CC BY-NC), uploaded by tlit46",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "polygonatum-biflorum",
@@ -3036,7 +3122,9 @@
     "imageAttribution": "(c) Eric Hunt, all rights reserved",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "trillium-grandiflorum",
@@ -3090,7 +3178,9 @@
     "imageAttribution": "(c) sandy richard, some rights reserved (CC BY-NC-SA)",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "asarum-canadense",
@@ -3157,7 +3247,9 @@
     "imageAttribution": "(c) Susan Elliott, some rights reserved (CC BY-NC), uploaded by Susan Elliott",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "elymus-hystrix",
@@ -3221,7 +3313,9 @@
     "imageAttribution": "(c) Kevin, some rights reserved (CC BY-NC), uploaded by Kevin",
     "oudolfRole": "filler",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "iris-virginica-var-shrevei",
@@ -3290,7 +3384,9 @@
     "imageAttribution": "Photo via iNaturalist",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "caltha-palustris",
@@ -3346,7 +3442,9 @@
     "imageAttribution": "(c) eeyipes, some rights reserved (CC BY)",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "acorus-calamus",
@@ -3401,7 +3499,9 @@
     "imageAttribution": "(c) Eduard Garin, some rights reserved (CC BY-NC), uploaded by Eduard Garin",
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "verbena-hastata",
@@ -3474,7 +3574,9 @@
     "imageAttribution": "(c) jprekop, all rights reserved, uploaded by jprekop",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "eupatorium-perfoliatum",
@@ -3540,7 +3642,9 @@
     "imageAttribution": "(c) Stacey Patrick, some rights reserved (CC BY-NC), uploaded by Stacey Patrick",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "vernonia-fasciculata",
@@ -3605,7 +3709,9 @@
     "imageAttribution": "(c) Joshua Mayer, some rights reserved (CC BY-SA)",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 5
   },
   {
     "slug": "spartina-pectinata",
@@ -3670,7 +3776,9 @@
     "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "juncus-effusus",
@@ -3732,7 +3840,9 @@
     "imageAttribution": "(c) Nelson DeBarros, some rights reserved (CC BY-NC), uploaded by Nelson DeBarros",
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "physocarpus-opulifolius",
@@ -3804,7 +3914,9 @@
     ],
     "imageAttribution": "(c) hollyyoung, some rights reserved (CC BY-NC), uploaded by hollyyoung",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "corylus-americana",
@@ -3870,7 +3982,9 @@
     ],
     "imageAttribution": "(c) peggyo, some rights reserved (CC BY-NC), uploaded by peggyo",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "ceanothus-americanus",
@@ -3935,7 +4049,9 @@
     "imageAttribution": "(c) Mark Kluge, some rights reserved (CC BY-NC), uploaded by Mark Kluge",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 2,
+    "tier": 4
   },
   {
     "slug": "cornus-sericea",
@@ -4006,7 +4122,9 @@
     ],
     "imageAttribution": "(c) adrianakolev, all rights reserved",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "ilex-verticillata",
@@ -4069,7 +4187,9 @@
     "imageAttribution": "(c) Paul Donahue, some rights reserved (CC BY-NC), uploaded by Paul Donahue",
     "oudolfRole": "structure",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "cornus-racemosa",
@@ -4137,7 +4257,9 @@
     ],
     "imageAttribution": "(c) Dan Mullen, some rights reserved (CC BY-NC-ND)",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "aronia-melanocarpa",
@@ -4209,7 +4331,9 @@
     ],
     "imageAttribution": "(c) Greg Funka, some rights reserved (CC BY-NC), uploaded by Greg Funka",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "sambucus-nigra-ssp-canadensis",
@@ -4274,7 +4398,9 @@
     ],
     "imageAttribution": "Photo via iNaturalist",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "amorpha-canescens",
@@ -4339,7 +4465,9 @@
     "imageAttribution": "(c) Sadie Hickey, some rights reserved (CC BY-NC), uploaded by Sadie Hickey",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 4
   },
   {
     "slug": "quercus-macrocarpa",
@@ -4403,7 +4531,9 @@
     ],
     "imageAttribution": "(c) rayrob, some rights reserved (CC BY-NC), uploaded by rayrob",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "quercus-bicolor",
@@ -4467,7 +4597,9 @@
     ],
     "imageAttribution": "(c) Bart Lawrence, some rights reserved (CC BY-NC), uploaded by Bart Lawrence",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "quercus-rubra",
@@ -4525,7 +4657,9 @@
     ],
     "imageAttribution": "(c) regoona, all rights reserved",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "amelanchier-arborea",
@@ -4597,7 +4731,9 @@
     ],
     "imageAttribution": "(c) Bonnie Kinder, some rights reserved (CC BY-NC), uploaded by Bonnie Kinder",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "cercis-canadensis",
@@ -4658,7 +4794,9 @@
     ],
     "imageAttribution": "(c) dbarronoss, some rights reserved (CC BY-NC-ND)",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "tilia-americana",
@@ -4715,7 +4853,9 @@
     ],
     "imageAttribution": "(c) botanicum-vitae, all rights reserved",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "nyssa-sylvatica",
@@ -4772,7 +4912,9 @@
     ],
     "imageAttribution": "(c) mountainad82, some rights reserved (CC BY-NC)",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "parthenocissus-quinquefolia",
@@ -4836,7 +4978,9 @@
     ],
     "imageAttribution": "(c) Suzanne Cadwell, some rights reserved (CC BY-NC)",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 2,
+    "tier": 3
   },
   {
     "slug": "lonicera-sempervirens",
@@ -4899,7 +5043,9 @@
     ],
     "imageAttribution": "(c) Laura Kimberly, some rights reserved (CC BY-NC), uploaded by Laura Kimberly",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 2,
+    "tier": 3
   },
   {
     "slug": "celastrus-scandens",
@@ -4956,7 +5102,9 @@
     ],
     "imageAttribution": "(c) Rob Curtis, some rights reserved (CC BY-NC-SA), uploaded by Rob Curtis",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 3
   },
   {
     "slug": "adiantum-pedatum",
@@ -5007,7 +5155,9 @@
     ],
     "imageAttribution": "(c) bgrimmer, all rights reserved, uploaded by bgrimmer",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "athyrium-filix-femina",
@@ -5066,7 +5216,9 @@
     ],
     "imageAttribution": "(c) jacquelinerose, some rights reserved (CC BY-NC), uploaded by jacquelinerose",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "osmunda-regalis",
@@ -5121,7 +5273,9 @@
     ],
     "imageAttribution": "(c) mjcorreia, all rights reserved, uploaded by mjcorreia",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "coreopsis-palmata",
@@ -5186,7 +5340,9 @@
     "imageAttribution": "(c) Peter Gorman, some rights reserved (CC BY-NC-SA)",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "silphium-perfoliatum",
@@ -5252,7 +5408,9 @@
     "imageAttribution": "(c) Chuck Sutherland, all rights reserved, uploaded by Chuck Sutherland",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "lupinus-perennis",
@@ -5308,7 +5466,9 @@
     "imageAttribution": "(c) cassi saari, some rights reserved (CC BY-SA)",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "dalea-purpurea",
@@ -5379,7 +5539,9 @@
     "imageAttribution": "(c) Paul Tavares, some rights reserved (CC BY-NC), uploaded by Paul Tavares",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "baptisia-alba",
@@ -5446,7 +5608,9 @@
     "imageAttribution": "no rights reserved, uploaded by John Kees",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 5
   },
   {
     "slug": "baptisia-bracteata",
@@ -5510,7 +5674,9 @@
     "imageAttribution": "(c) Joshua, some rights reserved (CC BY-NC-SA)",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 4
   },
   {
     "slug": "physostegia-virginiana",
@@ -5575,7 +5741,9 @@
     "imageAttribution": "(c) benwadejones, some rights reserved (CC BY-NC), uploaded by benwadejones",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "penstemon-digitalis",
@@ -5647,7 +5815,9 @@
     "imageAttribution": "(c) Joe, some rights reserved (CC BY-NC), uploaded by Joe",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "veronicastrum-virginicum",
@@ -5718,7 +5888,9 @@
     "imageAttribution": "(c) Amy Beth Workman, some rights reserved (CC BY-NC), uploaded by Amy Beth Workman",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 5
   },
   {
     "slug": "fragaria-virginiana",
@@ -5786,7 +5958,9 @@
     "imageAttribution": "(c) Abby Hyde, some rights reserved (CC BY), uploaded by Abby Hyde",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "allium-cernuum",
@@ -5852,7 +6026,9 @@
     "imageAttribution": "(c) Grace Chovil, all rights reserved, uploaded by Grace Chovil",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "heuchera-richardsonii",
@@ -5916,7 +6092,9 @@
     "imageAttribution": "(c) smeyer41, all rights reserved",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "silene-regia",
@@ -5975,7 +6153,9 @@
     "imageAttribution": "(c) pfautsch, all rights reserved",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "liatris-spicata",
@@ -6046,7 +6226,9 @@
     "imageAttribution": "no rights reserved, uploaded by Dale Knox",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "lindera-benzoin",
@@ -6111,7 +6293,9 @@
     ],
     "imageAttribution": "(c) Sandy Wolkenberg, some rights reserved (CC BY), uploaded by Sandy Wolkenberg",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "chelone-glabra",
@@ -6176,7 +6360,9 @@
     "imageAttribution": "(c) Ken-ichi Ueda, some rights reserved (CC BY), uploaded by Ken-ichi Ueda",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "calamagrostis-canadensis",
@@ -6242,7 +6428,9 @@
     "imageAttribution": "(c) James, all rights reserved, uploaded by James",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "blephilia-ciliata",
@@ -6305,7 +6493,9 @@
     "imageAttribution": "(c) cotinis, some rights reserved (CC BY-NC-SA)",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "hamamelis-virginiana",
@@ -6359,7 +6549,9 @@
     ],
     "imageAttribution": "(c) Paul Marcum, some rights reserved (CC BY-NC), uploaded by Paul Marcum",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "chasmanthium-latifolium",
@@ -6423,7 +6615,9 @@
     "imageAttribution": "(c) Susan Elliott, some rights reserved (CC BY-NC), uploaded by Susan Elliott",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "rudbeckia-subtomentosa",
@@ -6488,7 +6682,9 @@
     "imageAttribution": "(c) Eric Hunt, all rights reserved, uploaded by Eric Hunt",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 5
   },
   {
     "slug": "ageratina-altissima",
@@ -6544,7 +6740,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "solidago-flexicaulis",
@@ -6600,7 +6798,9 @@
     ],
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "caulophyllum-thalictroides",
@@ -6653,7 +6853,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "phlox-divaricata",
@@ -6715,7 +6917,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "tiarella-cordifolia",
@@ -6768,7 +6972,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "podophyllum-peltatum",
@@ -6822,7 +7028,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "arisaema-triphyllum",
@@ -6877,7 +7085,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 1
   },
   {
     "slug": "dicentra-cucullaria",
@@ -6924,7 +7134,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "campanula-americana",
@@ -6981,7 +7193,9 @@
     ],
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "eurybia-divaricata",
@@ -7038,7 +7252,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "hepatica-acutiloba",
@@ -7091,7 +7307,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "osmorhiza-claytonii",
@@ -7138,7 +7356,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "packera-aurea",
@@ -7203,7 +7423,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "chrysogonum-virginianum",
@@ -7256,7 +7478,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "geum-fragarioides",
@@ -7310,7 +7534,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "carex-laxiculmis",
@@ -7364,7 +7590,9 @@
     ],
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 5,
+    "tier": 2
   },
   {
     "slug": "carex-jamesii",
@@ -7420,7 +7648,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 5,
+    "tier": 2
   },
   {
     "slug": "cornus-alternifolia",
@@ -7475,7 +7705,9 @@
       }
     ],
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "viburnum-acerifolium",
@@ -7531,7 +7763,9 @@
       }
     ],
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "staphylea-trifolia",
@@ -7579,7 +7813,9 @@
       }
     ],
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "euonymus-atropurpureus",
@@ -7634,7 +7870,9 @@
       }
     ],
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "viola-sororia",
@@ -7694,7 +7932,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "coreopsis-tripteris",
@@ -7759,7 +7999,9 @@
     ],
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "chamaecrista-fasciculata",
@@ -7821,7 +8063,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "polystichum-acrostichoides",
@@ -7873,7 +8117,9 @@
       }
     ],
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "matteuccia-struthiopteris",
@@ -7928,7 +8174,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "onoclea-sensibilis",
@@ -7985,7 +8233,9 @@
     ],
     "oudolfRole": "filler",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "elymus-virginicus",
@@ -8048,7 +8298,9 @@
     ],
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "elymus-canadensis",
@@ -8110,7 +8362,9 @@
     ],
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "quercus-alba",
@@ -8152,7 +8406,7 @@
     "description": "The quintessential oak of eastern hardwood forests, with distinctive rounded lobes and pale, flaky bark. Supports more than 500 species of caterpillars, making it a cornerstone of bird food webs.",
     "careNotes": "Very long-lived (300+ years). Slow to moderate growth. Avoid disturbing root zone once mature. Sweet acorns eaten by many mammals and birds.",
     "plantingInstructions": "Plant young trees or acorns in fall. Taproot makes transplanting older trees difficult. Give ample room — mature canopy spreads 50–80 feet.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/7298947/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8174,9 +8428,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Eric Keith, some rights reserved (CC BY-NC), uploaded by Eric Keith",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "acer-saccharum",
@@ -8215,7 +8471,7 @@
     "description": "A stately shade tree famous for brilliant orange-red fall color and as the source of maple syrup. Dense canopy and classic pyramidal-to-rounded form.",
     "careNotes": "Prefers rich, well-drained loam. Sensitive to road salt, compaction, and prolonged drought. Surface roots can make underplanting difficult.",
     "plantingInstructions": "Plant balled-and-burlapped or potted trees in spring or fall. Mulch well and keep watered first 2–3 seasons.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/230661769/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8231,9 +8487,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Michael John Oldham, some rights reserved (CC BY-NC), uploaded by Michael John Oldham",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "celtis-occidentalis",
@@ -8275,7 +8533,7 @@
     "description": "A tough, underappreciated urban-tolerant shade tree with corky warty bark and small purple berries prized by winter birds. Host plant for hackberry emperor and question mark butterflies.",
     "careNotes": "Extremely adaptable — tolerates drought, flooding, wind, pollution, and poor soils. Occasional witches-broom and nipple gall are cosmetic only.",
     "plantingInstructions": "Plant bare-root or potted trees in spring or fall. Fast-growing once established. Excellent substitute for ash in urban sites.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/256037606/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8291,9 +8549,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) \n\nAyotte, Gilles, 1948-, some rights reserved (CC BY-SA)",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "carya-ovata",
@@ -8333,7 +8593,7 @@
     "description": "Distinctive tree with shaggy gray bark peeling in long vertical plates. Sweet edible nuts feed squirrels, turkeys, and deer. Host plant for luna moth and many other Lepidoptera.",
     "careNotes": "Slow-growing but very long-lived. Deep taproot makes transplanting tricky — use young container stock. Messy nut drop in autumn.",
     "plantingInstructions": "Plant young potted stock in spring. Tolerates drought once established. Allow 40+ feet of room for mature spread.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/203172055/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8343,9 +8603,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) klalla, some rights reserved (CC BY-NC)",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "carpinus-caroliniana",
@@ -8386,7 +8648,7 @@
     "description": "A graceful small understory tree with smooth, sinewy, muscle-like gray bark (hence the nickname \"musclewood\"). Beautiful fluted trunks and excellent orange-red fall color.",
     "careNotes": "Prefers moist, rich woodland soil. Tolerates flooding. Slow-growing; works well in shade gardens and rain gardens.",
     "plantingInstructions": "Plant balled-and-burlapped or container trees in spring. Protect young trees from deer browse.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/43197119/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8402,9 +8664,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) ThePrairiePreacher, some rights reserved (CC BY-NC), uploaded by ThePrairiePreacher",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "ostrya-virginiana",
@@ -8445,7 +8709,7 @@
     "description": "Small understory tree with shreddy bark and ornamental hop-like seed clusters in late summer. Extremely hard wood gives rise to the alternate name \"ironwood\".",
     "careNotes": "Among the most shade- and drought-tolerant small native trees. Very slow-growing but tough once established. Excellent for dry oak woodland understory.",
     "plantingInstructions": "Plant potted trees in spring or fall. Tolerant of almost any soil that isn’t permanently saturated.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/15550/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8455,9 +8719,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Patrick Coin, some rights reserved (CC BY-NC-SA)",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "platanus-occidentalis",
@@ -8496,7 +8762,7 @@
     "description": "A massive floodplain tree with striking mottled bark that peels to reveal creamy-white inner layers. Among the largest trees in eastern North America.",
     "careNotes": "Needs ample space and moisture. Anthracnose may cause early leaf drop in wet springs but is cosmetic. Not a small-yard tree.",
     "plantingInstructions": "Plant balled-and-burlapped trees in spring. Ideal along streams and lowlands. Fast-growing.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/204738082/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8512,9 +8778,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "no rights reserved, uploaded by Andy Wilson",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "prunus-serotina",
@@ -8557,7 +8825,7 @@
     "description": "A fast-growing tree with fragrant white flower racemes in spring and dark cherries in late summer devoured by dozens of bird species. Top caterpillar host plant (450+ species).",
     "careNotes": "Fruit drop can be messy near paved surfaces. Black-knot fungus may appear but is usually not fatal. Wildlife value hard to beat.",
     "plantingInstructions": "Plant potted or bare-root trees in spring. Seedlings self-sow readily under parent trees.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/14006/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8573,9 +8841,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Danny Barron, some rights reserved (CC BY-NC-ND)",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "gymnocladus-dioicus",
@@ -8611,7 +8881,7 @@
     "description": "A sculptural large tree with bold bipinnately compound leaves, picturesque winter silhouette, and rough scaly bark. Illinois state tree. Leafs out very late — filters strong spring sun.",
     "careNotes": "Tolerates urban conditions, drought, and clay. Female trees produce large leathery seed pods; choose male cultivars for less litter.",
     "plantingInstructions": "Plant potted trees in spring. Slow to establish then moderate growth. Excellent street or park tree.",
-    "imageUrl": "",
+    "imageUrl": "https://static.inaturalist.org/photos/734639/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8627,9 +8897,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Chad Arment, all rights reserved, uploaded by Chad Arment",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "betula-nigra",
@@ -8670,7 +8942,7 @@
     "description": "Fast-growing birch with beautifully exfoliating cinnamon-colored bark. The only birch native to the Midwest that tolerates heat and clay well; far more resistant to bronze birch borer than paper birch.",
     "careNotes": "Prefers consistent moisture; short-lived if site dries out. Often grown as a multi-stem clump for maximum bark display.",
     "plantingInstructions": "Plant balled-and-burlapped or potted trees in spring. Mulch deeply and water first 2–3 seasons.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/816571/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8686,9 +8958,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Richard Candler, some rights reserved (CC BY-NC), uploaded by Richard Candler",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "cephalanthus-occidentalis",
@@ -8728,7 +9002,7 @@
     "description": "A wetland shrub with sputnik-like spherical white flower heads that are pollinator magnets. Ducks and shorebirds eat the nutlets; waterfowl use it for cover.",
     "careNotes": "Thrives with wet feet — even tolerates shallow standing water. Prune hard every few years to maintain shape.",
     "plantingInstructions": "Plant potted or bare-root shrubs in spring. Ideal for rain gardens, pond edges, and low swales.",
-    "imageUrl": "",
+    "imageUrl": "https://static.inaturalist.org/photos/85835738/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8757,10 +9031,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) flwildbeauty, all rights reserved, uploaded by flwildbeauty",
     "oudolfRole": "structure",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "viburnum-lentago",
@@ -8802,7 +9078,7 @@
     "description": "A large shrub or small tree with flat-topped white flower clusters, blue-black edible drupes, and burgundy fall color. Valuable late-season bird food.",
     "careNotes": "Adaptable to most soils. Can be pruned up to a small tree form or left as a multi-stem thicket. Powdery mildew occasional but cosmetic.",
     "plantingInstructions": "Plant bare-root or potted shrubs in spring or fall. Suckers modestly — allow room to spread.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/172175665/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8824,9 +9100,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Alain Maire, some rights reserved (CC BY-NC), uploaded by Alain Maire",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "viburnum-prunifolium",
@@ -8868,7 +9146,7 @@
     "description": "A tough, upright viburnum with glossy dark leaves, creamy flower clusters, and blue-black fruit. Stunning crimson-purple fall color.",
     "careNotes": "Extremely drought-tolerant once established. Prune after flowering if needed. One of the best dry-site native viburnums.",
     "plantingInstructions": "Plant bare-root or potted shrubs in spring or fall. Works as specimen, hedge, or small tree.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/35211762/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8890,9 +9168,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "no rights reserved, uploaded by mefisher",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "viburnum-dentatum",
@@ -8933,7 +9213,7 @@
     "description": "A rounded multi-stem shrub with toothed leaves, flat white flower clusters, and deep blue-black drupes devoured by migrating songbirds.",
     "careNotes": "Adaptable but prefers consistent moisture. Renewal prune one-third of oldest stems every few years to keep vigorous.",
     "plantingInstructions": "Plant potted or bare-root shrubs in spring or fall. Plant in groups of 3+ for cross-pollination and better fruit set.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/197714531/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -8954,9 +9234,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Ashwin Srinivasan, some rights reserved (CC BY), uploaded by Ashwin Srinivasan",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "prunus-virginiana",
@@ -8999,7 +9281,7 @@
     "description": "A suckering large shrub with fragrant white flower racemes and astringent dark purple cherries enjoyed by birds and used in jams. Host plant for many butterfly and moth species.",
     "careNotes": "Forms thickets via root suckers — give it room or plan on removing suckers. Black-knot fungus occasional. Fruit pits are toxic if chewed.",
     "plantingInstructions": "Plant bare-root or potted shrubs in spring or fall. Best in naturalistic settings and hedgerows.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/146282563/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9016,9 +9298,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Dan Mullen, some rights reserved (CC BY-NC-ND)",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "spiraea-alba",
@@ -9058,7 +9342,7 @@
     "description": "A low suckering shrub with airy pyramidal clusters of tiny white flowers that hum with pollinators. A native alternative to invasive spirea cultivars.",
     "careNotes": "Tolerates wet feet and clay. Cut to the ground every few years to refresh. Spreads via rhizomes in ideal conditions.",
     "plantingInstructions": "Plant potted or bare-root shrubs in spring. Excellent for rain gardens and wet meadow restorations.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/61182739/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9081,10 +9365,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Hubert Szczygieł, some rights reserved (CC BY-NC), uploaded by Hubert Szczygieł",
     "oudolfRole": "structure",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "rosa-carolina",
@@ -9125,7 +9411,7 @@
     "description": "A compact native rose with single pink flowers, golden stamens, and brilliant red hips that persist into winter for bird food. Much better behaved than invasive multiflora rose.",
     "careNotes": "Thrives on neglect. Prune lightly in late winter. Spreads slowly by rhizomes.",
     "plantingInstructions": "Plant bare-root or potted shrubs in spring. Happy in lean soils where fussier roses fail.",
-    "imageUrl": "",
+    "imageUrl": "https://static.inaturalist.org/photos/42238806/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9142,10 +9428,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Carl Houck, all rights reserved, uploaded by Carl Houck",
     "oudolfRole": "filler",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 2,
+    "tier": 4
   },
   {
     "slug": "amorpha-fruticosa",
@@ -9187,7 +9475,7 @@
     "description": "A fast-growing leguminous shrub with spikes of tiny deep purple flowers tipped with orange anthers. Nitrogen-fixing; excellent for streambank stabilization.",
     "careNotes": "Can be cut to the ground to rejuvenate. Some self-sowing in moist sites. Tolerates flooding.",
     "plantingInstructions": "Plant bare-root or potted shrubs in spring. Ideal for rain gardens and bioswales.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/359384233/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9204,9 +9492,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Peter May, some rights reserved (CC BY-NC), uploaded by Peter May",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 1,
+    "tier": 5
   },
   {
     "slug": "diervilla-lonicera",
@@ -9245,7 +9535,7 @@
     "description": "A low, suckering native shrub — despite the name, completely unrelated to invasive Asian bush honeysuckles. Yellow trumpet flowers and good red fall color.",
     "careNotes": "Ideal groundcover for dry shade where little else thrives. Spreads slowly by rhizomes.",
     "plantingInstructions": "Plant potted shrubs in spring. Tolerates the toughest woodland edges.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/21142762/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9260,9 +9550,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) pnorton, some rights reserved (CC BY-NC), uploaded by pnorton",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 2,
+    "tier": 4
   },
   {
     "slug": "campsis-radicans",
@@ -9303,7 +9595,7 @@
     "description": "A robust woody vine with showy orange-red trumpet flowers irresistible to hummingbirds. Blooms all summer into early fall.",
     "careNotes": "Vigorous to the point of aggressive — needs a sturdy structure and annual pruning to keep in bounds. Not for small gardens.",
     "plantingInstructions": "Plant potted vines in spring. Give it a strong post, fence, or dead tree — avoid planting against houses.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/7300976/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9318,9 +9610,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Gary House, some rights reserved (CC BY-NC), uploaded by Gary House",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 2,
+    "tier": 3
   },
   {
     "slug": "vitis-riparia",
@@ -9362,7 +9656,7 @@
     "description": "A vigorous native grape with small tart purple fruits that are outstanding bird and mammal food. Host plant for many sphinx moth species including the stunning pandorus sphinx.",
     "careNotes": "Very vigorous — prune annually in late winter. Fruits make excellent jelly.",
     "plantingInstructions": "Plant potted vines in spring at the base of a sturdy trellis or arbor. Fast-growing once established.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/59477130/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9378,9 +9672,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) roomthily, some rights reserved (CC BY-NC), uploaded by roomthily",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 2,
+    "tier": 3
   },
   {
     "slug": "clematis-virginiana",
@@ -9420,7 +9716,7 @@
     "description": "A native clematis smothered in clouds of small white flowers in late summer, followed by feathery silvery seed heads. Our native answer to invasive sweet autumn clematis.",
     "careNotes": "Cut back hard in late winter — blooms on new wood. Self-sows modestly.",
     "plantingInstructions": "Plant potted vines in spring. Happy scrambling over shrubs, fences, or small trees.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/150498198/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9435,9 +9731,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Michael J. Papay, some rights reserved (CC BY), uploaded by Michael J. Papay",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 2,
+    "tier": 3
   },
   {
     "slug": "osmundastrum-cinnamomeum",
@@ -9477,7 +9775,7 @@
     "description": "A bold architectural fern with tall vase-shaped fronds surrounding conspicuous cinnamon-brown fertile fronds in spring. Forms long-lived clumps.",
     "careNotes": "Loves rich, consistently moist acidic soil. Tolerates boggy conditions. Slowly forms larger clumps but is not aggressive.",
     "plantingInstructions": "Plant container ferns or divisions in spring. Keep moist the first year.",
-    "imageUrl": "",
+    "imageUrl": "https://static.inaturalist.org/photos/75969516/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9492,9 +9790,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) alicalynn, all rights reserved",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "osmunda-claytoniana",
@@ -9531,7 +9831,7 @@
     "description": "A distinctive fern with pinnae that appear \"interrupted\" by clusters of dark fertile pinnae mid-frond. Among the oldest fern lineages — essentially unchanged since the Triassic.",
     "careNotes": "Prefers rich, moist woodland soil. More shade-tolerant than cinnamon fern and tolerates slightly drier sites.",
     "plantingInstructions": "Plant in spring in humus-rich soil. Mulch with leaf litter.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/33125132/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9546,9 +9846,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) V.S. Volkotrub, some rights reserved (CC BY-NC), uploaded by V.S. Volkotrub",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "thelypteris-palustris",
@@ -9583,7 +9885,7 @@
     "description": "A delicate lacy fern that colonizes wet soils and forms graceful airy drifts. One of the few ferns that tolerates full sun if the site stays wet.",
     "careNotes": "Spreads by rhizomes in consistently wet sites — excellent for large rain gardens or pond edges, not small beds.",
     "plantingInstructions": "Plant divisions or potted ferns in spring in wet, mucky soil.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/4839037/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "possibility-place",
@@ -9598,9 +9900,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Michael Kielb, some rights reserved (CC BY-NC), uploaded by Michael Kielb",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "bouteloua-gracilis",
@@ -9637,7 +9941,7 @@
     "description": "A fine-textured warm-season bunchgrass whose horizontal \"eyebrow\" seed heads are instantly recognizable. Drought-proof once established; excellent low-maintenance lawn alternative.",
     "careNotes": "Thrives in the worst dry, poor soils. Cut back in early spring before growth resumes.",
     "plantingInstructions": "Sow seed in late spring after soil warms, or plant plugs. Slow to establish first year.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/79232001/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -9659,10 +9963,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Matt Berger, some rights reserved (CC BY), uploaded by Matt Berger",
     "oudolfRole": "matrix",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "carex-stricta",
@@ -9699,7 +10005,7 @@
     "description": "The dominant sedge of Midwestern sedge meadows, forming distinctive raised \"tussocks\" that host dozens of companion species. Critical habitat structure for marshbirds.",
     "careNotes": "Needs consistently wet soil. Over decades, tussocks rise above surrounding water as organic matter accumulates.",
     "plantingInstructions": "Plant plugs in spring in saturated soil. Used widely in wetland restoration.",
-    "imageUrl": "",
+    "imageUrl": "https://static.inaturalist.org/photos/195929675/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -9721,10 +10027,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) botanicum-vitae, all rights reserved",
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 5,
+    "tier": 2
   },
   {
     "slug": "gentiana-andrewsii",
@@ -9764,7 +10072,7 @@
     "description": "One of the most beloved native wildflowers — deep violet-blue flowers that never fully open, requiring bumblebees strong enough to force their way inside. Blooms when almost nothing else does.",
     "careNotes": "Prefers consistent moisture and humus-rich soil. Slow to establish; give it 2–3 years to flower reliably. Long-lived once settled.",
     "plantingInstructions": "Plant plugs in spring in rich, moist soil with afternoon shade. Seed requires cold-moist stratification and light to germinate.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/6893506/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -9786,10 +10094,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Bonnie Kinder, some rights reserved (CC BY-NC), uploaded by Bonnie Kinder",
     "oudolfRole": "scatter",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "helenium-autumnale",
@@ -9829,7 +10139,7 @@
     "description": "Tall, bushy plants covered in cheerful yellow daisies with prominent yellow-green central discs. The common name refers to historical use of dried leaves as snuff — pollen does NOT cause hayfever.",
     "careNotes": "Pinch back in early summer for bushier, shorter plants. Divide every few years to maintain vigor. Tolerates clay and wet feet.",
     "plantingInstructions": "Plant plugs in spring. Seed germinates readily with light and cold-moist stratification.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/168217302/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -9857,10 +10167,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) morchella7, some rights reserved (CC BY-NC), uploaded by morchella7",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "symphyotrichum-ericoides",
@@ -9900,7 +10212,7 @@
     "description": "Clouds of tiny white daisies on wiry stems — a last-minute pollinator buffet before hard frost. Foliage is needle-fine like heath, hence the name.",
     "careNotes": "Very drought-tolerant. Cut back by half in June for bushier, shorter plants. Spreads modestly by rhizomes.",
     "plantingInstructions": "Plant plugs in spring. Seed germinates readily without stratification.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/51847175/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -9922,10 +10234,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) bcnorval, some rights reserved (CC BY-NC)",
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "symphyotrichum-lateriflorum",
@@ -9965,7 +10279,7 @@
     "description": "A graceful shade-tolerant aster with horizontal branches carrying small white flowers whose centers turn pink-to-rose as they age — giving a calico effect on the plant.",
     "careNotes": "One of the best late-season bloomers for part shade. Self-sows lightly.",
     "plantingInstructions": "Plant plugs in spring. Seed germinates easily with cold-moist stratification.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/5044116/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -9981,10 +10295,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Susan Elliott, some rights reserved (CC BY-NC), uploaded by Susan Elliott",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "solidago-nemoralis",
@@ -10022,7 +10338,7 @@
     "description": "A compact, well-behaved goldenrod for dry, sunny sites — unlike some of its rhizomatous cousins. Arching gold flower plumes are pollinator-covered.",
     "careNotes": "Thrives in poor dry soil. Does not spread aggressively. Excellent for small gardens where Canada goldenrod would overwhelm.",
     "plantingInstructions": "Plant plugs in spring. Seed germinates readily with light.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/4745737/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10038,10 +10354,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Mark Kluge, some rights reserved (CC BY-NC), uploaded by Mark Kluge",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "claytonia-virginica",
@@ -10078,7 +10396,7 @@
     "description": "A tiny ephemeral carpet-former — delicate white-to-pale-pink flowers with darker pink veins, blooming before canopy leaf-out. Host to the specialist spring-beauty mining bee.",
     "careNotes": "Fully ephemeral — disappears by early summer. Plant among later-emerging perennials like ferns. Naturalizes into spectacular drifts.",
     "plantingInstructions": "Plant corms in fall or potted plants in spring while still in leaf. Avoid deep mulch that smothers emerging shoots.",
-    "imageUrl": "",
+    "imageUrl": "https://static.inaturalist.org/photos/183910009/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10094,10 +10412,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Cambray Bergmann, all rights reserved, uploaded by Cambray Bergmann",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "erythronium-albidum",
@@ -10133,7 +10453,7 @@
     "description": "A spring ephemeral with mottled \"trout-speckled\" leaves and nodding recurved white lily flowers. Forms extensive colonies where happy — a sign of high-quality woodland.",
     "careNotes": "Extremely slow to establish from seed (5–7 years to flower). Patient gardeners are rewarded with century-long colonies.",
     "plantingInstructions": "Plant dormant corms deep (5+ inches) in fall, or potted plants in spring. Rich leaf-mold soil essential.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/20143/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10148,10 +10468,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Anita, some rights reserved (CC BY-NC)",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "cardamine-concatenata",
@@ -10188,7 +10510,7 @@
     "description": "A spring ephemeral with clusters of four-petaled white-to-pale-pink flowers. Host plant for the West Virginia white butterfly, a regional specialist.",
     "careNotes": "Ephemeral — goes dormant by early summer. Appreciates undisturbed leaf litter.",
     "plantingInstructions": "Plant rhizome divisions in fall or potted plants in spring. Naturalizes slowly into drifts.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/5903049/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10203,10 +10525,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Judy Gallagher, some rights reserved (CC BY-SA), uploaded by Judy Gallagher",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "camassia-scilloides",
@@ -10247,7 +10571,7 @@
     "description": "A native bulb with tall airy spikes of pale-blue star flowers. Native equivalent of ornamental camassia; thrives in moist prairies and open woodlands.",
     "careNotes": "Foliage dies back by midsummer — pair with later-rising perennials. Long-lived where site stays moist in spring.",
     "plantingInstructions": "Plant bulbs in fall 3–4 inches deep, or potted plants in spring while still in leaf.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/105788/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10264,10 +10588,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) John B., some rights reserved (CC BY)",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 1
   },
   {
     "slug": "pycnanthemum-virginianum",
@@ -10307,7 +10633,7 @@
     "description": "Consistently ranks at the top of university pollinator studies for the sheer diversity of insects it attracts — more than 70 species of bees, wasps, flies, and butterflies in a single patch.",
     "careNotes": "Foliage smells strongly of mint when crushed. Spreads by rhizomes in rich moist soil — plant where it has room or use a root barrier.",
     "plantingInstructions": "Plant plugs in spring. Seed germinates easily after cold-moist stratification.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/9055947/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10335,10 +10661,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Sherrie Snyder, some rights reserved (CC BY-NC), uploaded by Sherrie Snyder",
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 2
   },
   {
     "slug": "ratibida-pinnata",
@@ -10380,7 +10708,7 @@
     "description": "A tall, airy prairie favorite with droopy yellow ray petals surrounding a gray-brown central cone that smells of anise when crushed. Goldfinches eat the seeds.",
     "careNotes": "Very tough and adaptable. Self-sows freely in bare soil. May need staking in very rich garden soil.",
     "plantingInstructions": "Plant plugs in spring. Seed germinates easily with light and brief cold-moist stratification.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/148417289/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10408,10 +10736,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "no rights reserved, uploaded by Andy Wilson",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "asclepias-verticillata",
@@ -10448,7 +10778,7 @@
     "description": "A fine-textured milkweed with threadlike whorled leaves and small greenish-white flower clusters. Host plant for monarchs; extends monarch habitat into dry, thin soils where other milkweeds fail.",
     "careNotes": "Very drought-tolerant. Late to emerge in spring — mark location. Spreads modestly by rhizomes.",
     "plantingInstructions": "Plant plugs in spring. Direct-sown seed germinates after cold-moist stratification.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/4647603/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10464,10 +10794,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) eknuth, some rights reserved (CC BY-NC), uploaded by eknuth",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "asclepias-sullivantii",
@@ -10504,7 +10836,7 @@
     "description": "A refined cousin of common milkweed with smoother, blue-green leaves, tidier habit, and rose-pink flower umbels. Much better garden behavior than the spreading common milkweed.",
     "careNotes": "Spreads slowly by rhizomes, but far less aggressively than A. syriaca. Monarch host plant.",
     "plantingInstructions": "Plant plugs in spring. Seed needs cold-moist stratification; deep taproot makes transplanting older plants difficult.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/60310513/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10526,10 +10858,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Travis Bonovsky, some rights reserved (CC BY-NC), uploaded by Travis Bonovsky",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "anemone-canadensis",
@@ -10570,7 +10904,7 @@
     "description": "Bright white five-petaled flowers above a carpet of deeply cut green leaves. Spreads aggressively by rhizomes — ideal for covering large areas quickly, problematic in small beds.",
     "careNotes": "Will colonize — give it room or contain with hardscape. Outcompetes most weeds. Tolerates part shade.",
     "plantingInstructions": "Plant bare root or potted plants in spring or fall. Very easy to establish.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/162600164/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10592,10 +10926,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Dendroica cerulea, some rights reserved (CC BY)",
     "oudolfRole": "filler",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 1
   },
   {
     "slug": "anemone-virginiana",
@@ -10634,7 +10970,7 @@
     "description": "A tall, airy anemone with greenish-white flowers that mature into distinctive upright \"thimble\" seed heads that persist and release cottony seeds through winter.",
     "careNotes": "Tolerates surprisingly dry shade. Gentle self-sower. Seed heads give winter interest.",
     "plantingInstructions": "Plant plugs in spring. Seed needs cold-moist stratification.",
-    "imageUrl": "",
+    "imageUrl": "https://static.inaturalist.org/photos/146727896/medium.jpeg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10650,10 +10986,12 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Jonathan Schnurr, all rights reserved, uploaded by Jonathan Schnurr",
     "oudolfRole": "scatter",
     "seedHeadInterest": true,
-    "winterStructure": true
+    "winterStructure": true,
+    "sociability": 3,
+    "tier": 3
   },
   {
     "slug": "glyceria-striata",
@@ -10692,7 +11030,7 @@
     "description": "A cool-season wetland grass with graceful drooping panicles that catch light beautifully. Shade-tolerant — one of the few grasses that thrives in wet woodland.",
     "careNotes": "Requires consistently moist to wet soil. Self-sows in ideal sites. Seeds are waterfowl food.",
     "plantingInstructions": "Plant plugs in spring in consistently wet soil. Seed germinates with cold-moist stratification.",
-    "imageUrl": "",
+    "imageUrl": "https://inaturalist-open-data.s3.amazonaws.com/photos/129824/medium.jpg",
     "suppliers": [
       {
         "supplierSlug": "prairie-moon",
@@ -10708,9 +11046,11 @@
         ]
       }
     ],
-    "imageAttribution": "",
+    "imageAttribution": "(c) Jason Hollinger, some rights reserved (CC BY)",
     "oudolfRole": "matrix",
     "seedHeadInterest": false,
-    "winterStructure": false
+    "winterStructure": false,
+    "sociability": 4,
+    "tier": 2
   }
 ]

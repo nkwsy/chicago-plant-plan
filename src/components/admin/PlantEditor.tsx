@@ -23,6 +23,7 @@ import type {
   WildlifeValue,
   EffortLevel,
 } from '@/types/plant';
+import { inferSociabilityAndTier } from '@/lib/plants/sociability';
 
 const PLANT_TYPES: PlantType[] = ['forb', 'grass', 'sedge', 'shrub', 'tree', 'vine', 'fern'];
 const SUN: SunRequirement[] = ['full_sun', 'part_sun', 'part_shade', 'full_shade'];
@@ -32,6 +33,25 @@ const HABITATS: NativeHabitat[] = ['prairie', 'woodland', 'wetland', 'savanna'];
 const WILDLIFE: WildlifeValue[] = ['pollinators', 'birds', 'butterflies', 'mammals'];
 const EFFORT: EffortLevel[] = ['low', 'medium', 'high'];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+const OUDOLF_ROLES = ['matrix', 'structure', 'scatter', 'filler'] as const;
+type OudolfRole = (typeof OUDOLF_ROLES)[number];
+
+const TIER_LABELS: Record<number, string> = {
+  5: 'Emergent — tall accents (trees, large shrubs, tall forbs)',
+  4: 'Primary structural — silhouette forbs, mid shrubs',
+  3: 'Secondary companion — drift forbs, mid grasses',
+  2: 'Matrix — groundcover grasses & sedges',
+  1: 'Scatter / filler — low gap-fillers, single accents',
+};
+
+const SOCIABILITY_LABELS: Record<number, string> = {
+  1: 'Solitary specimen',
+  2: 'Small group of 3–5',
+  3: 'Drift of 6–12',
+  4: 'Sweep of 15–30',
+  5: 'Colony / continuous carpet',
+};
 
 interface InatHit {
   id: number;
@@ -447,6 +467,127 @@ export default function PlantEditor({ initial, mode }: { initial: Partial<Plant>
           values={plant.wildlifeValue || []}
           onToggle={(v) => toggleArr('wildlifeValue', v)}
         />
+      </section>
+
+      <section>
+        <header className="flex items-center justify-between mb-2">
+          <h2 className="text-sm font-semibold">Design role &amp; layout geometry</h2>
+          <button
+            type="button"
+            onClick={() => {
+              const inferred = inferSociabilityAndTier(plant);
+              setPlant((prev) => ({
+                ...prev,
+                sociability: inferred.sociability,
+                tier: inferred.tier,
+              }));
+            }}
+            className="text-xs text-emerald-800 hover:underline"
+            title="Recompute sociability + tier from plantType, oudolfRole, and size"
+          >
+            Auto-infer from botanical fields
+          </button>
+        </header>
+
+        <div className="grid grid-cols-3 gap-4">
+          <Field label="Oudolf role">
+            <select
+              value={plant.oudolfRole || ''}
+              onChange={(e) =>
+                update('oudolfRole', (e.target.value || undefined) as OudolfRole | undefined)
+              }
+              className="input"
+            >
+              <option value="">— unset —</option>
+              {OUDOLF_ROLES.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-stone-500 mt-1">
+              How the plant functions in a naturalistic composition.
+            </p>
+          </Field>
+
+          <Field label="Hierarchy tier">
+            <select
+              value={plant.tier ?? ''}
+              onChange={(e) =>
+                update(
+                  'tier',
+                  (e.target.value
+                    ? (Number(e.target.value) as 1 | 2 | 3 | 4 | 5)
+                    : undefined),
+                )
+              }
+              className="input"
+            >
+              <option value="">— unset —</option>
+              {[5, 4, 3, 2, 1].map((t) => (
+                <option key={t} value={t}>
+                  T{t} — {TIER_LABELS[t]}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-stone-500 mt-1">
+              5 = emergent canopy → 1 = scatter / filler. Drives Voronoi-cell weight in the
+              tapestry layout.
+            </p>
+          </Field>
+
+          <Field label="Sociability">
+            <select
+              value={plant.sociability ?? ''}
+              onChange={(e) =>
+                update(
+                  'sociability',
+                  (e.target.value
+                    ? (Number(e.target.value) as 1 | 2 | 3 | 4 | 5)
+                    : undefined),
+                )
+              }
+              className="input"
+            >
+              <option value="">— unset —</option>
+              {[1, 2, 3, 4, 5].map((s) => (
+                <option key={s} value={s}>
+                  S{s} — {SOCIABILITY_LABELS[s]}
+                </option>
+              ))}
+            </select>
+            <p className="text-xs text-stone-500 mt-1">
+              How many plants typically cluster together. Aster-style scale.
+            </p>
+          </Field>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 mt-3">
+          <Field label="Seed-head interest">
+            <input
+              type="checkbox"
+              checked={!!plant.seedHeadInterest}
+              onChange={(e) => update('seedHeadInterest', e.target.checked)}
+              className="mt-2"
+            />
+          </Field>
+          <Field label="Winter structure">
+            <input
+              type="checkbox"
+              checked={!!plant.winterStructure}
+              onChange={(e) => update('winterStructure', e.target.checked)}
+              className="mt-2"
+            />
+          </Field>
+          <Field label="Default symbol key">
+            <input
+              value={plant.defaultSymbolKey || ''}
+              onChange={(e) => update('defaultSymbolKey', e.target.value || undefined)}
+              placeholder="optional override into a symbol set"
+              className="input"
+            />
+          </Field>
+        </div>
       </section>
 
       <section className="grid grid-cols-3 gap-4">

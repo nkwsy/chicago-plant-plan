@@ -1,0 +1,2316 @@
+{
+  "generatedAt": "2026-05-02T20:04:41.310Z",
+  "write": true,
+  "force": false,
+  "totalPlants": 174,
+  "changed": 174,
+  "distribution": {
+    "byTier": {
+      "1": 45,
+      "2": 28,
+      "3": 44,
+      "4": 8,
+      "5": 49
+    },
+    "bySoc": {
+      "1": 43,
+      "2": 20,
+      "3": 41,
+      "4": 61,
+      "5": 9
+    },
+    "byTypeXTier": {
+      "forb": {
+        "1": 36,
+        "2": 4,
+        "3": 37,
+        "4": 4,
+        "5": 12
+      },
+      "grass": {
+        "2": 15,
+        "3": 1
+      },
+      "sedge": {
+        "2": 9
+      },
+      "shrub": {
+        "4": 4,
+        "5": 19
+      },
+      "tree": {
+        "5": 18
+      },
+      "vine": {
+        "3": 6
+      },
+      "fern": {
+        "1": 9
+      }
+    }
+  },
+  "outcomes": [
+    {
+      "slug": "echinacea-purpurea",
+      "commonName": "Purple Coneflower",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 4
+      },
+      "reason": "structural forb → small group, primary",
+      "changed": true
+    },
+    {
+      "slug": "rudbeckia-hirta",
+      "commonName": "Black-eyed Susan",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "asclepias-tuberosa",
+      "commonName": "Butterfly Weed",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "monarda-fistulosa",
+      "commonName": "Wild Bergamot",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "eutrochium-purpureum",
+      "commonName": "Joe Pye Weed",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "very tall forb (≥6.5ft) → solo emergent accent",
+      "changed": true
+    },
+    {
+      "slug": "lobelia-cardinalis",
+      "commonName": "Cardinal Flower",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "asclepias-syriaca",
+      "commonName": "Common Milkweed",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "asclepias-incarnata",
+      "commonName": "Swamp Milkweed",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "symphyotrichum-novae-angliae",
+      "commonName": "New England Aster",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 5
+      },
+      "reason": "tall structural forb (5–6.5ft) → small group, emergent",
+      "changed": true
+    },
+    {
+      "slug": "symphyotrichum-laeve",
+      "commonName": "Smooth Blue Aster",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "symphyotrichum-oblongifolium",
+      "commonName": "Aromatic Aster",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "echinacea-pallida",
+      "commonName": "Pale Purple Coneflower",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 4
+      },
+      "reason": "structural forb → small group, primary",
+      "changed": true
+    },
+    {
+      "slug": "eryngium-yuccifolium",
+      "commonName": "Rattlesnake Master",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 5
+      },
+      "reason": "tall structural forb (5–6.5ft) → small group, emergent",
+      "changed": true
+    },
+    {
+      "slug": "liatris-pycnostachya",
+      "commonName": "Prairie Blazing Star",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "liatris-aspera",
+      "commonName": "Rough Blazing Star",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "silphium-terebinthinaceum",
+      "commonName": "Prairie Dock",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "very tall forb (≥6.5ft) → solo emergent accent",
+      "changed": true
+    },
+    {
+      "slug": "silphium-laciniatum",
+      "commonName": "Compass Plant",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "very tall forb (≥6.5ft) → solo emergent accent",
+      "changed": true
+    },
+    {
+      "slug": "parthenium-integrifolium",
+      "commonName": "Wild Quinine",
+      "plantType": "forb",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix-role forb → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "zizia-aurea",
+      "commonName": "Golden Alexanders",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "phlox-pilosa",
+      "commonName": "Prairie Phlox",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "solidago-rigida",
+      "commonName": "Stiff Goldenrod",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 4
+      },
+      "reason": "structural forb → small group, primary",
+      "changed": true
+    },
+    {
+      "slug": "solidago-speciosa",
+      "commonName": "Showy Goldenrod",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "tradescantia-ohiensis",
+      "commonName": "Ohio Spiderwort",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "dodecatheon-meadia",
+      "commonName": "Shooting Star",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "geum-triflorum",
+      "commonName": "Prairie Smoke",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "andropogon-gerardii",
+      "commonName": "Big Bluestem",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "sporobolus-heterolepis",
+      "commonName": "Prairie Dropseed",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "schizachyrium-scoparium",
+      "commonName": "Little Bluestem",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "panicum-virgatum",
+      "commonName": "Switchgrass",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "sorghastrum-nutans",
+      "commonName": "Indian Grass",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "bouteloua-curtipendula",
+      "commonName": "Side-oats Grama",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "koeleria-macrantha",
+      "commonName": "June Grass",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "carex-bicknellii",
+      "commonName": "Prairie Sedge",
+      "plantType": "sedge",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 5,
+        "tier": 2
+      },
+      "reason": "sedge → matrix colony",
+      "changed": true
+    },
+    {
+      "slug": "carex-pensylvanica",
+      "commonName": "Pennsylvania Sedge",
+      "plantType": "sedge",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 5,
+        "tier": 2
+      },
+      "reason": "sedge → matrix colony",
+      "changed": true
+    },
+    {
+      "slug": "carex-vulpinoidea",
+      "commonName": "Fox Sedge",
+      "plantType": "sedge",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 5,
+        "tier": 2
+      },
+      "reason": "sedge → matrix colony",
+      "changed": true
+    },
+    {
+      "slug": "carex-muskingumensis",
+      "commonName": "Palm Sedge",
+      "plantType": "sedge",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 5,
+        "tier": 2
+      },
+      "reason": "sedge → matrix colony",
+      "changed": true
+    },
+    {
+      "slug": "helianthus-divaricatus",
+      "commonName": "Woodland Sunflower",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "geranium-maculatum",
+      "commonName": "Wild Geranium",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "aquilegia-canadensis",
+      "commonName": "Wild Columbine",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 1
+      },
+      "reason": "filler forb → drift, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "polemonium-reptans",
+      "commonName": "Jacob's Ladder",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "lobelia-siphilitica",
+      "commonName": "Great Blue Lobelia",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "sanguinaria-canadensis",
+      "commonName": "Bloodroot",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "mertensia-virginica",
+      "commonName": "Virginia Bluebells",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "polygonatum-biflorum",
+      "commonName": "Solomon's Seal",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "trillium-grandiflorum",
+      "commonName": "White Trillium",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "asarum-canadense",
+      "commonName": "Wild Ginger",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "elymus-hystrix",
+      "commonName": "Bottlebrush Grass",
+      "plantType": "grass",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "mid grass → drift, secondary companion",
+      "changed": true
+    },
+    {
+      "slug": "iris-virginica-var-shrevei",
+      "commonName": "Blue Flag Iris",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "caltha-palustris",
+      "commonName": "Marsh Marigold",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "acorus-calamus",
+      "commonName": "Sweet Flag",
+      "plantType": "forb",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix-role forb → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "verbena-hastata",
+      "commonName": "Blue Vervain",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "eupatorium-perfoliatum",
+      "commonName": "Common Boneset",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "vernonia-fasciculata",
+      "commonName": "Ironweed",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 5
+      },
+      "reason": "tall structural forb (5–6.5ft) → small group, emergent",
+      "changed": true
+    },
+    {
+      "slug": "spartina-pectinata",
+      "commonName": "Prairie Cordgrass",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "juncus-effusus",
+      "commonName": "Soft Rush",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "physocarpus-opulifolius",
+      "commonName": "Common Ninebark",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "corylus-americana",
+      "commonName": "American Hazelnut",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "ceanothus-americanus",
+      "commonName": "New Jersey Tea",
+      "plantType": "shrub",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 4
+      },
+      "reason": "mid shrub (3–5ft) → small group, primary",
+      "changed": true
+    },
+    {
+      "slug": "cornus-sericea",
+      "commonName": "Red-osier Dogwood",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "ilex-verticillata",
+      "commonName": "Winterberry Holly",
+      "plantType": "shrub",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "cornus-racemosa",
+      "commonName": "Gray Dogwood",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "aronia-melanocarpa",
+      "commonName": "Black Chokeberry",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "sambucus-nigra-ssp-canadensis",
+      "commonName": "Common Elderberry",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "amorpha-canescens",
+      "commonName": "Leadplant",
+      "plantType": "shrub",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 4
+      },
+      "reason": "mid shrub (3–5ft) → small group, primary",
+      "changed": true
+    },
+    {
+      "slug": "quercus-macrocarpa",
+      "commonName": "Bur Oak",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "quercus-bicolor",
+      "commonName": "Swamp White Oak",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "quercus-rubra",
+      "commonName": "Northern Red Oak",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "amelanchier-arborea",
+      "commonName": "Downy Serviceberry",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "cercis-canadensis",
+      "commonName": "Eastern Redbud",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "tilia-americana",
+      "commonName": "American Basswood",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "nyssa-sylvatica",
+      "commonName": "Black Gum",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "parthenocissus-quinquefolia",
+      "commonName": "Virginia Creeper",
+      "plantType": "vine",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 3
+      },
+      "reason": "vine → small group, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "lonicera-sempervirens",
+      "commonName": "Trumpet Honeysuckle",
+      "plantType": "vine",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 3
+      },
+      "reason": "vine → small group, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "celastrus-scandens",
+      "commonName": "American Bittersweet",
+      "plantType": "vine",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 3
+      },
+      "reason": "vine → small group, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "adiantum-pedatum",
+      "commonName": "Northern Maidenhair Fern",
+      "plantType": "fern",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "fern → sweep, low filler/groundcover",
+      "changed": true
+    },
+    {
+      "slug": "athyrium-filix-femina",
+      "commonName": "Lady Fern",
+      "plantType": "fern",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "fern → sweep, low filler/groundcover",
+      "changed": true
+    },
+    {
+      "slug": "osmunda-regalis",
+      "commonName": "Royal Fern",
+      "plantType": "fern",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "fern → sweep, low filler/groundcover",
+      "changed": true
+    },
+    {
+      "slug": "coreopsis-palmata",
+      "commonName": "Prairie Coreopsis",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "silphium-perfoliatum",
+      "commonName": "Cup Plant",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "very tall forb (≥6.5ft) → solo emergent accent",
+      "changed": true
+    },
+    {
+      "slug": "lupinus-perennis",
+      "commonName": "Wild Lupine",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "dalea-purpurea",
+      "commonName": "Purple Prairie Clover",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "baptisia-alba",
+      "commonName": "White Wild Indigo",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 5
+      },
+      "reason": "tall structural forb (5–6.5ft) → small group, emergent",
+      "changed": true
+    },
+    {
+      "slug": "baptisia-bracteata",
+      "commonName": "Cream Wild Indigo",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 4
+      },
+      "reason": "structural forb → small group, primary",
+      "changed": true
+    },
+    {
+      "slug": "physostegia-virginiana",
+      "commonName": "Obedient Plant",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "penstemon-digitalis",
+      "commonName": "Foxglove Beardtongue",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "veronicastrum-virginicum",
+      "commonName": "Culver's Root",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 5
+      },
+      "reason": "tall structural forb (5–6.5ft) → small group, emergent",
+      "changed": true
+    },
+    {
+      "slug": "fragaria-virginiana",
+      "commonName": "Wild Strawberry",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "allium-cernuum",
+      "commonName": "Nodding Wild Onion",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "heuchera-richardsonii",
+      "commonName": "Prairie Alumroot",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "silene-regia",
+      "commonName": "Royal Catchfly",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "liatris-spicata",
+      "commonName": "Marsh Blazing Star",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "lindera-benzoin",
+      "commonName": "Common Spicebush",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "chelone-glabra",
+      "commonName": "White Turtlehead",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "calamagrostis-canadensis",
+      "commonName": "Blue Joint Grass",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "blephilia-ciliata",
+      "commonName": "Downy Wood Mint",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "hamamelis-virginiana",
+      "commonName": "Common Witch-hazel",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "chasmanthium-latifolium",
+      "commonName": "Northern Sea Oats",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "rudbeckia-subtomentosa",
+      "commonName": "Sweet Black-eyed Susan",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 5
+      },
+      "reason": "tall structural forb (5–6.5ft) → small group, emergent",
+      "changed": true
+    },
+    {
+      "slug": "ageratina-altissima",
+      "commonName": "White Snakeroot",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "solidago-flexicaulis",
+      "commonName": "Zigzag Goldenrod",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "caulophyllum-thalictroides",
+      "commonName": "Blue Cohosh",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "phlox-divaricata",
+      "commonName": "Woodland Phlox",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "tiarella-cordifolia",
+      "commonName": "Foam Flower",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "podophyllum-peltatum",
+      "commonName": "Mayapple",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "arisaema-triphyllum",
+      "commonName": "Jack-in-the-Pulpit",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 1
+      },
+      "reason": "filler forb → drift, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "dicentra-cucullaria",
+      "commonName": "Dutchman's Breeches",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "campanula-americana",
+      "commonName": "Tall Bellflower",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "eurybia-divaricata",
+      "commonName": "White Wood Aster",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "hepatica-acutiloba",
+      "commonName": "Sharp-lobed Hepatica",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "osmorhiza-claytonii",
+      "commonName": "Sweet Cicely",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "packera-aurea",
+      "commonName": "Golden Groundsel",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "chrysogonum-virginianum",
+      "commonName": "Green and Gold",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "geum-fragarioides",
+      "commonName": "Barren Strawberry",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "carex-laxiculmis",
+      "commonName": "Spreading Sedge",
+      "plantType": "sedge",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 5,
+        "tier": 2
+      },
+      "reason": "sedge → matrix colony",
+      "changed": true
+    },
+    {
+      "slug": "carex-jamesii",
+      "commonName": "James' Sedge",
+      "plantType": "sedge",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 5,
+        "tier": 2
+      },
+      "reason": "sedge → matrix colony",
+      "changed": true
+    },
+    {
+      "slug": "cornus-alternifolia",
+      "commonName": "Pagoda Dogwood",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "viburnum-acerifolium",
+      "commonName": "Maple-leaf Viburnum",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "staphylea-trifolia",
+      "commonName": "Bladdernut",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "euonymus-atropurpureus",
+      "commonName": "American Wahoo",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "viola-sororia",
+      "commonName": "Common Blue Violet",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "coreopsis-tripteris",
+      "commonName": "Tall Coreopsis",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "very tall forb (≥6.5ft) → solo emergent accent",
+      "changed": true
+    },
+    {
+      "slug": "chamaecrista-fasciculata",
+      "commonName": "Partridge Pea",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "polystichum-acrostichoides",
+      "commonName": "Christmas Fern",
+      "plantType": "fern",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "fern → sweep, low filler/groundcover",
+      "changed": true
+    },
+    {
+      "slug": "matteuccia-struthiopteris",
+      "commonName": "Ostrich Fern",
+      "plantType": "fern",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "fern → sweep, low filler/groundcover",
+      "changed": true
+    },
+    {
+      "slug": "onoclea-sensibilis",
+      "commonName": "Sensitive Fern",
+      "plantType": "fern",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "fern → sweep, low filler/groundcover",
+      "changed": true
+    },
+    {
+      "slug": "elymus-virginicus",
+      "commonName": "Virginia Wild Rye",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "elymus-canadensis",
+      "commonName": "Canada Wild Rye",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "quercus-alba",
+      "commonName": "White Oak",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "acer-saccharum",
+      "commonName": "Sugar Maple",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "celtis-occidentalis",
+      "commonName": "Common Hackberry",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "carya-ovata",
+      "commonName": "Shagbark Hickory",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "carpinus-caroliniana",
+      "commonName": "American Hornbeam",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "ostrya-virginiana",
+      "commonName": "Eastern Hop Hornbeam",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "platanus-occidentalis",
+      "commonName": "American Sycamore",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "prunus-serotina",
+      "commonName": "Black Cherry",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "gymnocladus-dioicus",
+      "commonName": "Kentucky Coffeetree",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "betula-nigra",
+      "commonName": "River Birch",
+      "plantType": "tree",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "tree → solo emergent overstory",
+      "changed": true
+    },
+    {
+      "slug": "cephalanthus-occidentalis",
+      "commonName": "Buttonbush",
+      "plantType": "shrub",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "viburnum-lentago",
+      "commonName": "Nannyberry",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "viburnum-prunifolium",
+      "commonName": "Blackhaw Viburnum",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "viburnum-dentatum",
+      "commonName": "Arrowwood Viburnum",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "prunus-virginiana",
+      "commonName": "Chokecherry",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "spiraea-alba",
+      "commonName": "Meadowsweet",
+      "plantType": "shrub",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "rosa-carolina",
+      "commonName": "Pasture Rose",
+      "plantType": "shrub",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 4
+      },
+      "reason": "mid shrub (3–5ft) → small group, primary",
+      "changed": true
+    },
+    {
+      "slug": "amorpha-fruticosa",
+      "commonName": "False Indigo Bush",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "large shrub (≥5ft) → solo emergent",
+      "changed": true
+    },
+    {
+      "slug": "diervilla-lonicera",
+      "commonName": "Northern Bush Honeysuckle",
+      "plantType": "shrub",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 4
+      },
+      "reason": "mid shrub (3–5ft) → small group, primary",
+      "changed": true
+    },
+    {
+      "slug": "campsis-radicans",
+      "commonName": "Trumpet Creeper",
+      "plantType": "vine",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 3
+      },
+      "reason": "vine → small group, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "vitis-riparia",
+      "commonName": "Riverbank Grape",
+      "plantType": "vine",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 3
+      },
+      "reason": "vine → small group, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "clematis-virginiana",
+      "commonName": "Virgin's Bower",
+      "plantType": "vine",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 2,
+        "tier": 3
+      },
+      "reason": "vine → small group, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "osmundastrum-cinnamomeum",
+      "commonName": "Cinnamon Fern",
+      "plantType": "fern",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "fern → sweep, low filler/groundcover",
+      "changed": true
+    },
+    {
+      "slug": "osmunda-claytoniana",
+      "commonName": "Interrupted Fern",
+      "plantType": "fern",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "fern → sweep, low filler/groundcover",
+      "changed": true
+    },
+    {
+      "slug": "thelypteris-palustris",
+      "commonName": "Marsh Fern",
+      "plantType": "fern",
+      "oudolfRole": null,
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "fern → sweep, low filler/groundcover",
+      "changed": true
+    },
+    {
+      "slug": "bouteloua-gracilis",
+      "commonName": "Blue Grama",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "carex-stricta",
+      "commonName": "Tussock Sedge",
+      "plantType": "sedge",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 5,
+        "tier": 2
+      },
+      "reason": "sedge → matrix colony",
+      "changed": true
+    },
+    {
+      "slug": "gentiana-andrewsii",
+      "commonName": "Bottle Gentian",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "helenium-autumnale",
+      "commonName": "Common Sneezeweed",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "symphyotrichum-ericoides",
+      "commonName": "Heath Aster",
+      "plantType": "forb",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix-role forb → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "symphyotrichum-lateriflorum",
+      "commonName": "Calico Aster",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "solidago-nemoralis",
+      "commonName": "Old-field Goldenrod",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "claytonia-virginica",
+      "commonName": "Spring Beauty",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "erythronium-albidum",
+      "commonName": "White Trout Lily",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "cardamine-concatenata",
+      "commonName": "Cut-leaved Toothwort",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "camassia-scilloides",
+      "commonName": "Wild Hyacinth",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 1
+      },
+      "reason": "filler forb → drift, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "pycnanthemum-virginianum",
+      "commonName": "Common Mountain Mint",
+      "plantType": "forb",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix-role forb → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "ratibida-pinnata",
+      "commonName": "Gray-headed Coneflower",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "asclepias-verticillata",
+      "commonName": "Whorled Milkweed",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "asclepias-sullivantii",
+      "commonName": "Sullivant's Milkweed",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "anemone-canadensis",
+      "commonName": "Canada Anemone",
+      "plantType": "forb",
+      "oudolfRole": "filler",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 1
+      },
+      "reason": "low filler forb → sweep, filler layer",
+      "changed": true
+    },
+    {
+      "slug": "anemone-virginiana",
+      "commonName": "Tall Thimbleweed",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "glyceria-striata",
+      "commonName": "Fowl Manna Grass",
+      "plantType": "grass",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 4,
+        "tier": 2
+      },
+      "reason": "matrix grass → sweep, matrix layer",
+      "changed": true
+    },
+    {
+      "slug": "queen-of-the-prairie",
+      "commonName": "queen of the prairie",
+      "plantType": "forb",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 1,
+        "tier": 5
+      },
+      "reason": "very tall forb (≥6.5ft) → solo emergent accent",
+      "changed": true
+    },
+    {
+      "slug": "purple-false-foxglove",
+      "commonName": "purple false foxglove",
+      "plantType": "forb",
+      "oudolfRole": "scatter",
+      "before": {},
+      "after": {
+        "sociability": 3,
+        "tier": 3
+      },
+      "reason": "companion forb → drift, secondary layer",
+      "changed": true
+    },
+    {
+      "slug": "bristly-sedge",
+      "commonName": "bristly sedge",
+      "plantType": "sedge",
+      "oudolfRole": "matrix",
+      "before": {},
+      "after": {
+        "sociability": 5,
+        "tier": 2
+      },
+      "reason": "sedge → matrix colony",
+      "changed": true
+    },
+    {
+      "slug": "woolgrass",
+      "commonName": "woolgrass",
+      "plantType": "sedge",
+      "oudolfRole": "structure",
+      "before": {},
+      "after": {
+        "sociability": 5,
+        "tier": 2
+      },
+      "reason": "sedge → matrix colony",
+      "changed": true
+    }
+  ]
+}
