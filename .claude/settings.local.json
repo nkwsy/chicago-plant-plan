@@ -57,7 +57,31 @@
       "Bash(git checkout *)",
       "Bash(gh pr create --base main --title 'Planner UX polish + supplier-availability automation' --body ' *)",
       "Bash(command -v gh)",
-      "Read(//opt/homebrew/bin/**)"
+      "Read(//opt/homebrew/bin/**)",
+      "WebFetch(domain:chicago-plant-plan-urbanrivers.vercel.app)",
+      "Bash(curl -sI https://chicago-plant-plan-urbanrivers.vercel.app/formulas/test1/edit)",
+      "Bash(PORT=3100 npm run dev)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3100/)",
+      "Bash(curl -s -o /tmp/detail.html -w \"HTTP %{http_code}  size=%{size_download}\\\\n\" http://localhost:3100/formulas/piet-oudolf-prairie-matrix)",
+      "Bash(curl -s -o /tmp/edit.html -w \"HTTP %{http_code}  loc=%{redirect_url}\\\\n\" http://localhost:3100/formulas/piet-oudolf-prairie-matrix/edit)",
+      "Bash(curl -s -o /tmp/new.html -w \"HTTP %{http_code}  loc=%{redirect_url}\\\\n\" http://localhost:3100/formulas/new)",
+      "Bash(curl -s -X POST http://localhost:3100/api/formulas/preview-plot -H \"Content-Type: application/json\" -d '{}' -w \"\\\\nHTTP %{http_code}\\\\n\" -o /tmp/preview.json)",
+      "Read(//tmp/**)",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(curl -sf -o /dev/null http://localhost:3100/)",
+      "Bash(curl -s http://localhost:3100/formulas/piet-oudolf-prairie-matrix)",
+      "Bash(time curl *)",
+      "Read(//private/tmp/**)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(curl -sS -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3000/formulas/piet-oudolf-prairie-matrix/edit)",
+      "Bash(ps -p 54429 -o pid,command)",
+      "Bash(curl -sf http://localhost:3000/api/supplier-availability)",
+      "Bash(curl -sX POST http://localhost:3000/api/supplier-availability -H 'Content-Type: application/json' -d '{}')",
+      "Bash(curl -sX POST http://localhost:3000/api/supplier-inquiry -H 'Content-Type: application/json' -d '{}')",
+      "Bash(curl -s 'http://localhost:3000/api/plants?slug=andropogon-gerardii')",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Big Bluestem'\\); print\\('tier:', d.get\\('tier'\\)\\); print\\('sociability:', d.get\\('sociability'\\)\\); print\\('oudolfRole:', d.get\\('oudolfRole'\\)\\)\")",
+      "Bash(curl -s 'http://localhost:3000/api/plants?slug=eutrochium-purpureum')",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Joe Pye'\\); print\\('tier:', d.get\\('tier'\\)\\); print\\('sociability:', d.get\\('sociability'\\)\\); print\\('oudolfRole:', d.get\\('oudolfRole'\\)\\)\")"
     ]
   }
 }

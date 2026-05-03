@@ -1,0 +1,146 @@
+[
+  {
+    "slug": "oudolf-classic",
+    "name": "Oudolf Classic",
+    "description": "Hand-drawn line glyphs in the tradition of Piet Oudolf's planting plans: radial composites, hatched grasses, tufted sedges, umbel clusters. Glyphs use currentColor so the active palette flows through.",
+    "isBuiltIn": true,
+    "byFamily": {
+      "Asteraceae": {
+        "svg": "<g stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" fill=\"none\"><line x1=\"12\" y1=\"3\" x2=\"12\" y2=\"21\"/><line x1=\"3\" y1=\"12\" x2=\"21\" y2=\"12\"/><line x1=\"5.6\" y1=\"5.6\" x2=\"18.4\" y2=\"18.4\"/><line x1=\"18.4\" y1=\"5.6\" x2=\"5.6\" y2=\"18.4\"/></g><circle cx=\"12\" cy=\"12\" r=\"2.5\" fill=\"currentColor\"/>",
+        "scale": 1
+      },
+      "Poaceae": {
+        "svg": "<g stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" fill=\"none\"><line x1=\"7\" y1=\"21\" x2=\"6\" y2=\"4\"/><line x1=\"12\" y1=\"21\" x2=\"12\" y2=\"3\"/><line x1=\"17\" y1=\"21\" x2=\"18\" y2=\"4\"/></g>",
+        "scale": 1
+      },
+      "Cyperaceae": {
+        "svg": "<g fill=\"currentColor\"><circle cx=\"8\" cy=\"15\" r=\"1.6\"/><circle cx=\"16\" cy=\"15\" r=\"1.6\"/><circle cx=\"12\" cy=\"8\" r=\"1.6\"/></g><g stroke=\"currentColor\" stroke-width=\"1.2\" stroke-linecap=\"round\"><line x1=\"8\" y1=\"15\" x2=\"8\" y2=\"19\"/><line x1=\"16\" y1=\"15\" x2=\"16\" y2=\"19\"/><line x1=\"12\" y1=\"8\" x2=\"12\" y2=\"5\"/></g>",
+        "scale": 0.95
+      },
+      "Apiaceae": {
+        "svg": "<g fill=\"currentColor\"><circle cx=\"12\" cy=\"12\" r=\"1.6\"/><circle cx=\"5\" cy=\"9\" r=\"1.4\"/><circle cx=\"19\" cy=\"9\" r=\"1.4\"/><circle cx=\"7\" cy=\"17\" r=\"1.4\"/><circle cx=\"17\" cy=\"17\" r=\"1.4\"/><circle cx=\"12\" cy=\"5\" r=\"1.4\"/></g><g stroke=\"currentColor\" stroke-width=\"1\" fill=\"none\"><line x1=\"12\" y1=\"12\" x2=\"5\" y2=\"9\"/><line x1=\"12\" y1=\"12\" x2=\"19\" y2=\"9\"/><line x1=\"12\" y1=\"12\" x2=\"7\" y2=\"17\"/><line x1=\"12\" y1=\"12\" x2=\"17\" y2=\"17\"/><line x1=\"12\" y1=\"12\" x2=\"12\" y2=\"5\"/></g>",
+        "scale": 1
+      },
+      "Lamiaceae": {
+        "svg": "<g stroke=\"currentColor\" stroke-width=\"1.8\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\"><polyline points=\"5,16 12,7 19,16\"/><polyline points=\"7,19 12,12 17,19\"/></g>",
+        "scale": 1
+      },
+      "Iridaceae": {
+        "svg": "<g stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" fill=\"none\"><path d=\"M12 21 C 11 12, 8 7, 6 4\"/><path d=\"M12 21 C 12 12, 12 6, 12 3\"/><path d=\"M12 21 C 13 12, 16 7, 18 4\"/></g>",
+        "scale": 1
+      },
+      "Liliaceae": {
+        "svg": "<g stroke=\"currentColor\" stroke-width=\"1.6\" stroke-linecap=\"round\" fill=\"none\"><path d=\"M12 21 C 11 12, 8 7, 6 4\"/><path d=\"M12 21 C 12 12, 12 6, 12 3\"/><path d=\"M12 21 C 13 12, 16 7, 18 4\"/></g>",
+        "scale": 1
+      },
+      "Fagaceae": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"9\" stroke=\"currentColor\" stroke-width=\"1.5\" fill=\"none\"/><g stroke=\"currentColor\" stroke-width=\"0.9\" fill=\"none\"><line x1=\"5\" y1=\"7\" x2=\"19\" y2=\"17\"/><line x1=\"5\" y1=\"17\" x2=\"19\" y2=\"7\"/><line x1=\"12\" y1=\"3\" x2=\"12\" y2=\"21\"/><line x1=\"3\" y1=\"12\" x2=\"21\" y2=\"12\"/></g>",
+        "scale": 1.2
+      },
+      "Rosaceae": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"7\" stroke=\"currentColor\" stroke-width=\"1.5\" fill=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"2.2\" fill=\"currentColor\"/>",
+        "scale": 1.05
+      }
+    },
+    "byTier": {
+      "5": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"9\" stroke=\"currentColor\" stroke-width=\"1.5\" fill=\"none\"/><g stroke=\"currentColor\" stroke-width=\"0.9\" fill=\"none\"><line x1=\"5\" y1=\"7\" x2=\"19\" y2=\"17\"/><line x1=\"5\" y1=\"17\" x2=\"19\" y2=\"7\"/></g>",
+        "scale": 1.25
+      },
+      "4": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"7\" stroke=\"currentColor\" stroke-width=\"1.5\" fill=\"none\"/><circle cx=\"12\" cy=\"12\" r=\"2\" fill=\"currentColor\"/>",
+        "scale": 1.1
+      },
+      "3": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"5\" stroke=\"currentColor\" stroke-width=\"1.4\" fill=\"none\"/>",
+        "scale": 1
+      },
+      "2": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"2.4\" fill=\"currentColor\"/>",
+        "scale": 0.85
+      },
+      "1": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"1.4\" fill=\"currentColor\"/>",
+        "scale": 0.7
+      }
+    },
+    "overrides": {},
+    "fallback": {
+      "svg": "<circle cx=\"12\" cy=\"12\" r=\"3\" fill=\"currentColor\"/>",
+      "defaultColor": "#2a2a2a",
+      "scale": 1
+    }
+  },
+  {
+    "slug": "bold-geometric",
+    "name": "Bold Geometric",
+    "description": "Filled geometric shapes — stars for composites, triangles for grasses, hexagons for umbels. Reads at a glance for presentations.",
+    "isBuiltIn": true,
+    "byFamily": {
+      "Asteraceae": {
+        "svg": "<polygon points=\"12,2 14.4,9.6 22,9.6 15.8,14 18.2,21.6 12,17.2 5.8,21.6 8.2,14 2,9.6 9.6,9.6\" fill=\"currentColor\"/>",
+        "scale": 1
+      },
+      "Poaceae": {
+        "svg": "<polygon points=\"12,3 21,21 3,21\" fill=\"currentColor\"/>",
+        "scale": 1
+      },
+      "Cyperaceae": {
+        "svg": "<rect x=\"5\" y=\"5\" width=\"14\" height=\"14\" fill=\"currentColor\"/>",
+        "scale": 0.85
+      },
+      "Apiaceae": {
+        "svg": "<polygon points=\"12,3 20.7,8 20.7,16 12,21 3.3,16 3.3,8\" fill=\"currentColor\"/>",
+        "scale": 1
+      },
+      "Lamiaceae": {
+        "svg": "<polygon points=\"12,3 21,12 12,21 3,12\" fill=\"currentColor\"/>",
+        "scale": 1
+      },
+      "Iridaceae": {
+        "svg": "<ellipse cx=\"12\" cy=\"12\" rx=\"4\" ry=\"9\" fill=\"currentColor\"/>",
+        "scale": 1
+      },
+      "Liliaceae": {
+        "svg": "<ellipse cx=\"12\" cy=\"12\" rx=\"4\" ry=\"9\" fill=\"currentColor\"/>",
+        "scale": 1
+      },
+      "Fagaceae": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"currentColor\"/><circle cx=\"12\" cy=\"12\" r=\"4\" fill=\"#fff\"/>",
+        "scale": 1.25
+      },
+      "Rosaceae": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"8\" fill=\"currentColor\"/>",
+        "scale": 1.05
+      }
+    },
+    "byTier": {
+      "5": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"10\" fill=\"currentColor\"/><circle cx=\"12\" cy=\"12\" r=\"4\" fill=\"#fff\"/>",
+        "scale": 1.25
+      },
+      "4": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"8\" fill=\"currentColor\"/>",
+        "scale": 1.1
+      },
+      "3": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"6\" fill=\"currentColor\"/>",
+        "scale": 1
+      },
+      "2": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"3\" fill=\"currentColor\"/>",
+        "scale": 0.85
+      },
+      "1": {
+        "svg": "<circle cx=\"12\" cy=\"12\" r=\"1.6\" fill=\"currentColor\"/>",
+        "scale": 0.7
+      }
+    },
+    "overrides": {},
+    "fallback": {
+      "svg": "<circle cx=\"12\" cy=\"12\" r=\"4\" fill=\"currentColor\"/>",
+      "defaultColor": "#2a2a2a",
+      "scale": 1
+    }
+  }
+]

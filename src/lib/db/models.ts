@@ -41,6 +41,10 @@ export interface IPlant extends Document {
   oudolfRole?: string | null;
   seedHeadInterest?: boolean;
   winterStructure?: boolean;
+  // Layout-geometry metadata (drives Voronoi tapestry + grid layouts).
+  sociability?: number | null;
+  tier?: number | null;
+  defaultSymbolKey?: string | null;
 }
 
 const PlantSchema = new Schema<IPlant>({
@@ -92,6 +96,11 @@ const PlantSchema = new Schema<IPlant>({
   },
   seedHeadInterest: { type: Boolean, default: false },
   winterStructure: { type: Boolean, default: false },
+  // Layout-geometry metadata. Defaults are null so missing values are
+  // distinguishable from a real "1" — the inference helper relies on this.
+  sociability: { type: Number, default: null, min: 1, max: 5 },
+  tier: { type: Number, default: null, min: 1, max: 5 },
+  defaultSymbolKey: { type: String, default: null },
 }, { timestamps: true });
 
 PlantSchema.index({ sun: 1 });
@@ -100,6 +109,8 @@ PlantSchema.index({ effortLevel: 1 });
 PlantSchema.index({ nativeHabitats: 1 });
 PlantSchema.index({ plantType: 1 });
 PlantSchema.index({ favorability: -1 });
+PlantSchema.index({ tier: 1 });
+PlantSchema.index({ sociability: 1 });
 
 // Plan
 export interface IPlan extends Document {
@@ -135,6 +146,8 @@ export interface IPlan extends Document {
   exclusionZones: object[];
   existingTrees: object[];
   sunGrid: object | null;
+  symbolSetSlug?: string | null;
+  symbolOverrides?: Record<string, unknown>;
   layoutVersion: number;
   createdAt: Date;
   updatedAt: Date;
@@ -172,10 +185,19 @@ const PlanSchema = new Schema<IPlan>({
     speciesIndex: Number,
     plantType: String,
     groupId: String,
+    // V4 tapestry fields. cellGeoJson is Mixed because Mongoose's GeoJSON
+    // typed schema is finicky about coordinate-array depth; we already validate
+    // the shape on the server side before save.
+    tier: Number,
+    sociability: Number,
+    cellGeoJson: Schema.Types.Mixed,
+    cellAreaSqFt: Number,
   }],
   exclusionZones: Schema.Types.Mixed,
   existingTrees: Schema.Types.Mixed,
   sunGrid: Schema.Types.Mixed,
+  symbolSetSlug: { type: String, default: null },
+  symbolOverrides: { type: Schema.Types.Mixed, default: {} },
   layoutVersion: { type: Number, default: 1 },
   gridCols: { type: Number, default: 0 },
   gridRows: { type: Number, default: 0 },
@@ -318,6 +340,38 @@ const FormulaSchema = new Schema<IFormula>({
 // Fast lookup for "my formulas" queries: filter owner, then load by slug.
 FormulaSchema.index({ ownerId: 1, updatedAt: -1 });
 
+// SymbolSet — reusable library of SVG glyphs (planting-plan illustration
+// style). See src/types/symbol-set.ts for the full shape. We use Mixed for
+// the keyed records since we don't want to enforce a closed enum on family
+// or species names at the schema layer.
+export interface ISymbolSet extends Document {
+  slug: string;
+  name: string;
+  description: string;
+  isBuiltIn: boolean;
+  parentSlug?: string | null;
+  ownerId?: string | null;
+  byFamily: Record<string, unknown>;
+  byTier: Record<string, unknown>;
+  overrides: Record<string, unknown>;
+  fallback: { svg: string; defaultColor?: string; scale?: number };
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+const SymbolSetSchema = new Schema<ISymbolSet>({
+  slug: { type: String, required: true, unique: true, index: true },
+  name: { type: String, required: true },
+  description: { type: String, default: '' },
+  isBuiltIn: { type: Boolean, default: false, index: true },
+  parentSlug: { type: String, default: null },
+  ownerId: { type: String, default: null, index: true },
+  byFamily: { type: Schema.Types.Mixed, default: {} },
+  byTier: { type: Schema.Types.Mixed, default: {} },
+  overrides: { type: Schema.Types.Mixed, default: {} },
+  fallback: { type: Schema.Types.Mixed, required: true },
+}, { timestamps: true, minimize: false });
+
 // Feedback — anonymous or signed-in user feedback collected from the floating
 // widget. `page` is the route the user was on when they submitted.
 export type FeedbackCategory = 'bug' | 'idea' | 'praise' | 'question' | 'other';
@@ -375,6 +429,7 @@ export const ApiCache = mongoose.models.ApiCache || mongoose.model<IApiCache>('A
 export const PriceInquiry = mongoose.models.PriceInquiry || mongoose.model<IPriceInquiry>('PriceInquiry', PriceInquirySchema);
 export const Formula = mongoose.models.Formula || mongoose.model<IFormula>('Formula', FormulaSchema);
 export const Feedback = mongoose.models.Feedback || mongoose.model<IFeedback>('Feedback', FeedbackSchema);
+export const SymbolSet = mongoose.models.SymbolSet || mongoose.model<ISymbolSet>('SymbolSet', SymbolSetSchema);
 
 // Re-export User so callers that historically import from './models' still work.
 export { User } from './user';

@@ -26,6 +26,15 @@ export interface UserPreferences {
    *  empty string = classic selection with no formula bias. Orthogonal to
    *  `aestheticPref`, which only affects layout clustering. */
   formulaSlug?: string;
+  /** Geometry algorithm used to place plants on the bed.
+   *   - 'numbered' (default): legacy 3-phase placement, used with the
+   *     numbered-circle render mode.
+   *   - 'tapestry': Voronoi-cell tessellation; every patch of bed is owned
+   *     by a plant, no voids. Renders as cell polygons.
+   *   - 'grid': uniform grid at gridSpacingInches o.c. — install-friendly. */
+  layoutMode?: 'numbered' | 'tapestry' | 'grid';
+  /** On-center spacing for `layoutMode === 'grid'`. Default 18″. */
+  gridSpacingInches?: number;
 }
 
 export interface PlanPlant {
@@ -46,6 +55,19 @@ export interface PlanPlant {
   speciesIndex?: number;
   plantType?: PlantType;
   groupId?: string;
+  // V4 layout fields — Voronoi-cell tapestry (phase 2 of layout overhaul).
+  // When present, each plant "owns" a polygon of the bed; renderers use the
+  // cell as the tapestry shape instead of the procedural blob.
+  /** Hierarchy tier the plant was placed at (1=filler … 5=emergent). */
+  tier?: 1 | 2 | 3 | 4 | 5;
+  /** Sociability the plant was assigned (1=solitary … 5=colony). */
+  sociability?: 1 | 2 | 3 | 4 | 5;
+  /** GeoJSON polygon of this plant's Voronoi cell, clipped to bed +
+   *  exclusion zones. Coordinates are [lng, lat] pairs. */
+  cellGeoJson?: GeoJSON.Polygon;
+  /** Cell area in square feet — useful for rendering decisions (icon scale,
+   *  drift coalescing) without re-running turf.area on every paint. */
+  cellAreaSqFt?: number;
 }
 
 export interface ExclusionZone {
@@ -114,6 +136,10 @@ export interface PlanData {
   layoutVersion?: number;
   // V3 fields
   sunGrid?: SunGrid;
+  // V4 fields — symbol-set selection + per-plan overrides for the active
+  // tapestry render. See src/types/symbol-set.ts.
+  symbolSetSlug?: string;
+  symbolOverrides?: Record<string, { svg?: string; color?: string; scale?: number }>;
 }
 
 export interface QuoteRequest {

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import MapContainer from '@/components/map/MapContainer';
 import PlantingLegend from '@/components/plan/PlantingLegend';
+import PlanFilterPanel, { EMPTY_FILTERS, applyPlanFilters, type PlanFilters } from '@/components/plan/PlanFilterPanel';
 import type { SiteProfile } from '@/types/analysis';
 import type { UserPreferences, PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
 import type { DesignFormula } from '@/types/formula';
@@ -55,6 +56,7 @@ export default function NewPlanPage() {
     densityMultiplier: 1.0,
     includeTrees: true,
     includeShrubs: true,
+    layoutMode: 'numbered',
   });
   const [allPlantsCache, setAllPlantsCache] = useState<any[]>([]);
   const [exclusionZones, setExclusionZones] = useState<ExclusionZone[]>([]);
@@ -70,6 +72,18 @@ export default function NewPlanPage() {
   // Oudolf-style render of the planting drift). Users toggle from the plan
   // step toolbar.
   const [plantRenderMode, setPlantRenderMode] = useState<'numbered' | 'tapestry'>('numbered');
+  const [showSymbols, setShowSymbols] = useState(true);
+  const [filters, setFilters] = useState<PlanFilters>(EMPTY_FILTERS);
+  const [symbolSetSlug, setSymbolSetSlug] = useState<string>('oudolf-classic');
+  const [symbolSets, setSymbolSets] = useState<import('@/types/symbol-set').SymbolSet[]>([]);
+  const activeSymbolSet = symbolSets.find((s) => s.slug === symbolSetSlug) || null;
+  // Load available symbol sets once.
+  useEffect(() => {
+    fetch('/api/symbol-sets')
+      .then((r) => r.json())
+      .then((d) => Array.isArray(d) ? setSymbolSets(d) : null)
+      .catch(() => {/* keep going without symbols */});
+  }, []);
   const [generatedPlan, setGeneratedPlan] = useState<{
     plants: PlanPlant[];
     gridCols: number;
@@ -82,6 +96,7 @@ export default function NewPlanPage() {
   const [saving, setSaving] = useState(false);
   const [planTitle, setPlanTitle] = useState('My Native Garden');
   const [authorEmail, setAuthorEmail] = useState('');
+  const [isPublic, setIsPublic] = useState(true);
 
   const steps: { key: Step; label: string }[] = [
     { key: 'location', label: 'Location' },
@@ -364,6 +379,7 @@ export default function NewPlanPage() {
           existingTrees,
           sunGrid: generatedPlan.sunGrid,
           layoutVersion: 3,
+          isPublic,
         }),
       });
       const data = await res.json();
@@ -868,6 +884,106 @@ export default function NewPlanPage() {
                 </button>
               </div>
 
+              {/* Layout algorithm — legacy 3-phase placement, Voronoi-cell
+               *  tapestry, or install-friendly uniform grid. Switching to
+               *  Voronoi/Grid auto-flips render mode to Tapestry so the
+               *  user immediately sees the cell shapes; regen on next
+               *  Recalculate. */}
+              <div className="flex rounded-lg border border-stone-200 overflow-hidden text-sm">
+                <button
+                  onClick={() => {
+                    setPreferences(p => ({ ...p, layoutMode: 'numbered' }));
+                  }}
+                  className={`px-3 py-1.5 transition-colors ${(preferences.layoutMode ?? 'numbered') === 'numbered' ? 'bg-emerald-700 text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+                  title="3-phase placement (legacy): structure → matrix → accent drifts"
+                >
+                  Layout: Drifts
+                </button>
+                <button
+                  onClick={() => {
+                    setPreferences(p => ({ ...p, layoutMode: 'tapestry' }));
+                    setPlantRenderMode('tapestry');
+                  }}
+                  className={`px-3 py-1.5 border-l border-stone-200 transition-colors ${preferences.layoutMode === 'tapestry' ? 'bg-emerald-700 text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+                  title="Voronoi-cell tapestry — every patch of bed owned by a plant, no voids (Oudolf-style)"
+                >
+                  Layout: Voronoi
+                </button>
+                <button
+                  onClick={() => {
+                    setPreferences(p => ({ ...p, layoutMode: 'grid' }));
+                    setPlantRenderMode('tapestry');
+                  }}
+                  className={`px-3 py-1.5 border-l border-stone-200 transition-colors ${preferences.layoutMode === 'grid' ? 'bg-emerald-700 text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+                  title="Uniform grid at on-center spacing — easiest to install with a tape measure"
+                >
+                  Layout: Grid
+                </button>
+              </div>
+
+              {/* Grid spacing — only meaningful in grid mode. */}
+              {preferences.layoutMode === 'grid' && (
+                <label className="flex items-center gap-2 text-sm text-stone-700">
+                  <span>Grid o.c.</span>
+                  <select
+                    value={preferences.gridSpacingInches ?? 18}
+                    onChange={(e) => setPreferences(p => ({ ...p, gridSpacingInches: Number(e.target.value) }))}
+                    className="border border-stone-300 rounded-md px-2 py-1 text-sm bg-white"
+                    title="On-center spacing between grid points"
+                  >
+                    <option value={12}>12&quot;</option>
+                    <option value={15}>15&quot;</option>
+                    <option value={18}>18&quot;</option>
+                    <option value={24}>24&quot;</option>
+                    <option value={36}>36&quot;</option>
+                  </select>
+                </label>
+              )}
+
+              {/* Symbol set picker + on/off toggle. Glyphs render over both
+               *  numbered and tapestry layers. */}
+              <div className="flex rounded-lg border border-stone-200 overflow-hidden text-sm">
+                <button
+                  onClick={() => setShowSymbols(s => !s)}
+                  className={`px-3 py-1.5 transition-colors ${showSymbols ? 'bg-amber-700 text-white' : 'bg-white text-muted hover:bg-stone-50'}`}
+                  title="Toggle Oudolf-style plant symbols"
+                >
+                  Symbols
+                </button>
+                <select
+                  value={symbolSetSlug}
+                  onChange={(e) => setSymbolSetSlug(e.target.value)}
+                  disabled={!showSymbols}
+                  className="px-2 py-1.5 border-l border-stone-200 bg-white text-stone-700 text-sm disabled:bg-stone-50 disabled:text-stone-400"
+                  title="Active symbol set"
+                >
+                  {symbolSets.map((s) => (
+                    <option key={s.slug} value={s.slug}>{s.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Type / tier / season visibility filters. */}
+              <PlanFilterPanel
+                filters={filters}
+                onChange={setFilters}
+                totalCount={generatedPlan.plants.length}
+                visibleCount={applyPlanFilters(
+                  generatedPlan.plants.map((p: PlanPlant) => {
+                    const cat = allPlantsCache.find((c: { slug: string }) => c.slug === p.plantSlug);
+                    return {
+                      plantType: p.plantType,
+                      tier: p.tier ?? cat?.tier,
+                      bloomStartMonth: cat?.bloomStartMonth,
+                      bloomEndMonth: cat?.bloomEndMonth,
+                      seedHeadInterest: cat?.seedHeadInterest,
+                      winterStructure: cat?.winterStructure,
+                    };
+                  }),
+                  filters,
+                ).length}
+              />
+
               <button
                 onClick={() => setShowSunlight(s => !s)}
                 className={`flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-full border transition-all ${
@@ -1103,15 +1219,32 @@ export default function NewPlanPage() {
                 computeSunGridRef={computeSunGridRef}
                 onBuildingsDetected={mergeDetectedBuildings}
                 plantRenderMode={plantRenderMode}
-                plantPlacements={generatedPlan.plants
-                  .filter((p: PlanPlant) => p.lat && p.lng)
-                  .map((p: PlanPlant) => ({
-                    lat: p.lat!, lng: p.lng!,
-                    color: p.bloomColor, name: p.commonName,
-                    slug: p.plantSlug, imageUrl: p.imageUrl,
-                    spreadInches: p.spreadInches, speciesIndex: p.speciesIndex,
-                    plantType: p.plantType,
-                  }))}
+                symbolSet={activeSymbolSet}
+                showSymbols={showSymbols}
+                plantPlacements={applyPlanFilters(
+                  generatedPlan.plants
+                    .filter((p: PlanPlant) => p.lat && p.lng)
+                    .map((p: PlanPlant) => {
+                      // Look up family + bloom data from the all-plants cache
+                      // so we don't have to bake them onto every saved PlanPlant.
+                      const cat = allPlantsCache.find((c: { slug: string }) => c.slug === p.plantSlug);
+                      return {
+                        lat: p.lat!, lng: p.lng!,
+                        color: p.bloomColor, name: p.commonName,
+                        slug: p.plantSlug, imageUrl: p.imageUrl,
+                        spreadInches: p.spreadInches, speciesIndex: p.speciesIndex,
+                        plantType: p.plantType,
+                        cellGeoJson: p.cellGeoJson,
+                        family: cat?.family,
+                        tier: p.tier ?? cat?.tier,
+                        bloomStartMonth: cat?.bloomStartMonth,
+                        bloomEndMonth: cat?.bloomEndMonth,
+                        seedHeadInterest: cat?.seedHeadInterest,
+                        winterStructure: cat?.winterStructure,
+                      };
+                    }),
+                  filters,
+                )}
                 onPlantClick={(slug) => setSelectedPlantSlug(slug === selectedPlantSlug ? null : slug)}
                 height="100%"
               />
@@ -1247,6 +1380,43 @@ export default function NewPlanPage() {
                 placeholder="you@example.com"
                 className="w-full px-3 py-2 border border-stone-300 rounded-lg text-sm focus:border-primary focus:ring-1 focus:ring-primary outline-none"
               />
+            </div>
+
+            {/* Visibility */}
+            <div className="mb-4 p-4 bg-stone-50 rounded-lg border border-stone-200">
+              <div className="text-sm font-medium mb-2">Visibility</div>
+              <div className="flex flex-col gap-2">
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    checked={isPublic}
+                    onChange={() => setIsPublic(true)}
+                    className="mt-0.5 text-primary focus:ring-primary"
+                  />
+                  <span>
+                    <span className="text-sm font-medium">Public</span>
+                    <span className="block text-xs text-muted">
+                      Show this plan on the community map so others can see what&apos;s being planted nearby.
+                    </span>
+                  </span>
+                </label>
+                <label className="flex items-start gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="visibility"
+                    checked={!isPublic}
+                    onChange={() => setIsPublic(false)}
+                    className="mt-0.5 text-primary focus:ring-primary"
+                  />
+                  <span>
+                    <span className="text-sm font-medium">Private</span>
+                    <span className="block text-xs text-muted">
+                      Only you can see this plan. It won&apos;t appear on the public map.
+                    </span>
+                  </span>
+                </label>
+              </div>
             </div>
 
             <div className="flex flex-wrap gap-3 justify-between">
