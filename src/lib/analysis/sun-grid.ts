@@ -172,16 +172,21 @@ function computeCellSunHours(
 ): number {
   let sunHours = 0;
 
-  // Pre-extract building polygons from exclusion zones and convert coords to meters
-  const buildingPolygons = exclusionZones
-    .filter(z => z.type === 'building')
+  // Pre-extract shadow-casting polygons (buildings + fences) and convert
+  // coords to meters. Fences default to 6 ft (1.83 m) and so cast a much
+  // shorter shadow than buildings, but the rest of the ray-cast is identical.
+  const FENCE_DEFAULT_M = 1.83; // 6 ft
+  const shadowPolygons = exclusionZones
+    .filter(z => z.type === 'building' || z.type === 'fence')
     .map(z => {
       const coords = z.geoJson.coordinates[0];
       const verticesM = coords.map(c => ({
         x: (c[0] - lng) * M_PER_DEG_LNG,
         y: (c[1] - lat) * M_PER_DEG_LAT,
       }));
-      return { verticesM, heightM: z.heightMeters || DEFAULT_BUILDING_HEIGHT_M };
+      const heightM = z.heightMeters
+        ?? (z.type === 'fence' ? FENCE_DEFAULT_M : DEFAULT_BUILDING_HEIGHT_M);
+      return { verticesM, heightM };
     });
 
   // Sample every 30 min for accuracy
@@ -255,10 +260,11 @@ function computeCellSunHours(
 
     if (inShadow) continue;
 
-    // Building polygon shadows (from ExclusionZone buildings detected via Mapbox)
-    // Cast a ray from cell toward the sun. If it hits a building polygon edge
-    // within shadow range, the building is between us and the sun = we're in shadow.
-    for (const bldg of buildingPolygons) {
+    // Building + fence polygon shadows (drawn by user or auto-detected via
+    // Mapbox). Cast a ray from the cell toward the sun. If it hits a polygon
+    // edge within shadow range (height/tan(alt)), the obstacle is between us
+    // and the sun = we're in shadow.
+    for (const bldg of shadowPolygons) {
       const shadowLenM = Math.min(bldg.heightM / Math.tan(altRad), 300);
       const verts = bldg.verticesM;
       for (let i = 0; i < verts.length - 1; i++) {

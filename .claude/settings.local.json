@@ -81,7 +81,9 @@
       "Bash(curl -s 'http://localhost:3000/api/plants?slug=andropogon-gerardii')",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Big Bluestem'\\); print\\('tier:', d.get\\('tier'\\)\\); print\\('sociability:', d.get\\('sociability'\\)\\); print\\('oudolfRole:', d.get\\('oudolfRole'\\)\\)\")",
       "Bash(curl -s 'http://localhost:3000/api/plants?slug=eutrochium-purpureum')",
-      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Joe Pye'\\); print\\('tier:', d.get\\('tier'\\)\\); print\\('sociability:', d.get\\('sociability'\\)\\); print\\('oudolfRole:', d.get\\('oudolfRole'\\)\\)\")"
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('Joe Pye'\\); print\\('tier:', d.get\\('tier'\\)\\); print\\('sociability:', d.get\\('sociability'\\)\\); print\\('oudolfRole:', d.get\\('oudolfRole'\\)\\)\")",
+      "Bash(awk 'NR>=1554 && NR<=1564 { printf \"L%d: %s\\\\n\", NR, $0 }' /Users/nick/projects/chicago-plant-plan/src/app/plan/new/page.tsx)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:3000/plan/new)"
     ]
   }
 }

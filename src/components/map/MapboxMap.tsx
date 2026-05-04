@@ -21,6 +21,10 @@ interface PlantPlacement {
    *  a glyph from the active SymbolSet (Asteraceae → asterisk, etc.). */
   family?: string;
   tier?: 1 | 2 | 3 | 4 | 5;
+  /** Stable index into the parent's plant array. Baked into the GeoJSON so
+   *  paint/erase clicks can mutate one specific placement instead of the whole
+   *  species. The parent assigns this during placement-list construction. */
+  placementIdx?: number;
 }
 
 interface MapboxMapProps {
@@ -41,7 +45,11 @@ interface MapboxMapProps {
   areaOutline?: GeoJSON.Polygon | null;
   exclusionZones?: ExclusionZone[];
   existingTrees?: ExistingTree[];
-  editMode?: 'none' | 'exclusion' | 'tree';
+  /** What the next user gesture on the map should do.
+   *   - 'exclusion': polygon-draw an exclusion zone
+   *   - 'tree': click to place a tree
+   *   - 'fence': line-draw a fence (auto-buffered to thin polygon, casts 6ft shadow) */
+  editMode?: 'none' | 'exclusion' | 'tree' | 'fence';
   onExclusionZoneCreated?: (zone: ExclusionZone) => void;
   onExistingTreePlaced?: (tree: ExistingTree) => void;
   /** Fires once per areaOutline change with any buildings the map finds near
@@ -73,6 +81,22 @@ interface MapboxMapProps {
   /** Whether the symbol layer is visible. Independent of plantRenderMode —
    *  symbols look natural over both numbered circles and tapestry cells. */
   showSymbols?: boolean;
+  /** When non-'none', clicking a plant fires onPlantEdit instead of
+   *  onPlantClick (info card). 'paint' replaces that placement with the
+   *  caller's active species; 'erase' removes it. 'select' arms a drag
+   *  rectangle for region selection. 'paste' arms a click-to-paste cursor. */
+  placementEditMode?: 'none' | 'paint' | 'erase' | 'select' | 'paste';
+  /** Fired with the placementIdx of a clicked plant when placementEditMode is
+   *  active. The parent decides whether to paint, erase, or do something else
+   *  based on its own brush state. */
+  onPlantEdit?: (placementIdx: number) => void;
+  /** Fired when the user paints/clicks empty space (no plant under cursor)
+   *  while placementEditMode is 'paint' or 'paste'. The parent uses this to
+   *  add new placements (single, stamp, or paste). */
+  onMapPaint?: (lat: number, lng: number, opts: { shiftKey: boolean }) => void;
+  /** Fired on mouseup of a region-select drag. Returns the lat/lng bounds
+   *  of the drawn rectangle so the parent can collect plants inside. */
+  onRegionSelected?: (bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number }) => void;
 }
 
 const STYLE_URLS: Record<string, string> = {
@@ -88,7 +112,7 @@ function inchesToMeters(inches: number): number {
 function buildPlantGeoJSON(placements: PlantPlacement[]): GeoJSON.FeatureCollection {
   return {
     type: 'FeatureCollection',
-    features: placements.map(p => ({
+    features: placements.map((p, i) => ({
       type: 'Feature' as const,
       geometry: { type: 'Point' as const, coordinates: [p.lng, p.lat] },
       properties: {
@@ -97,6 +121,7 @@ function buildPlantGeoJSON(placements: PlantPlacement[]): GeoJSON.FeatureCollect
         speciesIndex: p.speciesIndex || 0,
         radiusMeters: p.spreadInches ? inchesToMeters(p.spreadInches) : 0.3,
         plantType: p.plantType || 'forb',
+        placementIdx: p.placementIdx ?? i,
       },
     })),
   };
@@ -106,7 +131,16 @@ function buildExclusionGeoJSON(zones: ExclusionZone[]): GeoJSON.FeatureCollectio
   return {
     type: 'FeatureCollection',
     features: zones.map(z => ({
-      type: 'Feature' as const, geometry: z.geoJson, properties: { label: z.label, type: z.type },
+      type: 'Feature' as const,
+      geometry: z.geoJson,
+      properties: {
+        label: z.label,
+        type: z.type,
+        // Bake the obstacle height in meters so fence/building paint
+        // expressions can drive 3D fill-extrusion height.
+        heightMeters: z.heightMeters
+          ?? (z.type === 'fence' ? 1.83 : z.type === 'building' ? 8 : 0),
+      },
     })),
   };
 }
@@ -178,6 +212,7 @@ function buildTapestryGeoJSON(placements: PlantPlacement[]): GeoJSON.FeatureColl
         abbrev: speciesAbbrev(p.slug, p.name),
         speciesIndex: p.speciesIndex || 0,
         plantType: p.plantType || 'forb',
+        placementIdx: p.placementIdx ?? i,
       };
 
       // Voronoi-cell tapestry: the layout already gave us a real polygon that
@@ -731,15 +766,40 @@ function addMapLayers(
     paint: { 'fill-color': '#1a1a2e', 'fill-opacity': 0.25 },
   });
 
-  // Exclusion zones
+  // Exclusion zones — fences get a distinct brown stroke so they read as
+  // built objects rather than excluded ground area.
   map.addSource('exclusions', { type: 'geojson', data: exclusionData });
   map.addLayer({ id: 'exclusion-fill', type: 'fill', source: 'exclusions',
-    paint: { 'fill-color': '#9ca3af', 'fill-opacity': 0.35 } });
+    paint: {
+      'fill-color': ['match', ['get', 'type'], 'fence', '#92400e', '#9ca3af'],
+      'fill-opacity': ['match', ['get', 'type'], 'fence', 0.7, 0.35],
+    } });
   map.addLayer({ id: 'exclusion-line', type: 'line', source: 'exclusions',
-    paint: { 'line-color': '#6b7280', 'line-width': 2, 'line-dasharray': [4, 2] } });
+    paint: {
+      'line-color': ['match', ['get', 'type'], 'fence', '#78350f', '#6b7280'],
+      'line-width': ['match', ['get', 'type'], 'fence', 3, 2],
+      'line-dasharray': ['match', ['get', 'type'], 'fence', ['literal', [1, 0]], ['literal', [4, 2]]],
+    } as any });
   map.addLayer({ id: 'exclusion-labels', type: 'symbol', source: 'exclusions',
     layout: { 'text-field': ['get', 'label'], 'text-size': 12, 'text-font': ['DIN Pro Medium', 'Arial Unicode MS Regular'] },
     paint: { 'text-color': '#374151', 'text-halo-color': 'rgba(255,255,255,0.8)', 'text-halo-width': 1.5 } });
+  // Fence extrusion — only visible in 3D. Pulls height from the same
+  // heightMeters property the sun-grid reads, so the visual matches the
+  // shadow math.
+  if (show3D) {
+    try {
+      map.addLayer({
+        id: 'exclusion-fence-extrusion', type: 'fill-extrusion', source: 'exclusions',
+        filter: ['==', ['get', 'type'], 'fence'],
+        paint: {
+          'fill-extrusion-color': '#78350f',
+          'fill-extrusion-height': ['get', 'heightMeters'],
+          'fill-extrusion-base': 0,
+          'fill-extrusion-opacity': 0.85,
+        } as any,
+      });
+    } catch { /* style may not support fill-extrusion */ }
+  }
 
   // Existing trees — canopy + trunk + label
   map.addSource('existing-trees', { type: 'geojson', data: treeData });
@@ -850,7 +910,8 @@ function addMapLayers(
   // Click interaction — parent supplies the popup via onPlantClick, so the
   // rendered card can show full plant details rather than the plain-name
   // tooltip Mapbox provides. Still flip the cursor so the plants feel
-  // interactive.
+  // interactive. The actual cursor style picks up whatever the parent's
+  // placementEditMode wants via the cursorEnter handler in the load callback.
   map.on('mouseenter', 'plant-circles', () => { map.getCanvas().style.cursor = 'pointer'; });
   map.on('mouseleave', 'plant-circles', () => { map.getCanvas().style.cursor = ''; });
 }
@@ -873,6 +934,10 @@ export default function MapboxMap({
   symbolSet,
   planSymbolOverrides,
   showSymbols = true,
+  placementEditMode = 'none',
+  onPlantEdit,
+  onMapPaint,
+  onRegionSelected,
 }: MapboxMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
@@ -915,6 +980,17 @@ export default function MapboxMap({
   planSymbolOverridesRef.current = planSymbolOverrides;
   const showSymbolsRef = useRef(showSymbols);
   showSymbolsRef.current = showSymbols;
+  // Live ref to placement edit-mode + edit handler so the one-shot click
+  // listeners (registered in `map.on('load')`) can branch on the *current*
+  // mode without re-binding when the user toggles paint/erase from the parent.
+  const placementEditModeRef = useRef(placementEditMode);
+  placementEditModeRef.current = placementEditMode;
+  const onPlantEditRef = useRef(onPlantEdit);
+  onPlantEditRef.current = onPlantEdit;
+  const onMapPaintRef = useRef(onMapPaint);
+  onMapPaintRef.current = onMapPaint;
+  const onRegionSelectedRef = useRef(onRegionSelected);
+  onRegionSelectedRef.current = onRegionSelected;
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -973,28 +1049,164 @@ export default function MapboxMap({
       // Sun lighting
       if (showSunlight) updateSunPosition(map, center[0], center[1], sunHour);
 
-      // Plant click handlers — both renders delegate to the same callback,
-      // so the floating plant card in the parent works regardless of mode.
-      map.on('click', 'plant-circles', (e) => {
-        const slug = e.features?.[0]?.properties?.slug;
-        if (slug && onPlantClick) onPlantClick(slug);
-      });
-      map.on('click', 'plant-blob-fill', (e) => {
-        const slug = e.features?.[0]?.properties?.slug;
-        if (slug && onPlantClick) onPlantClick(slug);
-      });
-      map.on('mouseenter', 'plant-blob-fill', () => { map.getCanvas().style.cursor = 'pointer'; });
+      // Plant click handlers — when an edit mode (paint/erase) is active the
+      // click mutates the placement instead of opening the info card. Both
+      // renders go through the same dispatcher so the user gets the same
+      // behavior regardless of layout view.
+      const dispatchPlantClick = (props: any) => {
+        if (!props) return;
+        if (placementEditModeRef.current !== 'none' && placementEditModeRef.current !== 'paste') {
+          // 'select' falls through to the rectangle drag below, so don't
+          // edit a placement just because the drag started on top of one.
+          if (placementEditModeRef.current === 'select') return;
+          const idx = typeof props.placementIdx === 'number' ? props.placementIdx : null;
+          if (idx !== null && onPlantEditRef.current) onPlantEditRef.current(idx);
+        } else if (props.slug && onPlantClick) {
+          onPlantClick(props.slug);
+        }
+      };
+      map.on('click', 'plant-circles', (e) => dispatchPlantClick(e.features?.[0]?.properties));
+      map.on('click', 'plant-blob-fill', (e) => dispatchPlantClick(e.features?.[0]?.properties));
+      const cursorEnter = () => {
+        const mode = placementEditModeRef.current;
+        map.getCanvas().style.cursor = mode === 'erase'
+          ? 'not-allowed'
+          : mode === 'paint' ? 'crosshair'
+          : mode === 'paste' ? 'copy'
+          : mode === 'select' ? 'cell'
+          : 'pointer';
+      };
+      map.on('mouseenter', 'plant-blob-fill', cursorEnter);
       map.on('mouseleave', 'plant-blob-fill', () => { map.getCanvas().style.cursor = ''; });
+      map.on('mouseenter', 'plant-circles', cursorEnter);
+      map.on('mouseleave', 'plant-circles', () => { map.getCanvas().style.cursor = ''; });
 
-      // Tree placement click
+      // General-canvas click — handles three orthogonal cases:
+      //   1. tree edit mode → place a tree
+      //   2. paint/paste edit mode + click on EMPTY space → onMapPaint
+      //      (clicks on existing plants are caught by the plant-layer click
+      //       handlers above; this is the fallback for empty-bed clicks)
+      //   3. nothing if no edit mode is armed
+      // We use queryRenderedFeatures to detect whether the click landed on a
+      // plant; if so, the plant-layer handler already fired, so we bail.
       map.on('click', (e) => {
-        if (editModeRef.current !== 'tree') return;
-        onExistingTreePlaced?.({
-          id: `tree-${Date.now()}`,
-          lat: e.lngLat.lat, lng: e.lngLat.lng,
-          canopyDiameterFt: 20, label: 'Existing Tree',
+        if (editModeRef.current === 'tree') {
+          onExistingTreePlaced?.({
+            id: `tree-${Date.now()}`,
+            lat: e.lngLat.lat, lng: e.lngLat.lng,
+            canopyDiameterFt: 20, label: 'Existing Tree',
+          });
+          return;
+        }
+        const mode = placementEditModeRef.current;
+        if (mode !== 'paint' && mode !== 'paste') return;
+        // Suppress when click hit a plant — the layer handler already ran.
+        const hitPlant = map.queryRenderedFeatures(e.point, {
+          layers: ['plant-circles', 'plant-blob-fill'].filter(l => map.getLayer(l)),
+        });
+        if (hitPlant && hitPlant.length > 0 && mode === 'paint') return;
+        onMapPaintRef.current?.(e.lngLat.lat, e.lngLat.lng, {
+          shiftKey: !!(e.originalEvent && (e.originalEvent as MouseEvent).shiftKey),
         });
       });
+
+      // ── Shift+drag continuous painting ──────────────────────────────────
+      // When the user holds shift and drags in paint mode, we disable
+      // map panning and emit onMapPaint at every cursor sample (throttled by
+      // ~12px so we don't fire 60Hz). A regular drag (no shift) still pans.
+      let dragPainting = false;
+      let lastPaintPx: { x: number; y: number } | null = null;
+      const PAINT_THROTTLE_PX = 14;
+      map.getCanvas().addEventListener('mousedown', (ev: MouseEvent) => {
+        if (placementEditModeRef.current !== 'paint') return;
+        if (!ev.shiftKey) return;
+        dragPainting = true;
+        lastPaintPx = { x: ev.offsetX, y: ev.offsetY };
+        map.dragPan.disable();
+        // Fire one paint at the down point too, so a shift+click registers.
+        const lngLat = map.unproject([ev.offsetX, ev.offsetY]);
+        onMapPaintRef.current?.(lngLat.lat, lngLat.lng, { shiftKey: true });
+      });
+      map.getCanvas().addEventListener('mousemove', (ev: MouseEvent) => {
+        if (!dragPainting) return;
+        if (lastPaintPx) {
+          const dx = ev.offsetX - lastPaintPx.x;
+          const dy = ev.offsetY - lastPaintPx.y;
+          if (dx * dx + dy * dy < PAINT_THROTTLE_PX * PAINT_THROTTLE_PX) return;
+        }
+        lastPaintPx = { x: ev.offsetX, y: ev.offsetY };
+        const lngLat = map.unproject([ev.offsetX, ev.offsetY]);
+        onMapPaintRef.current?.(lngLat.lat, lngLat.lng, { shiftKey: true });
+      });
+      const stopDragPaint = () => {
+        if (!dragPainting) return;
+        dragPainting = false;
+        lastPaintPx = null;
+        map.dragPan.enable();
+      };
+      window.addEventListener('mouseup', stopDragPaint);
+      map.getCanvas().addEventListener('mouseleave', stopDragPaint);
+
+      // ── Region selection (drag rectangle) ───────────────────────────────
+      // Active when placementEditMode === 'select'. We render a translucent
+      // div over the canvas and hand the lat/lng bounds back to the parent on
+      // mouseup. Map pan is disabled for the duration.
+      let selectStart: { x: number; y: number } | null = null;
+      let selectBox: HTMLDivElement | null = null;
+      const ensureSelectBox = () => {
+        if (selectBox) return selectBox;
+        selectBox = document.createElement('div');
+        selectBox.style.cssText =
+          'position:absolute;border:2px dashed #2563eb;background:rgba(37,99,235,0.12);' +
+          'pointer-events:none;z-index:5;display:none;';
+        containerRef.current?.appendChild(selectBox);
+        return selectBox;
+      };
+      map.getCanvas().addEventListener('mousedown', (ev: MouseEvent) => {
+        if (placementEditModeRef.current !== 'select') return;
+        selectStart = { x: ev.offsetX, y: ev.offsetY };
+        map.dragPan.disable();
+        const box = ensureSelectBox();
+        box.style.display = 'block';
+        box.style.left = `${selectStart.x}px`;
+        box.style.top = `${selectStart.y}px`;
+        box.style.width = '0px';
+        box.style.height = '0px';
+      });
+      map.getCanvas().addEventListener('mousemove', (ev: MouseEvent) => {
+        if (!selectStart || !selectBox) return;
+        const x = Math.min(ev.offsetX, selectStart.x);
+        const y = Math.min(ev.offsetY, selectStart.y);
+        const w = Math.abs(ev.offsetX - selectStart.x);
+        const h = Math.abs(ev.offsetY - selectStart.y);
+        selectBox.style.left = `${x}px`;
+        selectBox.style.top = `${y}px`;
+        selectBox.style.width = `${w}px`;
+        selectBox.style.height = `${h}px`;
+      });
+      const finishSelect = (ev: MouseEvent) => {
+        if (!selectStart) return;
+        const start = selectStart;
+        selectStart = null;
+        map.dragPan.enable();
+        if (selectBox) selectBox.style.display = 'none';
+        // Tiny drags = treated as a click, ignored.
+        const dx = ev.offsetX - start.x;
+        const dy = ev.offsetY - start.y;
+        if (dx * dx + dy * dy < 25) return;
+        const a = map.unproject([Math.min(start.x, ev.offsetX), Math.min(start.y, ev.offsetY)]);
+        const b = map.unproject([Math.max(start.x, ev.offsetX), Math.max(start.y, ev.offsetY)]);
+        // Mapbox y-axis: smaller y = higher latitude, so unprojecting min/max
+        // x,y in screen space gives one corner where lat/lng don't agree —
+        // re-min/max in geographic space to get a clean bbox.
+        onRegionSelectedRef.current?.({
+          minLat: Math.min(a.lat, b.lat),
+          maxLat: Math.max(a.lat, b.lat),
+          minLng: Math.min(a.lng, b.lng),
+          maxLng: Math.max(a.lng, b.lng),
+        });
+      };
+      window.addEventListener('mouseup', finishSelect as EventListener);
     });
 
     // Re-add layers on style change
@@ -1051,6 +1263,31 @@ export default function MapboxMap({
         const data = draw.getAll();
         if (!data?.features?.length) return;
         const feature = data.features[data.features.length - 1];
+
+        // Fence drawn as LineString → buffer to a thin polygon (~6") and
+        // ship it back as an exclusion zone with type='fence' + 6 ft height.
+        // The shadow-grid + 3D extrusion both pick it up automatically.
+        if (feature.geometry.type === 'LineString' && editModeRef.current === 'fence') {
+          draw.deleteAll();
+          // Lazy-load turf to keep the initial bundle slim — fence drawing
+          // is an opt-in, second-tier feature.
+          import('@turf/turf').then(turf => {
+            try {
+              const buffered = turf.buffer(feature as any, 0.075, { units: 'meters' });
+              const geom = (buffered as any)?.geometry;
+              if (!geom || geom.type !== 'Polygon') return;
+              onExclusionZoneCreated?.({
+                id: `fence-${Date.now()}`,
+                geoJson: geom as GeoJSON.Polygon,
+                label: 'Fence (6 ft)',
+                type: 'fence',
+                heightMeters: 1.83,
+              });
+            } catch { /* swallow — bad geometry just means no fence created */ }
+          });
+          return;
+        }
+
         if (feature.geometry.type !== 'Polygon') return;
 
         // If areaOutline exists, we're in plan-edit mode — all draws are exclusions
@@ -1235,11 +1472,15 @@ export default function MapboxMap({
     return () => clearTimeout(timer);
   }, [showSunGrid]);
 
-  // Auto-activate draw_polygon when editMode switches to 'exclusion'
+  // Auto-activate the right MapboxDraw mode when editMode flips. 'fence' uses
+  // draw_line_string — the line is buffered into a thin polygon at the
+  // draw.create handler.
   useEffect(() => {
-    if (editMode === 'exclusion' && drawRef.current) {
-      try { drawRef.current.changeMode('draw_polygon'); } catch {}
-    }
+    if (!drawRef.current) return;
+    try {
+      if (editMode === 'exclusion') drawRef.current.changeMode('draw_polygon');
+      else if (editMode === 'fence') drawRef.current.changeMode('draw_line_string');
+    } catch {}
   }, [editMode]);
 
   // Update tree shadow polygons when sun hour or trees change

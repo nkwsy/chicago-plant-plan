@@ -1,16 +1,39 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import type { PlanPlant } from '@/types/plan';
 import { SUPPLIERS } from '@/lib/suppliers';
-import GridPlanView from '@/components/plan/GridPlanView';
+import GridPlanView, { type PlanRenderStyle } from '@/components/plan/GridPlanView';
+
+const RENDER_STYLES: { id: PlanRenderStyle; label: string; hint: string }[] = [
+  { id: 'matrix', label: 'Matrix', hint: 'Grid squares, install-friendly' },
+  { id: 'dots', label: 'Dots', hint: 'Numbered circles, classic plan' },
+  { id: 'tapestry', label: 'Tapestry', hint: 'Voronoi cells, Oudolf style' },
+];
+
+function isRenderStyle(s: string | null): s is PlanRenderStyle {
+  return s === 'matrix' || s === 'dots' || s === 'tapestry';
+}
 
 export default function PrintPlanPage() {
   const params = useParams();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const planId = params.planId as string;
   const [plan, setPlan] = useState<any | null>(null);
+
+  // Render style is persisted in the URL so the print preview, browser refresh,
+  // and shareable export-link all show the same view.
+  const styleParam = searchParams.get('style');
+  const renderStyle: PlanRenderStyle = isRenderStyle(styleParam) ? styleParam : 'dots';
+
+  function setRenderStyle(next: PlanRenderStyle) {
+    const sp = new URLSearchParams(searchParams.toString());
+    sp.set('style', next);
+    router.replace(`/plan/${planId}/print?${sp.toString()}`, { scroll: false });
+  }
 
   useEffect(() => {
     fetch(`/api/plans?id=${planId}`)
@@ -26,12 +49,31 @@ export default function PrintPlanPage() {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-8">
-      {/* Print button */}
-      <div className="no-print mb-6 flex gap-3">
+      {/* Print + style controls — hidden when actually printing. */}
+      <div className="no-print mb-6 flex flex-wrap items-center gap-3">
         <button onClick={() => window.print()} className="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary-dark transition-colors flex items-center gap-2">
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
           Print this plan
         </button>
+
+        <div className="flex items-center gap-1 bg-stone-50 border border-stone-200 rounded-lg p-1">
+          <span className="text-xs font-medium text-muted px-2">Style:</span>
+          {RENDER_STYLES.map(s => (
+            <button
+              key={s.id}
+              onClick={() => setRenderStyle(s.id)}
+              className={`px-3 py-1.5 text-sm rounded-md transition-all ${
+                renderStyle === s.id
+                  ? 'bg-white shadow text-primary font-medium border border-stone-200'
+                  : 'text-muted hover:text-foreground'
+              }`}
+              title={s.hint}
+            >
+              {s.label}
+            </button>
+          ))}
+        </div>
+
         <Link href={`/plan/${planId}`} className="border border-stone-300 px-4 py-2 rounded-lg text-sm hover:bg-stone-50">
           ← Back to plan
         </Link>
@@ -56,9 +98,12 @@ export default function PrintPlanPage() {
               plants={plan.plants}
               exclusionZones={plan.exclusionZones || []}
               existingTrees={plan.existingTrees || []}
+              renderStyle={renderStyle}
             />
             <p className="text-xs text-muted text-center mt-1">
-              Circles sized to plant spread. Numbers correspond to species in the manifest below.
+              {renderStyle === 'matrix' && 'Squares sized to plant spread. Numbers correspond to species in the manifest below.'}
+              {renderStyle === 'dots' && 'Circles sized to plant spread. Numbers correspond to species in the manifest below.'}
+              {renderStyle === 'tapestry' && 'Voronoi cells in the Oudolf palette. Letter codes are genus abbreviations (see manifest).'}
             </p>
           </div>
         )}

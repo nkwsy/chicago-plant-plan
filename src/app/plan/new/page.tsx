@@ -3,11 +3,32 @@
 import { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import MapContainer from '@/components/map/MapContainer';
-import PlantingLegend from '@/components/plan/PlantingLegend';
 import PlanFilterPanel, { EMPTY_FILTERS, applyPlanFilters, type PlanFilters } from '@/components/plan/PlanFilterPanel';
+import PlantCatalogPicker from '@/components/plan/PlantCatalogPicker';
+import { type BrushState, type CopiedRegion } from '@/components/plan/sidebar/shared';
+import ProEditor, {
+  type EditorTool, type LayerId, type LayerState,
+} from '@/components/plan/editor/ProEditor';
 import type { SiteProfile } from '@/types/analysis';
 import type { UserPreferences, PlanPlant, ExclusionZone, ExistingTree } from '@/types/plan';
 import type { DesignFormula } from '@/types/formula';
+import * as turf from '@turf/turf';
+
+/** True when the tree's lat/lng falls outside the bed polygon. The
+ *  "outside" status is purely a function of geometry — having the user
+ *  hand-flag it would let the saved label drift out of sync if they redrew
+ *  the bed. */
+function isTreeOutsideBed(
+  tree: { lat: number; lng: number },
+  polygon: GeoJSON.Polygon | GeoJSON.MultiPolygon | null | undefined,
+): boolean {
+  if (!polygon) return true;
+  try {
+    return !turf.booleanPointInPolygon(turf.point([tree.lng, tree.lat]), polygon);
+  } catch {
+    return true;
+  }
+}
 
 type Step = 'location' | 'analysis' | 'design' | 'plan';
 
@@ -61,7 +82,7 @@ export default function NewPlanPage() {
   const [allPlantsCache, setAllPlantsCache] = useState<any[]>([]);
   const [exclusionZones, setExclusionZones] = useState<ExclusionZone[]>([]);
   const [existingTrees, setExistingTrees] = useState<ExistingTree[]>([]);
-  const [editMode, setEditMode] = useState<'none' | 'exclusion' | 'tree'>('none');
+  const [editMode, setEditMode] = useState<'none' | 'exclusion' | 'tree' | 'fence'>('none');
   const [selectedPlantSlug, setSelectedPlantSlug] = useState<string | null>(null);
   const detectBuildingsRef = useRef<(() => ExclusionZone[]) | null>(null);
   const computeSunGridRef = useRef<(() => Promise<import('@/types/plan').SunGrid | null>) | null>(null);
@@ -97,6 +118,77 @@ export default function NewPlanPage() {
   const [planTitle, setPlanTitle] = useState('My Native Garden');
   const [authorEmail, setAuthorEmail] = useState('');
   const [isPublic, setIsPublic] = useState(true);
+  // --- Manual editing state ----------------------------------------------------
+  // brush: unified state for all canvas-edit modes (paint/erase/select/paste)
+  //   plus the active species set + stamp pattern. Lives in the parent so the
+  //   sidebar tools and the map-click handlers share one source of truth.
+  // pinnedSlugs: species the user pinned from the catalog. Forced into the
+  //   candidate selection on the next regenerate.
+  // copiedRegion: most recent select-rectangle capture, for paste.
+  // pickerOpen: catalog modal visibility.
+  // sidebarOpen: collapsible sidebar.
+  const [brush, setBrush] = useState<BrushState>({ kind: null, slugs: [], pattern: 1 });
+  const [pinnedSlugs, setPinnedSlugs] = useState<string[]>([]);
+  const [copiedRegion, setCopiedRegion] = useState<CopiedRegion | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  // Pro Editor (v1) tool state. Tools map onto brush.kind for the existing
+  // map handlers — see toolToEditMode() below.
+  const [tool, setTool] = useState<EditorTool>('move');
+  // Multi-selection (placement indices, stored as strings to align with the
+  // sandbox model). Drives the Properties panel + bulk Copy / Delete.
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  // Layer model — every plant rolls up into one of four Oudolf roles. The
+  // catalog's `oudolfRole` field is the source of truth; plants without one
+  // default to 'matrix'.
+  const [layers, setLayers] = useState<Record<LayerId, LayerState>>({
+    matrix: { visible: true, locked: false },
+    structure: { visible: true, locked: false },
+    scatter: { visible: true, locked: false },
+    filler: { visible: true, locked: false },
+  });
+  // Modifier-key refs — read inside map click handlers to decide whether
+  // shift-click adds and alt-click subtracts. We track via window listeners
+  // so the refs reflect the current state regardless of focus path.
+  const shiftKeyRef = useRef(false);
+  const altKeyRef = useRef(false);
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Shift') shiftKeyRef.current = true;
+      if (e.key === 'Alt') altKeyRef.current = true;
+    }
+    function onKeyUp(e: KeyboardEvent) {
+      if (e.key === 'Shift') shiftKeyRef.current = false;
+      if (e.key === 'Alt') altKeyRef.current = false;
+    }
+    function onBlur() { shiftKeyRef.current = false; altKeyRef.current = false; }
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('blur', onBlur);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', onBlur);
+    };
+  }, []);
+
+  // Tool ↔ brush.kind sync — the editor's user-facing tool maps to the
+  // map's existing placementEditMode. Stamp tool just toggles a different
+  // pattern; brush.kind stays 'paint'. Eyedropper is handled in onPlantEdit.
+  useEffect(() => {
+    setBrush(b => {
+      const map: Record<EditorTool, BrushState['kind']> = {
+        move: 'select', marquee: 'select', lasso: 'select', drag: 'select',
+        brush: 'paint', stamp: 'paint',
+        erase: 'erase', eyedropper: 'select',
+      };
+      return {
+        ...b,
+        kind: map[tool],
+        // Brush is single-up; Stamp uses whatever pattern the user picked.
+        pattern: tool === 'stamp' ? (b.pattern === 1 ? 3 : b.pattern) : 1,
+      };
+    });
+  }, [tool]);
 
   const steps: { key: Step; label: string }[] = [
     { key: 'location', label: 'Location' },
@@ -125,6 +217,23 @@ export default function NewPlanPage() {
       .then((d: { user: { id: string; role: 'user' | 'admin' } | null }) => setMe(d.user))
       .catch(() => {});
   }, []);
+
+  // Re-derive each existing tree's outside-bed flag whenever the bed
+  // polygon changes. The badge in the list reads the flag from state, so
+  // without this the saved values lag behind the live geometry after a
+  // redraw.
+  useEffect(() => {
+    setExistingTrees(prev => {
+      let changed = false;
+      const next = prev.map(t => {
+        const want = isTreeOutsideBed(t, location.areaGeoJson);
+        if ((t.outsideProperty ?? false) === want) return t;
+        changed = true;
+        return { ...t, outsideProperty: want };
+      });
+      return changed ? next : prev;
+    });
+  }, [location.areaGeoJson]);
 
   useEffect(() => {
     if (step !== 'design' || formulas.length > 0 || formulasLoading) return;
@@ -251,7 +360,7 @@ export default function NewPlanPage() {
         allPlants, siteProfile, preferences, areaSqFt,
         location.areaGeoJson, [location.lat, location.lng],
         exclusionZones, existingTrees, sunOverride,
-        formula,
+        formula, pinnedSlugs,
       );
 
       setGeneratedPlan({
@@ -394,8 +503,16 @@ export default function NewPlanPage() {
     }
   }
 
+  // The plan step renders the Pro Editor (v1) which manages its own
+  // chrome and lays the map inline — so no fixed-position offset is needed
+  // anymore. We just give the plan step a full-width container; other
+  // steps keep the centered wizard column.
+  const isPlanStep = step === 'plan' && generatedPlan;
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div
+      className={`${isPlanStep ? 'max-w-none px-4 py-4' : 'max-w-4xl mx-auto px-4 py-6'}`}
+    >
       {/* Step indicator */}
       <div className="flex items-center justify-center mb-8">
         {steps.map((s, i) => (
@@ -787,41 +904,7 @@ export default function NewPlanPage() {
 
         {step === 'plan' && generatedPlan && (
           <div>
-            <h2 className="text-2xl font-bold mb-2">Your Planting Plan</h2>
-
-            {/* Plan title */}
-            <div className="mb-4">
-              <input
-                type="text"
-                value={planTitle}
-                onChange={(e) => setPlanTitle(e.target.value)}
-                className="text-lg font-medium border-b-2 border-stone-200 focus:border-primary outline-none pb-1 w-full bg-transparent"
-                placeholder="Name your plan..."
-              />
-            </div>
-
-            {/* Species count + quick regenerate */}
-            <div className="flex items-center gap-3 mb-4 p-3 bg-stone-50 rounded-lg border border-stone-200 flex-wrap">
-              <span className="text-sm font-medium text-muted">Species count:</span>
-              <div className="flex items-center gap-1.5">
-                <button
-                  onClick={() => setPreferences(p => ({ ...p, targetSpeciesCount: Math.max(3, p.targetSpeciesCount - 1) }))}
-                  className="w-7 h-7 rounded-full border border-stone-300 bg-white hover:bg-stone-100 flex items-center justify-center text-lg font-bold leading-none"
-                >−</button>
-                <span className="w-10 text-center text-xl font-bold text-primary">{preferences.targetSpeciesCount}</span>
-                <button
-                  onClick={() => setPreferences(p => ({ ...p, targetSpeciesCount: Math.min(40, p.targetSpeciesCount + 1) }))}
-                  className="w-7 h-7 rounded-full border border-stone-300 bg-white hover:bg-stone-100 flex items-center justify-center text-lg font-bold leading-none"
-                >+</button>
-              </div>
-              <button
-                onClick={generatePlan}
-                disabled={generating}
-                className="ml-auto text-sm px-4 py-1.5 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50"
-              >
-                {generating ? 'Generating…' : 'Regenerate'}
-              </button>
-            </div>
+            <h2 className="text-2xl font-bold mb-3">Your Planting Plan</h2>
 
             {/* Feature tags */}
             {(exclusionZones.length > 0 || existingTrees.length > 0) && (
@@ -963,26 +1046,7 @@ export default function NewPlanPage() {
                 </select>
               </div>
 
-              {/* Type / tier / season visibility filters. */}
-              <PlanFilterPanel
-                filters={filters}
-                onChange={setFilters}
-                totalCount={generatedPlan.plants.length}
-                visibleCount={applyPlanFilters(
-                  generatedPlan.plants.map((p: PlanPlant) => {
-                    const cat = allPlantsCache.find((c: { slug: string }) => c.slug === p.plantSlug);
-                    return {
-                      plantType: p.plantType,
-                      tier: p.tier ?? cat?.tier,
-                      bloomStartMonth: cat?.bloomStartMonth,
-                      bloomEndMonth: cat?.bloomEndMonth,
-                      seedHeadInterest: cat?.seedHeadInterest,
-                      winterStructure: cat?.winterStructure,
-                    };
-                  }),
-                  filters,
-                ).length}
-              />
+              {/* Visibility filters live in the sidebar's Plants tab. */}
 
               <button
                 onClick={() => setShowSunlight(s => !s)}
@@ -1029,8 +1093,12 @@ export default function NewPlanPage() {
               </span>
             </div>
 
-            {/* Exclusion zones + trees toolbar */}
-            <div className="bg-surface rounded-lg p-4 border border-stone-200 mb-3">
+            {/* Edit tools (paint/stamps/multi-brush/erase/select/paste),
+                features (exclusion/tree/fence), filters, pinned-plant chips,
+                and the legend all live in PlannerSidebar now. The toolbar
+                above this point keeps view-only controls (3D, render mode,
+                layout, symbols, sun) where the user expects them. */}
+            <div className="bg-surface rounded-lg p-4 border border-stone-200 mb-3 hidden">
               <p className="text-sm font-medium mb-3">Mark features on your property <span className="text-muted font-normal">(optional)</span></p>
               <div className="flex flex-wrap gap-2 mb-3">
                 <button
@@ -1169,17 +1237,29 @@ export default function NewPlanPage() {
                             <option value={80}>80ft</option>
                           </select>
                         </label>
-                        <label className="flex items-center gap-1 text-xs text-muted ml-1">
-                          <input
-                            type="checkbox"
-                            checked={t.outsideProperty || false}
-                            onChange={(e) => setExistingTrees(prev =>
-                              prev.map(et => et.id === t.id ? { ...et, outsideProperty: e.target.checked } : et)
-                            )}
-                            className="w-3 h-3"
-                          />
-                          Outside
-                        </label>
+                        {/* Derived badge — point-in-polygon against the bed
+                         *  outline. No checkbox: the geometry is the source
+                         *  of truth, hand-editing the flag just lets it drift
+                         *  out of sync. */}
+                        {(() => {
+                          const outside = isTreeOutsideBed(t, location.areaGeoJson);
+                          return (
+                            <span
+                              className={`text-[10px] uppercase tracking-wider rounded px-1.5 py-0.5 ml-1 ${
+                                outside
+                                  ? 'bg-amber-100 text-amber-800'
+                                  : 'bg-emerald-100 text-emerald-800'
+                              }`}
+                              title={
+                                outside
+                                  ? 'This tree sits outside the bed polygon — its shadow still affects the plan.'
+                                  : 'This tree is inside the bed polygon.'
+                              }
+                            >
+                              {outside ? 'Outside bed' : 'Inside bed'}
+                            </span>
+                          );
+                        })()}
                         <button
                           onClick={() => setExistingTrees(prev => prev.filter(et => et.id !== t.id))}
                           className="text-stone-400 hover:text-red-500 ml-auto"
@@ -1191,8 +1271,128 @@ export default function NewPlanPage() {
               )}
             </div>
 
-            {/* Map view */}
-            <div className="relative rounded-xl overflow-hidden border border-stone-200 shadow-sm mb-2" style={{ height: '500px' }}>
+            {/* Pro Editor — wraps the map with a Photoshop-style toolbar
+                (left rail of tools, contextual options bar above the map,
+                right panels for plant library / layers / properties / pinned
+                / shortcuts, status bar at the bottom). */}
+            <ProEditor
+              tool={tool}
+              setTool={setTool}
+              brush={brush}
+              setBrush={setBrush}
+              copiedRegion={copiedRegion}
+              plants={generatedPlan.plants}
+              visiblePlants={generatedPlan.plants.filter((p: PlanPlant) => {
+                const cat = allPlantsCache.find((c: { slug: string }) => c.slug === p.plantSlug);
+                const layer = (cat?.oudolfRole ?? 'matrix') as LayerId;
+                return layers[layer].visible;
+              }).length}
+              species={allPlantsCache as any}
+              activeSpeciesIdx={(() => {
+                const slug = brush.slugs[0];
+                if (!slug) return null;
+                const sp = allPlantsCache.find((s: any) => s.slug === slug);
+                return sp?.speciesIndex ?? null;
+              })()}
+              onSetActiveSpeciesIdx={(slug) => {
+                setBrush(b => ({ ...b, kind: 'paint', slugs: [slug] }));
+                if (tool !== 'brush' && tool !== 'stamp') setTool('brush');
+              }}
+              pinnedSlugs={pinnedSlugs}
+              onUnpin={(slug) => setPinnedSlugs(s => s.filter(x => x !== slug))}
+              onOpenCatalog={() => setPickerOpen(true)}
+              layers={layers}
+              toggleLayerVisible={(l) => setLayers(prev => ({ ...prev, [l]: { ...prev[l], visible: !prev[l].visible } }))}
+              toggleLayerLocked={(l) => setLayers(prev => ({ ...prev, [l]: { ...prev[l], locked: !prev[l].locked } }))}
+              selectedIds={selectedIds}
+              selectionCount={selectedIds.size}
+              selectionSpecies={(() => {
+                const map = new Map<string, { slug: string; commonName: string; count: number }>();
+                for (const id of selectedIds) {
+                  const p = generatedPlan.plants[Number(id)];
+                  if (!p) continue;
+                  const ex = map.get(p.plantSlug);
+                  if (ex) ex.count += 1;
+                  else map.set(p.plantSlug, { slug: p.plantSlug, commonName: p.commonName, count: 1 });
+                }
+                return Array.from(map.values());
+              })()}
+              onSelectAll={() => {
+                const all = new Set<string>();
+                generatedPlan.plants.forEach((p, i) => {
+                  const cat = allPlantsCache.find((s: any) => s.slug === p.plantSlug);
+                  const layer = (cat?.oudolfRole ?? 'matrix') as LayerId;
+                  if (layers[layer].visible && !layers[layer].locked) all.add(String(i));
+                });
+                setSelectedIds(all);
+              }}
+              onDeselect={() => setSelectedIds(new Set())}
+              onCopy={() => {
+                if (!selectedIds.size) return;
+                const sel = Array.from(selectedIds)
+                  .map(id => generatedPlan.plants[Number(id)])
+                  .filter((p): p is PlanPlant => !!p && p.lat != null && p.lng != null);
+                if (!sel.length) return;
+                const aLat = sel.reduce((a, p) => a + p.lat!, 0) / sel.length;
+                const aLng = sel.reduce((a, p) => a + p.lng!, 0) / sel.length;
+                setCopiedRegion({
+                  anchor: { lat: aLat, lng: aLng },
+                  plants: sel.map(p => ({
+                    offsetLat: p.lat! - aLat, offsetLng: p.lng! - aLng, plant: p,
+                  })),
+                });
+              }}
+              onPaste={() => {
+                if (!copiedRegion) return;
+                setBrush(b => ({ ...b, kind: 'paste' }));
+              }}
+              onDelete={() => {
+                if (!selectedIds.size) return;
+                setGeneratedPlan(prev => prev ? {
+                  ...prev,
+                  plants: prev.plants.filter((_, i) => !selectedIds.has(String(i))),
+                } : prev);
+                setSelectedIds(new Set());
+              }}
+              onSwapSelectionTo={(newSlug) => {
+                if (!selectedIds.size) return;
+                const replacement = allPlantsCache.find((s: any) => s.slug === newSlug);
+                if (!replacement) return;
+                setGeneratedPlan(prev => prev ? {
+                  ...prev,
+                  plants: prev.plants.map((p, i) =>
+                    selectedIds.has(String(i)) ? mergePlantData(p, replacement) : p,
+                  ),
+                  species: ensureSpeciesPresent(prev.species, prev.plants, replacement),
+                } : prev);
+              }}
+              planTitle={planTitle}
+              setPlanTitle={setPlanTitle}
+              speciesCount={preferences.targetSpeciesCount}
+              setSpeciesCount={(n) => setPreferences(p => ({ ...p, targetSpeciesCount: n }))}
+              onRegenerate={generatePlan}
+              regenerating={generating}
+              viewControls={
+                <div className="flex items-center gap-1.5 text-xs">
+                  <button
+                    onClick={() => setView3D(v => !v)}
+                    className={`px-2 py-0.5 rounded ${view3D ? 'bg-amber-500 text-white' : 'bg-stone-700 text-stone-300 hover:bg-stone-600'}`}
+                    title="Toggle 3D / top view"
+                  >{view3D ? '3D' : 'Top'}</button>
+                  <button
+                    onClick={() => setPlantRenderMode(plantRenderMode === 'tapestry' ? 'numbered' : 'tapestry')}
+                    className="px-2 py-0.5 rounded bg-stone-700 text-stone-300 hover:bg-stone-600"
+                    title="Toggle tapestry / numbered render"
+                  >{plantRenderMode === 'tapestry' ? 'Tapestry' : 'Numbered'}</button>
+                  <button
+                    onClick={() => setShowSunlight(s => !s)}
+                    className={`px-2 py-0.5 rounded ${showSunlight ? 'bg-amber-500 text-white' : 'bg-stone-700 text-stone-300 hover:bg-stone-600'}`}
+                    title="Toggle sun / shadow"
+                  >☀ Sun</button>
+                </div>
+              }
+              mapSlot={
+            <div className="relative w-full h-full">
               <MapContainer
                 center={[location.lat, location.lng]}
                 zoom={20}
@@ -1213,7 +1413,12 @@ export default function NewPlanPage() {
                   setEditMode('none');
                 }}
                 onExistingTreePlaced={(tree) => {
-                  setExistingTrees(prev => [...prev, tree]);
+                  // Auto-derive the outside-bed flag from the click point so
+                  // the saved value matches what the user sees on screen.
+                  setExistingTrees(prev => [
+                    ...prev,
+                    { ...tree, outsideProperty: isTreeOutsideBed(tree, location.areaGeoJson) },
+                  ]);
                 }}
                 detectBuildingsRef={detectBuildingsRef}
                 computeSunGridRef={computeSunGridRef}
@@ -1223,8 +1428,9 @@ export default function NewPlanPage() {
                 showSymbols={showSymbols}
                 plantPlacements={applyPlanFilters(
                   generatedPlan.plants
-                    .filter((p: PlanPlant) => p.lat && p.lng)
-                    .map((p: PlanPlant) => {
+                    .map((p: PlanPlant, idx: number) => ({ p, idx }))
+                    .filter(({ p }) => p.lat && p.lng)
+                    .map(({ p, idx }) => {
                       // Look up family + bloom data from the all-plants cache
                       // so we don't have to bake them onto every saved PlanPlant.
                       const cat = allPlantsCache.find((c: { slug: string }) => c.slug === p.plantSlug);
@@ -1241,11 +1447,148 @@ export default function NewPlanPage() {
                         bloomEndMonth: cat?.bloomEndMonth,
                         seedHeadInterest: cat?.seedHeadInterest,
                         winterStructure: cat?.winterStructure,
+                        // Stable index into generatedPlan.plants — paint/erase
+                        // round-trip this through MapboxMap's GeoJSON properties
+                        // so a click can target one specific placement.
+                        placementIdx: idx,
                       };
                     }),
                   filters,
                 )}
                 onPlantClick={(slug) => setSelectedPlantSlug(slug === selectedPlantSlug ? null : slug)}
+                placementEditMode={brush.kind ?? 'none'}
+                onPlantEdit={(idx) => {
+                  if (!generatedPlan) return;
+                  // Eyedropper: tool 'eyedropper' wins, regardless of brush.kind.
+                  if (tool === 'eyedropper') {
+                    const plant = generatedPlan.plants[idx];
+                    if (!plant) return;
+                    setBrush(b => ({ ...b, kind: 'paint', slugs: [plant.plantSlug] }));
+                    setTool('brush');
+                    return;
+                  }
+                  // Layer-locked plants are immune to edits regardless of mode.
+                  const targetPlant = generatedPlan.plants[idx];
+                  if (targetPlant) {
+                    const cat = allPlantsCache.find((p: any) => p.slug === targetPlant.plantSlug);
+                    const layer = (cat?.oudolfRole ?? 'matrix') as LayerId;
+                    if (layers[layer].locked) return;
+                  }
+                  if (brush.kind === 'erase') {
+                    setGeneratedPlan(prev => prev ? {
+                      ...prev,
+                      plants: prev.plants.filter((_, i) => i !== idx),
+                    } : prev);
+                    setSelectedIds(prev => { const n = new Set(prev); n.delete(String(idx)); return n; });
+                    return;
+                  }
+                  if (brush.kind === 'paint') {
+                    const slug = pickPaintSlug(brush.slugs);
+                    if (!slug) return;
+                    const replacement = allPlantsCache.find((p: any) => p.slug === slug);
+                    if (!replacement) return;
+                    setGeneratedPlan(prev => {
+                      if (!prev) return prev;
+                      const newPlants = prev.plants.map((p, i) => i === idx ? mergePlantData(p, replacement) : p);
+                      const newSpecies = ensureSpeciesPresent(prev.species, newPlants, replacement);
+                      return { ...prev, plants: newPlants, species: newSpecies };
+                    });
+                    return;
+                  }
+                  // Selection (move/marquee/lasso/drag tools): shift-click adds,
+                  // alt-click subtracts, plain click replaces selection.
+                  if (brush.kind === 'select') {
+                    const id = String(idx);
+                    setSelectedIds(prev => {
+                      const next = new Set(prev);
+                      if (shiftKeyRef.current) {
+                        if (next.has(id)) next.delete(id);
+                        else next.add(id);
+                      } else if (altKeyRef.current) {
+                        next.delete(id);
+                      } else {
+                        next.clear();
+                        next.add(id);
+                      }
+                      return next;
+                    });
+                  }
+                }}
+                onMapPaint={(lat, lng) => {
+                  if (!generatedPlan) return;
+                  if (brush.kind === 'paint') {
+                    const offsets = stampOffsets(brush.pattern);
+                    setGeneratedPlan(prev => {
+                      if (!prev) return prev;
+                      const additions: PlanPlant[] = [];
+                      for (const off of offsets) {
+                        const slug = pickPaintSlug(brush.slugs);
+                        if (!slug) continue;
+                        const cat = allPlantsCache.find((p: any) => p.slug === slug);
+                        if (!cat) continue;
+                        const spread = (cat.spreadMaxInches || 18) / 12; // ft
+                        const stepM = spread * 0.3048 * 1.2; // 1.2× spread between stamp points
+                        const dLat = (off.dy * stepM) / 111320;
+                        const dLng = (off.dx * stepM) / (111320 * Math.cos(lat * Math.PI / 180));
+                        additions.push(makeNewPlacement(cat, lat + dLat, lng + dLng, prev));
+                      }
+                      if (!additions.length) return prev;
+                      const newPlants = [...prev.plants, ...additions];
+                      let newSpecies = prev.species;
+                      for (const a of additions) {
+                        const cat = allPlantsCache.find((p: any) => p.slug === a.plantSlug);
+                        if (cat) newSpecies = ensureSpeciesPresent(newSpecies, newPlants, cat);
+                      }
+                      return { ...prev, plants: newPlants, species: newSpecies };
+                    });
+                    return;
+                  }
+                  if (brush.kind === 'paste' && copiedRegion) {
+                    setGeneratedPlan(prev => {
+                      if (!prev) return prev;
+                      const additions: PlanPlant[] = copiedRegion.plants.map(({ offsetLat, offsetLng, plant }) => ({
+                        ...plant,
+                        lat: lat + offsetLat,
+                        lng: lng + offsetLng,
+                        // New cell positions are no longer valid; clear them
+                        // so the renderer falls back to circles/blobs at the
+                        // pasted point.
+                        cellGeoJson: undefined,
+                      }));
+                      const newPlants = [...prev.plants, ...additions];
+                      let newSpecies = prev.species;
+                      for (const a of additions) {
+                        const cat = allPlantsCache.find((p: any) => p.slug === a.plantSlug);
+                        if (cat) newSpecies = ensureSpeciesPresent(newSpecies, newPlants, cat);
+                      }
+                      return { ...prev, plants: newPlants, species: newSpecies };
+                    });
+                  }
+                }}
+                onRegionSelected={(bounds) => {
+                  if (!generatedPlan || brush.kind !== 'select') return;
+                  // Marquee → selection (NOT auto-copy). Shift held = add to
+                  // existing selection; alt held = subtract. Layer-hidden or
+                  // locked plants are excluded.
+                  const matched: number[] = [];
+                  generatedPlan.plants.forEach((p, i) => {
+                    if (p.lat == null || p.lng == null) return;
+                    if (p.lat < bounds.minLat || p.lat > bounds.maxLat) return;
+                    if (p.lng < bounds.minLng || p.lng > bounds.maxLng) return;
+                    const cat = allPlantsCache.find((s: any) => s.slug === p.plantSlug);
+                    const layer = (cat?.oudolfRole ?? 'matrix') as LayerId;
+                    if (!layers[layer].visible || layers[layer].locked) return;
+                    matched.push(i);
+                  });
+                  setSelectedIds(prev => {
+                    const next = shiftKeyRef.current || altKeyRef.current ? new Set(prev) : new Set<string>();
+                    for (const i of matched) {
+                      if (altKeyRef.current) next.delete(String(i));
+                      else next.add(String(i));
+                    }
+                    return next;
+                  });
+                }}
                 height="100%"
               />
               {/* Unobtrusive plant info card — bottom-left, dismissible. Shows
@@ -1306,11 +1649,8 @@ export default function NewPlanPage() {
                 );
               })()}
             </div>
-            <p className="text-xs text-muted mb-4 mt-2 text-center">
-              {view3D
-                ? 'Drag to orbit. Buildings cast real-time shadows when sunlight is enabled.'
-                : 'Top-down satellite view with plant placements. Toggle 3D to see building shadows.'}
-            </p>
+              }
+            />
 
             {/* Ecological impact */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
@@ -1328,46 +1668,7 @@ export default function NewPlanPage() {
               <EcoCard label="Diversity" value={`${generatedPlan.diversityScore}/100`} detail="diversity score" />
             </div>
 
-            {/* Plant legend */}
-            <div className="mb-8">
-              <PlantingLegend
-                plants={generatedPlan.plants}
-                selectedSlug={selectedPlantSlug}
-                onSelect={setSelectedPlantSlug}
-                allPlants={allPlantsCache}
-                densityMultiplier={preferences.densityMultiplier}
-                onDensityChange={(d) => {
-                  setPreferences(p => ({ ...p, densityMultiplier: d }));
-                  // Will regenerate on next click
-                }}
-                onRemoveSpecies={(slug) => {
-                  if (!generatedPlan) return;
-                  const newPlants = generatedPlan.plants.filter(p => p.plantSlug !== slug);
-                  const newSpecies = generatedPlan.species.filter((s: any) => s.slug !== slug);
-                  setGeneratedPlan({ ...generatedPlan, plants: newPlants, species: newSpecies });
-                }}
-                onSwapSpecies={(oldSlug, newSlug) => {
-                  if (!generatedPlan) return;
-                  const replacement = allPlantsCache.find((p: any) => p.slug === newSlug);
-                  if (!replacement) return;
-                  const newPlants = generatedPlan.plants.map(p =>
-                    p.plantSlug === oldSlug ? {
-                      ...p,
-                      plantSlug: replacement.slug,
-                      commonName: replacement.commonName,
-                      scientificName: replacement.scientificName,
-                      bloomColor: replacement.bloomColor,
-                      heightMaxInches: replacement.heightMaxInches,
-                      imageUrl: replacement.imageUrl || '',
-                    } : p
-                  );
-                  const newSpecies = generatedPlan.species.map((s: any) =>
-                    s.slug === oldSlug ? replacement : s
-                  );
-                  setGeneratedPlan({ ...generatedPlan, plants: newPlants, species: newSpecies });
-                }}
-              />
-            </div>
+            {/* Plant legend now lives in the sidebar's Plants tab. */}
 
             {/* Email for ownership */}
             <div className="mb-4 p-4 bg-stone-50 rounded-lg border border-stone-200">
@@ -1431,6 +1732,34 @@ export default function NewPlanPage() {
                 {saving ? 'Saving...' : 'Save Plan'}
               </button>
             </div>
+
+            {/* Catalog picker — shared by the sidebar's "Browse" and "Paint" actions. */}
+            <PlantCatalogPicker
+              open={pickerOpen}
+              onClose={() => setPickerOpen(false)}
+              allPlants={allPlantsCache}
+              siteProfile={siteProfile}
+              pinnedSlugs={pinnedSlugs}
+              paintingSlug={brush.slugs[0] ?? null}
+              onPin={(slug) => setPinnedSlugs(s => s.includes(slug) ? s : [...s, slug])}
+              onUnpin={(slug) => setPinnedSlugs(s => s.filter(x => x !== slug))}
+              onPaint={(slug) => {
+                // Empty string = stop painting (clears the brush set).
+                if (!slug) {
+                  setBrush(b => ({ ...b, kind: b.kind === 'paint' ? null : b.kind, slugs: [] }));
+                  return;
+                }
+                // Single-species paint: replace the brush set. Holding alt
+                // would be the natural way to add to a multi-brush set, but
+                // the picker doesn't have that hook yet — multi is built up
+                // through the sidebar's species chips.
+                setBrush(b => ({
+                  ...b,
+                  kind: 'paint',
+                  slugs: b.slugs.includes(slug) ? b.slugs : [...b.slugs, slug],
+                }));
+              }}
+            />
           </div>
         )}
       </div>
@@ -1446,6 +1775,99 @@ function EcoCard({ label, value, detail }: { label: string; value: string; detai
       <div className="text-xs text-green-600">{detail}</div>
     </div>
   );
+}
+
+/** Pick a slug for the next paint event. Multi-plant brushes get a uniform
+ *  random pick — naturalistic mixed drifts read better than round-robin. */
+function pickPaintSlug(slugs: string[]): string | null {
+  if (!slugs.length) return null;
+  if (slugs.length === 1) return slugs[0];
+  return slugs[Math.floor(Math.random() * slugs.length)];
+}
+
+/** Stamp pattern offsets (unit-circle coordinates that get multiplied by the
+ *  plant's spread when the parent computes the lat/lng of each placement).
+ *   1 = single
+ *   3 = triangle (3 points, 120° apart)
+ *   5 = quincunx (4 corners + center)
+ *   9 = 3×3 grid
+ */
+function stampOffsets(pattern: 1 | 3 | 5 | 9): { dx: number; dy: number }[] {
+  if (pattern === 1) return [{ dx: 0, dy: 0 }];
+  if (pattern === 3) {
+    return [0, 120, 240].map(deg => {
+      const r = deg * Math.PI / 180;
+      return { dx: Math.sin(r), dy: -Math.cos(r) };
+    });
+  }
+  if (pattern === 5) {
+    return [
+      { dx: 0, dy: 0 },
+      { dx: -1, dy: -1 }, { dx: 1, dy: -1 },
+      { dx: -1, dy: 1 }, { dx: 1, dy: 1 },
+    ];
+  }
+  // 9 = 3x3 grid
+  const out: { dx: number; dy: number }[] = [];
+  for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) out.push({ dx, dy });
+  return out;
+}
+
+/** Merge a plant catalog row into an existing PlanPlant, preserving position
+ *  and quantity but swapping the species-identifying fields. */
+function mergePlantData(p: PlanPlant, replacement: any): PlanPlant {
+  return {
+    ...p,
+    plantSlug: replacement.slug,
+    commonName: replacement.commonName,
+    scientificName: replacement.scientificName,
+    bloomColor: replacement.bloomColor,
+    heightMaxInches: replacement.heightMaxInches,
+    spreadInches: replacement.spreadMaxInches ?? p.spreadInches,
+    imageUrl: replacement.imageUrl || '',
+    plantType: replacement.plantType,
+  };
+}
+
+/** Construct a fresh PlanPlant at a given lat/lng from a plant catalog row.
+ *  Reuses the highest-existing speciesIndex+1 when the species is new to the
+ *  plan, otherwise reuses the existing index so legend numbering stays stable. */
+function makeNewPlacement(
+  cat: any,
+  lat: number,
+  lng: number,
+  prev: { plants: PlanPlant[]; species: any[] },
+): PlanPlant {
+  const existingIdx = prev.plants.find(pl => pl.plantSlug === cat.slug)?.speciesIndex;
+  const speciesIndex = existingIdx ?? (
+    Math.max(0, ...prev.plants.map(pl => pl.speciesIndex || 0)) + 1
+  );
+  return {
+    plantSlug: cat.slug,
+    commonName: cat.commonName,
+    scientificName: cat.scientificName,
+    gridX: 0, gridY: 0,
+    quantity: 1,
+    bloomColor: cat.bloomColor,
+    heightMaxInches: cat.heightMaxInches,
+    spreadInches: cat.spreadMaxInches,
+    notes: '',
+    lat, lng,
+    imageUrl: cat.imageUrl,
+    speciesIndex,
+    plantType: cat.plantType,
+    tier: cat.tier,
+    sociability: cat.sociability,
+  };
+}
+
+/** Make sure the species manifest contains an entry for `replacement` while
+ *  pruning species whose last placement was just removed. */
+function ensureSpeciesPresent(species: any[], plants: PlanPlant[], replacement: any): any[] {
+  const next = species.some((s: any) => s.slug === replacement.slug)
+    ? species
+    : [...species, replacement];
+  return next.filter((s: any) => plants.some(p => p.plantSlug === s.slug));
 }
 
 function makeDefaultPolygon(lat: number, lng: number): GeoJSON.Polygon {

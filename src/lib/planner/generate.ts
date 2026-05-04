@@ -39,6 +39,7 @@ export function generatePlan(
   existingTrees: ExistingTree[] = [],
   globalSunOverride?: number | null,
   formula?: DesignFormula,
+  pinnedSlugs: string[] = [],
 ): GeneratedPlan {
   // Build the 5x5ft sun grid for per-plot analysis
   const bounds = polygonToBounds(polygon || null, center);
@@ -57,10 +58,19 @@ export function generatePlan(
     if (relaxed.length === 0) {
       return { plants: [], selectedSpecies: [], gridCols: 3, gridRows: 3, areaSqFt, diversityScore: 0, sunGrid };
     }
-    return generateFromCandidates(relaxed, preferences, areaSqFt, polygon, center, exclusionZones, existingTrees, sunGrid, formula);
+    return generateFromCandidates(relaxed, preferences, areaSqFt, polygon, center, exclusionZones, existingTrees, sunGrid, formula, resolvePinned(allPlants, pinnedSlugs));
   }
 
-  return generateFromCandidates(prefFiltered, preferences, areaSqFt, polygon, center, exclusionZones, existingTrees, sunGrid, formula);
+  return generateFromCandidates(prefFiltered, preferences, areaSqFt, polygon, center, exclusionZones, existingTrees, sunGrid, formula, resolvePinned(allPlants, pinnedSlugs));
+}
+
+/** Look up pinned slugs against the full catalog. Pinned plants bypass the
+ *  site/preference filters because the user explicitly asked for them — we
+ *  trust their judgment over the autoscorer's. */
+function resolvePinned(allPlants: Plant[], slugs: string[]): Plant[] {
+  if (!slugs.length) return [];
+  const bySlug = new Map(allPlants.map(p => [p.slug, p]));
+  return slugs.map(s => bySlug.get(s)).filter((p): p is Plant => !!p);
 }
 
 function generateFromCandidates(
@@ -73,16 +83,21 @@ function generateFromCandidates(
   existingTrees: ExistingTree[] = [],
   sunGrid?: SunGrid,
   formula?: DesignFormula,
+  pinned: Plant[] = [],
 ): GeneratedPlan {
   const gridConfig = calculateGridSize(areaSqFt);
   const targetSpecies = Math.min(
-    candidates.length,
+    Math.max(candidates.length, pinned.length),
     preferences.targetSpeciesCount || 10,
   );
 
-  // Greedy selection with diversity scoring
-  const selected: Plant[] = [];
-  const remaining = [...candidates];
+  // Pinned plants seed the selection — the greedy loop fills the remaining
+  // slots without ever picking a pinned slug again. Pinned plants are merged
+  // into the candidate pool too, so if they happen to be filtered out by the
+  // scorer's diversity heuristics they still count toward the target.
+  const pinnedSet = new Set(pinned.map(p => p.slug));
+  const selected: Plant[] = [...pinned];
+  const remaining = candidates.filter(c => !pinnedSet.has(c.slug));
   const ctx = {
     selectedFamilies: new Set<string>(),
     selectedTypes: new Set<string>(),
@@ -114,6 +129,20 @@ function generateFromCandidates(
     }
   }
   const roleCounts: Partial<Record<OudolfRole, number>> = {};
+
+  // Pre-seed diversity context with the pinned plants so the greedy loop
+  // doesn't re-pick their family/color/etc. when filling remaining slots.
+  for (const p of pinned) {
+    ctx.selectedFamilies.add(p.family);
+    ctx.selectedTypes.add(p.plantType);
+    ctx.selectedColors.add(p.bloomColor);
+    for (let m = p.bloomStartMonth; m <= p.bloomEndMonth; m++) {
+      ctx.selectedBloomMonths.add(m);
+    }
+    typeCounts[p.plantType] = (typeCounts[p.plantType] || 0) + 1;
+    const role = p.oudolfRole as OudolfRole | undefined;
+    if (role) roleCounts[role] = (roleCounts[role] || 0) + 1;
+  }
 
   while (selected.length < targetSpecies && remaining.length > 0) {
     let bestIdx = 0;
