@@ -74,8 +74,10 @@ export interface ExclusionZone {
   id: string;
   geoJson: GeoJSON.Polygon;
   label: string;
-  type: 'walkway' | 'patio' | 'shed' | 'driveway' | 'sidewalk' | 'building' | 'other';
-  heightMeters?: number; // building height for shadow computation (default 8m)
+  type: 'walkway' | 'patio' | 'shed' | 'driveway' | 'sidewalk' | 'building' | 'fence' | 'other';
+  /** Height of the obstacle for shadow computation. Defaults vary by type:
+   *  buildings 8m, fences 1.83m (6 ft), everything else effectively 0. */
+  heightMeters?: number;
 }
 
 export interface ExistingTree {
